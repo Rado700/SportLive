@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
+//@AllArgsConstructor
+//@NoArgsConstructor
 @Table(name="\"user\"")
 public class User {
     @Id
@@ -52,6 +52,17 @@ public class User {
     @JsonManagedReference
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Transaction> transactionList = new HashSet<>();
+
+    public User(String name, String surname, int height, int weight) {
+        this.name = name;
+        this.surname = surname;
+        this.height = height;
+        this.weight = weight;
+    }
+
+    public User() {
+
+    }
 
 
     public String getName() {

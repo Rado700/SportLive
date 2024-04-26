@@ -20,7 +20,7 @@ public class BalanceController {
     public Integer deposit (int balance) {
         return userService.deposit(balance);
     }
-    @PostMapping("/balance")
+    @PostMapping("/withBalance")
     public Integer withdraw (int balance) {
         return userService.withdraw(balance);
     }

@@ -23,7 +23,7 @@ public class UserService {
     }
     public Integer withdraw (Integer balance){
         User user = new User();
-        if (user.getBalance() < balance){
+        if (user.getBalance() > balance){
             user.setBalance(-balance);
         }else {
             System.out.println("сумма меньше баланса");
@@ -35,5 +35,22 @@ public class UserService {
         return user.getBalance();
     }
 
+    public User addUser(String name,String surname,int height,int weight){
+        User user = new User(name,surname,height,weight);
+        return userRepository.save(user);
+
+    }
+    public User getUser(Integer Id){
+        return userRepository.findById(Id).orElse(null);
+
+    }
+    public User deleteUser(Integer id) throws Exception {
+        User user = getUser(id);
+        if (user == null){
+            throw new Exception("нету такого пользователя");
+        }
+        userRepository.delete(user);
+        return user;
+    }
 
 }

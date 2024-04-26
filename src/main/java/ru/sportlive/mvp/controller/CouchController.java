@@ -1,12 +1,10 @@
 package ru.sportlive.mvp.controller;
 
-import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.sportlive.mvp.dto.CouchDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.services.CouchService;
 
@@ -18,10 +16,16 @@ public class CouchController {
     @Autowired
     CouchService couchService;
 
-    @GetMapping("/users")
+    @GetMapping("/couch")
     public ResponseEntity<List<Couch>>getAllUsers(){
-        List<Couch>getAll = couchService.getAllUsers();
+        List<Couch>getAll = couchService.getAllCouches();
         return new ResponseEntity<>(getAll, HttpStatus.OK);
 
+    }
+
+    @PostMapping("/couch/add")
+    public ResponseEntity<Couch>addCouch(@RequestBody CouchDTO couchDTO){
+        Couch couch = couchService.addCouch(couchDTO.getName(),couchDTO.getOrganisationId());
+        return new ResponseEntity<>(couch,HttpStatus.OK);
     }
 }
