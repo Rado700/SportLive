@@ -20,7 +20,7 @@ public class Couch {
     private String name;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "couch",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "couch",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Inventory> inventory = new ArrayList<>();
 
     @JsonBackReference
@@ -29,20 +29,20 @@ public class Couch {
     private Organisation organisation;
 
     @JsonBackReference
-    @ManyToMany(mappedBy = "selectedCouches")
+    @ManyToMany(mappedBy = "selectedCouches",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<User> user = new HashSet<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "couch",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "couch",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Schedule>schedules = new HashSet<>();
 
 
     public Couch() {
     }
 
-
-    public Couch(String name, Integer organisationId) {
-
+    public Couch(String name, Organisation organisation) {
+        this.name = name;
+        this.organisation = organisation;
     }
 
     public String getName() {

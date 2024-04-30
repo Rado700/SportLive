@@ -14,4 +14,16 @@ public class Sport {
     private String description;
     private String instruction;
     private String equipment;
+
+
+    public Sport(String name_sport, String description, String instruction, String equipment) {
+        this.name_sport = name_sport;
+        this.description = description;
+        this.instruction = instruction;
+        this.equipment = equipment;
+    }
+
+    public Sport() {
+    }
+
 }

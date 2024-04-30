@@ -3,22 +3,45 @@ package ru.sportlive.mvp.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Inventory;
+import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.repository.CouchRepository;
+import ru.sportlive.mvp.repository.InventoryRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CouchService {
     @Autowired
     CouchRepository couchRepository;
+    @Autowired
+    InventoryRepository inventoryRepository;
 
     public List<Couch> getAllCouches(){
         return couchRepository.findAll();
     }
-    public Couch addCouch (String name,Integer organisationId){
-        Couch couch = new Couch(name,organisationId);
-        return couchRepository.save(couch);
+    public Couch addCouch (String name, Organisation organisation_id){
+        Couch couch = new Couch(name,organisation_id);
+        couchRepository.save(couch);
+        return couch;
+
     }
+    public Couch getCouch(Integer id){
+        return couchRepository.findById(id).orElse(null);
+    }
+
+    public Couch deleteCouch(Integer id){
+        Couch couch = getCouch(id);
+        couchRepository.delete(couch);
+        return couch;
+    }
+    public Inventory addInventory(String name,Integer price,String type,String size,Couch couch_id){
+        Inventory inventory = new Inventory(name,price,type,size,couch_id);
+        inventoryRepository.save(inventory);
+        return inventory;
+    }
+
 
 
 }

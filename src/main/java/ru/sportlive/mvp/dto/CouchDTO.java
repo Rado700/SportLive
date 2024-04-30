@@ -2,11 +2,11 @@ package ru.sportlive.mvp.dto;
 
 public class CouchDTO {
     private String name;
-    private Integer organisationId;
+    private Integer organisation_id;
 
     public CouchDTO(String name, Integer organisation_id) {
         this.name = name;
-        this.organisationId = organisation_id;
+        this.organisation_id = organisation_id;
     }
 
     public String getName() {
@@ -17,11 +17,11 @@ public class CouchDTO {
         this.name = name;
     }
 
-    public Integer getOrganisationId() {
-        return organisationId;
+    public Integer getOrganisation_id() {
+        return organisation_id;
     }
 
-    public void setOrganisationId(Integer organisationId) {
-        this.organisationId = organisationId;
+    public void setOrganisation_id(Integer organisation_id) {
+        this.organisation_id = organisation_id;
     }
 }

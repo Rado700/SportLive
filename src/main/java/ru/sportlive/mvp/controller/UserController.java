@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.sportlive.mvp.dto.SportDTO;
 import ru.sportlive.mvp.dto.UsersDTO;
+import ru.sportlive.mvp.models.Sport;
 import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.services.SportService;
 import ru.sportlive.mvp.services.UserService;
 
 import java.awt.geom.QuadCurve2D;
@@ -18,6 +21,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    SportService sportService;
 
     @PostMapping("/user/addUser")
     public ResponseEntity<User>addNewUser (@RequestBody UsersDTO usersDTO){
@@ -39,6 +45,11 @@ public class UserController {
         List<User>users = userService.getAllUsers();
         return new ResponseEntity<>(users,HttpStatus.OK);
 
+    }
+    @PostMapping("/addSport")
+    public ResponseEntity<Sport>addSport(@RequestBody SportDTO sportDTO){
+        Sport sport = sportService.addSport(sportDTO.getSport_name(),sportDTO.getDescription(),sportDTO.getInstruction(),sportDTO.getEquipment());
+        return new ResponseEntity<>(sport,HttpStatus.OK);
     }
 
 }

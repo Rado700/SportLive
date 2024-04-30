@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +26,46 @@ public class Schedule {
     @OneToOne(mappedBy = "schedule",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Booking booking;
 
+
+    public Schedule() {
+    }
+
+    public Schedule(String place, String description, Date date, Couch couch) {
+        this.place = place;
+        this.description = description;
+        this.date = date;
+        this.couch = couch;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Couch getCouch() {
+        return couch;
+    }
+
+    public void setCouch(Couch couch) {
+        this.couch = couch;
+    }
 }

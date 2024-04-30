@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +32,14 @@ public class Inventory {
     @ManyToMany(mappedBy = "selectedInventory",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<User> user = new HashSet<>();
 
+    public Inventory() {
+    }
+
+    public Inventory(String name, Integer price, String type, String size, Couch couch) {
+        this.name = name;
+        this.price = price;
+        this.type = type;
+        this.size = size;
+        this.couch = couch;
+    }
 }
