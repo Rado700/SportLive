@@ -13,6 +13,7 @@ import ru.sportlive.mvp.services.OrganisationService;
 import java.util.List;
 
 @RestController
+@RequestMapping("/couch")
 public class CouchController {
     @Autowired
     CouchService couchService;
@@ -20,14 +21,14 @@ public class CouchController {
     @Autowired
     OrganisationService organisationService;
 
-    @GetMapping("/getAllcouch")
+    @GetMapping("/")
     public ResponseEntity<List<Couch>>getAllUsers(){
         List<Couch>getAll = couchService.getAllCouches();
         return new ResponseEntity<>(getAll, HttpStatus.OK);
 
     }
 
-    @PostMapping("/couch/add")
+    @PostMapping("/")
     public ResponseEntity<Couch>addCouch(@RequestBody CouchDTO couchDTO){
         try {
             Organisation organisation = organisationService.getOrganisation(couchDTO.getOrganisation_id());
@@ -38,12 +39,12 @@ public class CouchController {
         }
 
     }
-    @DeleteMapping ("/couch/delete/{couch_id}")
-    public ResponseEntity<Couch>deleteCouch(@PathVariable Integer couch_id) {
-        Couch couch = couchService.deleteCouch(couch_id);
+    @DeleteMapping ("/{id}")
+    public ResponseEntity<Couch>deleteCouch(@PathVariable Integer id) {
+        Couch couch = couchService.deleteCouch(id);
         return new ResponseEntity<>(couch,HttpStatus.OK);
     }
-    @GetMapping("/getCouch/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Couch>getCouch(@PathVariable Integer id){
         Couch couch = couchService.getCouch(id);
         return new ResponseEntity<>(couch,HttpStatus.OK);

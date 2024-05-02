@@ -1,24 +1,24 @@
 package ru.sportlive.mvp.dto;
 
 public class SportDTO {
-    private String sport_name;
+    private String name_sport;
     private String description;
     private String instruction;
     private String equipment;
 
     public SportDTO(String sport_name, String description, String instruction, String equipment) {
-        this.sport_name = sport_name;
+        this.name_sport = sport_name;
         this.description = description;
         this.instruction = instruction;
         this.equipment = equipment;
     }
 
-    public String getSport_name() {
-        return sport_name;
+    public String getName_sport() {
+        return name_sport;
     }
 
-    public void setSport_name(String sport_name) {
-        this.sport_name = sport_name;
+    public void setName_sport(String name_sport) {
+        this.name_sport = name_sport;
     }
 
     public String getDescription() {

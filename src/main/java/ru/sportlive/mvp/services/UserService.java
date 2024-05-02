@@ -6,6 +6,7 @@ import ru.sportlive.mvp.repository.UserRepository;
 import ru.sportlive.mvp.models.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -16,30 +17,30 @@ public class UserService {
       return userRepository.findAll();
     }
 
-    public Integer deposit(Integer balance){
+    public Integer deposit(Integer amount){
         User user = new User();
-        user.setBalance(balance);
-        return balance;
+        user.setBalance(amount);
+        return user.getBalance();
     }
-    public Integer withdraw (Integer balance){
+    public Integer withdraw (Integer amount){
         User user = new User();
-        if (user.getBalance() > balance){
-            user.setBalance(-balance);
+        if (user.getBalance() > amount){
+            user.setBalance(-amount);
         }else {
             System.out.println("сумма меньше баланса");
         }
         return user.getBalance();
     }
-    public Integer getBalance(){
-        User user = new User();
-        return user.getBalance();
+    public Integer getUserBalance(Integer id){
+        Optional<User> user = userRepository.findById(id);
+        return user.map(User::getBalance).orElse(null);
     }
 
     public User addUser(String name,String surname,int height,int weight){
         User user = new User(name,surname,height,weight);
         return userRepository.save(user);
-
     }
+
     public User getUser(Integer Id){
         return userRepository.findById(Id).orElse(null);
 

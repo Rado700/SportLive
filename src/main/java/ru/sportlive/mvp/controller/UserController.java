@@ -13,7 +13,6 @@ import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.services.SportService;
 import ru.sportlive.mvp.services.UserService;
 
-import java.awt.geom.QuadCurve2D;
 import java.util.List;
 
 @RestController
@@ -48,7 +47,7 @@ public class UserController {
     }
     @PostMapping("/addSport")
     public ResponseEntity<Sport>addSport(@RequestBody SportDTO sportDTO){
-        Sport sport = sportService.addSport(sportDTO.getSport_name(),sportDTO.getDescription(),sportDTO.getInstruction(),sportDTO.getEquipment());
+        Sport sport = sportService.addSport(sportDTO.getName_sport(),sportDTO.getDescription(),sportDTO.getInstruction(),sportDTO.getEquipment());
         return new ResponseEntity<>(sport,HttpStatus.OK);
     }
 

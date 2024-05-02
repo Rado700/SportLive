@@ -20,12 +20,14 @@ public class Couch {
     private String name;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "couch",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "couch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Inventory> inventory = new ArrayList<>();
 
     @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "organisation_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "organisation_id", foreignKey = @ForeignKey(
+            foreignKeyDefinition = "FOREIGN KEY (organisation_id) REFERENCES Organisation ON DELETE CASCADE ON UPDATE CASCADE"
+    ))
     private Organisation organisation;
 
     @JsonBackReference

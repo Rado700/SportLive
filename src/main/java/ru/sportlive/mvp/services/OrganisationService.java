@@ -14,4 +14,10 @@ public class OrganisationService {
     public Organisation getOrganisation(Integer id) {
         return organisationRepository.findById(id).orElse(null);
     }
+
+    public Organisation addOrganisation(String name,String description){
+        Organisation organisation = new Organisation(name,description);
+        organisationRepository.save(organisation);
+        return organisation;
+    }
 }
