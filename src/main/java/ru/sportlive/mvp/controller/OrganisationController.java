@@ -9,18 +9,19 @@ import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.services.OrganisationService;
 
 @RestController
+@RequestMapping("/organisation")
 public class OrganisationController {
 
     @Autowired
     OrganisationService organisationService;
 
-    @GetMapping("/getOrganisation/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Organisation>getOrganisation(@PathVariable Integer id) {
         Organisation organisation = organisationService.getOrganisation(id);
         return new ResponseEntity<>(organisation, HttpStatus.OK);
     }
 
-    @PostMapping("/addOrganisation")
+    @PostMapping("/")
     public ResponseEntity<Organisation>addOrganisation(@RequestBody OrganisationDTO organisationDTO){
         Organisation organisation = organisationService.addOrganisation(organisationDTO.getName(),organisationDTO.getDescription());
         return new ResponseEntity<>(organisation,HttpStatus.OK);

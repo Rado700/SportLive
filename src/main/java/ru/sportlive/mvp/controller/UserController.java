@@ -16,17 +16,14 @@ import ru.sportlive.mvp.services.UserService;
 import java.util.List;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     UserService userService;
 
-    @Autowired
-    SportService sportService;
-
-    @PostMapping("/user/addUser")
+    @PostMapping("/")
     public ResponseEntity<User>addNewUser (@RequestBody UsersDTO usersDTO){
-
         try {
             User user = userService.addUser(usersDTO.getName(), usersDTO.getSurname(), usersDTO.getHeight(),usersDTO.getWeight());
             return new ResponseEntity<>(user, HttpStatus.OK);
@@ -34,21 +31,22 @@ public class UserController {
             throw new RuntimeException(e.getMessage());
         }
     }
-    @DeleteMapping("/user/{Id}")
-    public ResponseEntity<User>deleteUser(@PathVariable Integer Id) throws Exception {
-        User user = userService.deleteUser(Id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<User>deleteUser(@PathVariable Integer id) throws Exception {
+        User user = userService.deleteUser(id);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
-    @GetMapping("/getAllUsers")
+    @GetMapping("/")
     public ResponseEntity<List<User>>getAllUser(){
         List<User>users = userService.getAllUsers();
         return new ResponseEntity<>(users,HttpStatus.OK);
 
     }
-    @PostMapping("/addSport")
-    public ResponseEntity<Sport>addSport(@RequestBody SportDTO sportDTO){
-        Sport sport = sportService.addSport(sportDTO.getName_sport(),sportDTO.getDescription(),sportDTO.getInstruction(),sportDTO.getEquipment());
-        return new ResponseEntity<>(sport,HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity<User>getUser(@PathVariable Integer id){
+        User user =userService.getUser(id);
+        return new ResponseEntity<>(user,HttpStatus.OK);
     }
+
 
 }

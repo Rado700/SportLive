@@ -11,6 +11,7 @@ import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.ScheduleService;
 
 @RestController
+@RequestMapping("/schedule")
 public class ScheduleController {
     @Autowired
     ScheduleService scheduleService;
@@ -19,13 +20,13 @@ public class ScheduleController {
     CouchService couchService;
 
 
-    @GetMapping("/getSchedule/{schedule_id}")
-    public ResponseEntity<Schedule>getSchedule(@PathVariable Integer schedule_id){
-        Schedule schedule = scheduleService.getSchedule(schedule_id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Schedule>getSchedule(@PathVariable Integer id){
+        Schedule schedule = scheduleService.getSchedule(id);
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
-    @PostMapping("/addSchedule")
+    @PostMapping("/")
     public ResponseEntity<Schedule>addSchedule(@RequestBody ScheduleDTO scheduleDTO){
         Couch couch = couchService.getCouch(scheduleDTO.getCouch_id());
         Schedule schedule = scheduleService.addSchedule(scheduleDTO.getPlace(),scheduleDTO.getDescription(),scheduleDTO.getDate(),couch);
