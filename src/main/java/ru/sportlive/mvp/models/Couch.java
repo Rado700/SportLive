@@ -30,6 +30,7 @@ public class Couch {
     ))
     private Organisation organisation;
 
+
     @JsonBackReference
     @ManyToMany(mappedBy = "selectedCouches",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<User> user = new HashSet<>();

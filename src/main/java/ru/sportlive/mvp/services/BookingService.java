@@ -7,13 +7,13 @@ import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.repository.BookingRepository;
 
+import java.util.List;
+
 @Service
 public class BookingService {
 
     @Autowired
     BookingRepository bookingRepository;
-
-
 
     public Booking getBooking (Integer id){
         return bookingRepository.findById(id).orElse(null);
@@ -23,5 +23,14 @@ public class BookingService {
         Booking booking = new Booking(schedule,user);
         bookingRepository.save(booking);
         return booking;
+    }
+
+    public Booking deleteBooking (Integer id){
+        Booking booking = getBooking(id);
+        bookingRepository.delete(booking);
+        return booking;
+    }
+    public List<Booking> getAllBookings(){
+        return bookingRepository.findAll();
     }
 }

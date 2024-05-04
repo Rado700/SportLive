@@ -1,5 +1,6 @@
 package ru.sportlive.mvp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -14,8 +15,10 @@ public class Transaction {
     private String summa;
     private String type;
 
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",foreignKey = @ForeignKey(
+            foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES User ON DELETE CASCADE ON UPDATE CASCADE"))
     private User user;
 
     public Transaction(String summa, String type) {

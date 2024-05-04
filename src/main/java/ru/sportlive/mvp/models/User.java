@@ -22,7 +22,7 @@ public class User {
     private String surname;
     private int height;
     private int weight;
-    private int balance;
+    private int balance ;
 
 
     @JsonManagedReference

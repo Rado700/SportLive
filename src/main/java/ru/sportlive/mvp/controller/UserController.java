@@ -2,6 +2,7 @@ package ru.sportlive.mvp.controller;
 
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/")
+    @Operation(summary = "Добавляет нового пользователя")
     public ResponseEntity<User>addNewUser (@RequestBody UsersDTO usersDTO){
         try {
             User user = userService.addUser(usersDTO.getName(), usersDTO.getSurname(), usersDTO.getHeight(),usersDTO.getWeight());
@@ -32,16 +34,19 @@ public class UserController {
         }
     }
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удаляет пользователя по id")
     public ResponseEntity<User>deleteUser(@PathVariable Integer id) throws Exception {
         User user = userService.deleteUser(id);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
     @GetMapping("/")
+    @Operation(summary = "Выводит всех пользователей")
     public ResponseEntity<List<User>>getAllUser(){
         List<User>users = userService.getAllUsers();
         return new ResponseEntity<>(users,HttpStatus.OK);
 
     }
+    @Operation(summary = "Выводит пользователя по id")
     @GetMapping("/{id}")
     public ResponseEntity<User>getUser(@PathVariable Integer id){
         User user =userService.getUser(id);

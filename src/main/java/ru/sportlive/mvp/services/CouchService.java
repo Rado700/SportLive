@@ -36,11 +36,7 @@ public class CouchService {
         couchRepository.delete(couch);
         return couch;
     }
-    public Inventory addInventory(String name,Integer price,String type,String size,Couch couch_id){
-        Inventory inventory = new Inventory(name,price,type,size,couch_id);
-        inventoryRepository.save(inventory);
-        return inventory;
-    }
+
 
 
 

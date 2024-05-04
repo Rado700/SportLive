@@ -18,9 +18,9 @@ public class UserService {
     }
 
     public Integer deposit(Integer amount){
-        User user = new User();
-        user.setBalance(amount);
-        return user.getBalance();
+        int dep = 0;
+        dep += amount;
+        return dep;
     }
     public Integer withdraw (Integer amount){
         User user = new User();
