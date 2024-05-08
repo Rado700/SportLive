@@ -4,24 +4,36 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@AllArgsConstructor
-
 public class Inventory {
+    @Getter
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Getter
+    @Setter
     private String name;
+    @Getter
+    @Setter
     private Integer price;
+    @Getter
+    @Setter
     private String type;
+    @Getter
+    @Setter
     private String size;
 
 
+    @Getter
+    @Setter
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "couch_id")
@@ -42,4 +54,5 @@ public class Inventory {
         this.size = size;
         this.couch = couch;
     }
+
 }

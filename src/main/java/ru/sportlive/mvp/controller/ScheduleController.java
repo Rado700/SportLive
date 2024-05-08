@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.ScheduleDTO;
+import ru.sportlive.mvp.dto.input.ScheduleDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.services.CouchService;
@@ -21,7 +21,6 @@ public class ScheduleController {
 
     @Autowired
     CouchService couchService;
-
 
     @Operation(summary = "Вывести расписание по id")
     @GetMapping("/{id}")
@@ -49,6 +48,17 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Schedule>deleteSchedule(@PathVariable Integer id){
         Schedule schedule = scheduleService.deleteSchedule(id);
+        return new ResponseEntity<>(schedule,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Вывести расписание у тренера")
+    @GetMapping("/couch/{id}")
+    public ResponseEntity<List<Schedule>>getScheduleCouch(@PathVariable Integer id){
+        Couch couch = couchService.getCouch(id);
+        if (couch == null){
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        List<Schedule> schedule = scheduleService.getScheduleCouch(couch);
         return new ResponseEntity<>(schedule,HttpStatus.OK);
     }
 

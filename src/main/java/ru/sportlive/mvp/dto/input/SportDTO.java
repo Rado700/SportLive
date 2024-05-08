@@ -1,4 +1,4 @@
-package ru.sportlive.mvp.dto;
+package ru.sportlive.mvp.dto.input;
 
 public class SportDTO {
     private String name_sport;

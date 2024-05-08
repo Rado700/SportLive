@@ -1,4 +1,4 @@
-package ru.sportlive.mvp.dto;
+package ru.sportlive.mvp.dto.input;
 
 public class InventoryDTO {
     private String name;

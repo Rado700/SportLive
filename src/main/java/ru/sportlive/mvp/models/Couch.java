@@ -3,8 +3,9 @@ package ru.sportlive.mvp.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import ru.sportlive.mvp.dto.output.CouchInfoDTO;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,9 +15,13 @@ import java.util.Set;
 @Entity
 @Table(name="couch")
 public class Couch {
+    @Getter
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Getter
+    @Setter
     private String name;
 
     @JsonManagedReference
@@ -39,6 +44,12 @@ public class Couch {
     @OneToMany(mappedBy = "couch",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Schedule>schedules = new HashSet<>();
 
+//    @Getter
+//    @Setter
+//    @JsonManagedReference
+//    @OneToMany(mappedBy = "couch",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    private List<Booking>bookings = new ArrayList<>();
+
 
     public Couch() {
     }
@@ -47,13 +58,8 @@ public class Couch {
         this.name = name;
         this.organisation = organisation;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public CouchInfoDTO getCouchInfo(){
+        return new CouchInfoDTO(id,name);
     }
 
     public List<Inventory> getInventory() {
@@ -70,14 +76,6 @@ public class Couch {
 
     public void setOrganisation(Organisation organisation) {
         this.organisation = organisation;
-    }
-
-    public Set<User> getUser() {
-        return user;
-    }
-
-    public void setUser(Set<User> user) {
-        this.user = user;
     }
 
     public Set<Schedule> getSchedules() {

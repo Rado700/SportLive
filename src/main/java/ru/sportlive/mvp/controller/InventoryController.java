@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.InventoryDTO;
+import ru.sportlive.mvp.dto.input.InventoryDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Inventory;
 import ru.sportlive.mvp.services.CouchService;
@@ -48,6 +48,13 @@ public class InventoryController {
     @GetMapping("/")
     public ResponseEntity<List<Inventory>>getAllInventory(){
         List<Inventory> inventory = inventoryService.getAllInventory();
+        return new ResponseEntity<>(inventory,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Вывести весь инвентарь тренера")
+    @GetMapping("/couch/{id}")
+    public ResponseEntity<List<Inventory>>getCouchInventory(@PathVariable Integer id){
+        List<Inventory> inventory = inventoryService.getInventoryCouch(id);
         return new ResponseEntity<>(inventory,HttpStatus.OK);
     }
 }

@@ -4,10 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
+import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.ScheduleRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ScheduleService {
@@ -24,6 +28,7 @@ public class ScheduleService {
         return schedule;
     }
 
+
     public Schedule deleteSchedule(Integer id){
         Schedule schedule = getSchedule(id);
         scheduleRepository.delete(schedule);
@@ -31,6 +36,12 @@ public class ScheduleService {
     }
     public List<Schedule>getAllSchedule(){
         return scheduleRepository.findAll();
+    }
+
+    public List<Schedule> getScheduleCouch(Couch couch){
+        Set<Schedule>schedules = couch.getSchedules();
+        return schedules.stream().sorted().collect(Collectors.toList());
+
     }
 
 }

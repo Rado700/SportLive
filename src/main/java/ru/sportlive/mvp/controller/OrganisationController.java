@@ -1,13 +1,11 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.models.annotations.OpenAPI30;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.OrganisationDTO;
+import ru.sportlive.mvp.dto.input.OrganisationDTO;
 import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.services.OrganisationService;
 

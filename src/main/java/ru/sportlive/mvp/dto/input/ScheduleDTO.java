@@ -1,4 +1,4 @@
-package ru.sportlive.mvp.dto;
+package ru.sportlive.mvp.dto.input;
 
 import java.util.Date;
 

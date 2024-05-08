@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.CouchDTO;
+import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.services.CouchService;
@@ -54,4 +54,15 @@ public class CouchController {
         Couch couch = couchService.getCouch(id);
         return new ResponseEntity<>(couch,HttpStatus.OK);
     }
+
+
 }
+
+
+//GET /scedule/couch/{couchId} выводить расписание у тренера +
+//        GET /inventory/couch/{couchId} выводить весь инвентарь тренера+
+//        POST /couch/organization добавлять тренера в организацию. В тело передавать couch_id и organization_id
+//        GET /booking/user/{userId} все бронирования пользователя+
+//        GET /booking/couch/{couchId} все бронирования тренера+
+//Сортировка по времени в /scedule/couch/{couchId}+
+

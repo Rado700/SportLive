@@ -5,15 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.BookingDTO;
+import ru.sportlive.mvp.dto.input.BookingDTO;
+import ru.sportlive.mvp.dto.output.BookingUserCouchDTO;
 import ru.sportlive.mvp.models.Booking;
+import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.services.BookingService;
+import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.ScheduleService;
 import ru.sportlive.mvp.services.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/booking")
@@ -24,6 +28,9 @@ public class BookingController {
     UserService userService;
     @Autowired
     ScheduleService scheduleService;
+
+    @Autowired
+    CouchService couchService;
 
     @Operation(summary = "Вывести бронь по id")
     @GetMapping("/{id}")
@@ -52,5 +59,21 @@ public class BookingController {
     public ResponseEntity<List<Booking>>getAllBookings(){
         List<Booking> bookings = bookingService.getAllBookings();
         return new ResponseEntity<>(bookings,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Все брони пользователя по id")
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<Booking>>getUserBooking(@PathVariable Integer id){
+        List<Booking> booking = bookingService.getUserBooking(id);
+        return new ResponseEntity<>(booking,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Все брони тренера по id")
+    @GetMapping("/couch/{id}")
+    public ResponseEntity<List<BookingUserCouchDTO>>getCouchBookingBySchedule(@PathVariable Integer id){
+        Couch couch = couchService.getCouch(id);
+        List<Schedule>schedules = scheduleService.getScheduleCouch(couch);
+        List<Booking>bookings = bookingService.getCouchBookingBySchedules(schedules);
+        return new ResponseEntity<>(bookings.stream().map(Booking::getBookingUserCouch).collect(Collectors.toList()), HttpStatus.OK);
     }
 }

@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.sportlive.mvp.repository.TransactionRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 import ru.sportlive.mvp.models.User;
 
@@ -13,23 +14,27 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    TransactionRepository transactionRepository;
+
+
     public List<User> getAllUsers(){
       return userRepository.findAll();
     }
 
-    public Integer deposit(Integer amount){
-        int dep = 0;
+    public User deposit(Integer amount, User user){
+        int dep =user.getBalance();
         dep += amount;
-        return dep;
+        user.setBalance(dep);
+        userRepository.save(user);
+        return user;
     }
-    public Integer withdraw (Integer amount){
-        User user = new User();
-        if (user.getBalance() > amount){
-            user.setBalance(-amount);
-        }else {
-            System.out.println("сумма меньше баланса");
-        }
-        return user.getBalance();
+    public User withdraw (Integer amount, User user){
+        int balance = user.getBalance();
+        balance += amount;
+        user.setBalance(balance);
+        userRepository.save(user);
+        return user;
     }
     public Integer getUserBalance(Integer id){
         Optional<User> user = userRepository.findById(id);

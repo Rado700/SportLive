@@ -3,13 +3,14 @@ package ru.sportlive.mvp.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.Inventory;
 import ru.sportlive.mvp.models.Organisation;
+import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CouchService {
@@ -36,6 +37,7 @@ public class CouchService {
         couchRepository.delete(couch);
         return couch;
     }
+
 
 
 
