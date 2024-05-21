@@ -38,8 +38,10 @@ public class CouchService {
         return couch;
     }
 
-
-
-
+    public Couch addCouchToOrganisation (Organisation organisation, Couch couch){
+        couch.setOrganisation(organisation);
+        couchRepository.save(couch);
+        return couch;
+    }
 
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.BookingDTO;
 import ru.sportlive.mvp.dto.output.BookingUserCouchDTO;
+import ru.sportlive.mvp.dto.output.GetScheduleDateUser;
 import ru.sportlive.mvp.models.Booking;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
@@ -76,4 +77,17 @@ public class BookingController {
         List<Booking>bookings = bookingService.getCouchBookingBySchedules(schedules);
         return new ResponseEntity<>(bookings.stream().map(Booking::getBookingUserCouch).collect(Collectors.toList()), HttpStatus.OK);
     }
+
+    @Operation(summary = "Вывод всех броней которые были проведены тренером для user")
+    @GetMapping("/couch/user/{couchId}/{userId}")
+    public ResponseEntity<List<GetScheduleDateUser>>getBookingCouchForUser(@PathVariable Integer couchId, @PathVariable Integer userId){
+        Couch couch = couchService.getCouch(couchId);
+//        User user = userService.getUser(userId);
+//        List<Schedule>couchSchedule = scheduleService.getScheduleCouch(couch);
+        List<Booking> bookingUser = bookingService.getUserBooking(userId);
+        List<Schedule>scheduleList = bookingService.getAllSchedulesCouchByUser(bookingUser,couch);
+        return new ResponseEntity<>(scheduleList.stream().map(Schedule::getScheduleDateUser).collect(Collectors.toList()),HttpStatus.OK);
+    }
 }
+
+//GET /booking/couch/user/{couchId}/{userId} - выводить список всех броней, которые были проведены тренером с couchId для юзера userId

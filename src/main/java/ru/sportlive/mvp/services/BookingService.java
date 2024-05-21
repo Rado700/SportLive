@@ -24,6 +24,8 @@ public class BookingService {
     UserRepository userRepository;
 
 
+
+
     public Booking getBooking (Integer id){
         return bookingRepository.findById(id).orElse(null);
     }
@@ -58,6 +60,17 @@ public class BookingService {
         }
         return bookings;
 
+    }
+    public List<Schedule>getAllSchedulesCouchByUser(List<Booking>bookings,Couch couch){
+        List<Schedule>schedules = new ArrayList<>();
+        for (Booking booking: bookings) {
+            Schedule schedule = booking.getSchedule();
+            Couch couch2 = schedule.getCouch();
+            if (schedule != null && couch2 == couch ){
+                schedules.add(schedule);
+            }
+        }
+        return schedules;
     }
 
 }

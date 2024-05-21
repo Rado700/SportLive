@@ -3,18 +3,16 @@ package ru.sportlive.mvp.dto.input;
 import lombok.Getter;
 import lombok.Setter;
 
-
-public class CouchDTO {
+public class CouchOrganisationDTO {
     @Getter
     @Setter
-    private String name;
+    private Integer couch_id;
     @Getter
     @Setter
     private Integer organisation_id;
 
-    public CouchDTO(String name, Integer organisation_id) {
-        this.name = name;
+    public CouchOrganisationDTO(Integer couch_id, Integer organisation_id) {
+        this.couch_id = couch_id;
         this.organisation_id = organisation_id;
     }
-
 }
