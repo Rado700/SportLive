@@ -50,5 +50,13 @@ public class UserController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
+    @Operation(summary = "Обновления данных у пользователя")
+    @PutMapping("/{user_id}")
+    public ResponseEntity<User>updateUser(@PathVariable Integer user_id,@RequestBody UsersDTO usersDTO){
+        User user = userService.getUser(user_id);
+        user = userService.updateToUser(user, usersDTO);
+        return new ResponseEntity<>(user,HttpStatus.OK);
+    }
+
 
 }

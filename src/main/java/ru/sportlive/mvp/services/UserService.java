@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.repository.TransactionRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 import ru.sportlive.mvp.models.User;
@@ -58,7 +59,13 @@ public class UserService {
         userRepository.delete(user);
         return user;
     }
-
-
+    public User updateToUser(User user, UsersDTO usersDTO){
+        user.setName(usersDTO.getName());
+        user.setSurname(usersDTO.getSurname());
+        user.setHeight(usersDTO.getHeight());
+        user.setWeight(usersDTO.getWeight());
+        userRepository.save(user);
+        return user;
+    }
 
 }
