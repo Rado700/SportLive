@@ -32,7 +32,7 @@ public class UserService {
     }
     public User withdraw (Integer amount, User user){
         int balance = user.getBalance();
-        balance += amount;
+        balance -= amount;
         user.setBalance(balance);
         userRepository.save(user);
         return user;

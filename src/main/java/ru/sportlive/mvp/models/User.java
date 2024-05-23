@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 //import ru.sportlive.mvp.dto.output.GetUserBooking;
-import ru.sportlive.mvp.dto.output.GetUserBooking;
 import ru.sportlive.mvp.dto.output.UserInfoDTO;
 
 import java.util.ArrayList;
