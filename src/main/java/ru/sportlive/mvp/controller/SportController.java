@@ -38,10 +38,17 @@ public class SportController {
         return new ResponseEntity<>(sport,HttpStatus.OK);
     }
 
-    @Operation(summary = "Вывусти вид спорта по id")
+    @Operation(summary = "Вывести вид спорта по id")
     @GetMapping("/{id}")
     public ResponseEntity<Sport>getSportById(@PathVariable Integer id){
         Sport sport = sportService.getSport(id);
+        return new ResponseEntity<>(sport,HttpStatus.OK);
+    }
+    @Operation(summary = "Обновления данных у спорта")
+    @PutMapping("/{id}")
+    public ResponseEntity<Sport>updateSport(@PathVariable Integer id,@RequestBody SportDTO sportDTO){
+        Sport sport = sportService.getSport(id);
+        sport = sportService.updateToSport(sport,sportDTO);
         return new ResponseEntity<>(sport,HttpStatus.OK);
     }
 

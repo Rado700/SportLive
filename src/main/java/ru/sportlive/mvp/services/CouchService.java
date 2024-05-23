@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.models.Schedule;
@@ -41,6 +42,11 @@ public class CouchService {
     public Couch addCouchToOrganisation (Organisation organisation, Couch couch){
         couch.setOrganisation(organisation);
         couchRepository.save(couch);
+        return couch;
+    }
+
+    public Couch updateToCouch(Couch couch, CouchDTO couchDTO){
+        couch.setName(couchDTO.getName());
         return couch;
     }
 

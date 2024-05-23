@@ -62,5 +62,12 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule,HttpStatus.OK);
     }
 
+    @Operation(summary = "Обновления расписания тренера")
+    @PutMapping("/{id}")
+    public ResponseEntity<Schedule>updateSchedule(@PathVariable Integer id,@RequestBody ScheduleDTO scheduleDTO){
+        Schedule schedule = scheduleService.getSchedule(id);
+        schedule = scheduleService.updateToSchedule(schedule,scheduleDTO);
+        return new ResponseEntity<>(schedule,HttpStatus.OK);
+    }
 
 }

@@ -71,6 +71,13 @@ public class CouchController {
         Couch couch1 = couchService.addCouchToOrganisation(organisation, couch);
         return new ResponseEntity<>(couch1,HttpStatus.OK);
     }
+    @Operation(summary = "Обновления данных у тренера")
+    @PutMapping("/{couch_id}")
+    public ResponseEntity<Couch>updateCouch(@PathVariable Integer couch_id,@RequestBody CouchDTO couchDTO){
+        Couch couch = couchService.getCouch(couch_id);
+        couch = couchService.updateToCouch(couch,couchDTO);
+        return new ResponseEntity<>(couch,HttpStatus.OK);
+    }
 
 }
 

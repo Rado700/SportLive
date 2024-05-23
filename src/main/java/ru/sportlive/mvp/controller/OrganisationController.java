@@ -46,4 +46,11 @@ public class OrganisationController {
         return new ResponseEntity<>(organisation,HttpStatus.OK);
     }
 
+    @Operation(summary = "Обновления данных организаций")
+    @PutMapping("/{id}")
+    public ResponseEntity<Organisation>updateOrganisation(@PathVariable Integer id,@RequestBody OrganisationDTO organisationDTO){
+        Organisation organisation = organisationService.getOrganisation(id);
+        organisation = organisationService.updateToOrganisation(organisation,organisationDTO);
+        return new ResponseEntity<>(organisation,HttpStatus.OK);
+    }
 }

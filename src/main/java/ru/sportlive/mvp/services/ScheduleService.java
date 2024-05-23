@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.sportlive.mvp.dto.input.ScheduleDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.repository.CouchRepository;
@@ -42,6 +43,13 @@ public class ScheduleService {
         Set<Schedule>schedules = couch.getSchedules();
         return schedules.stream().sorted().collect(Collectors.toList());
 
+    }
+    public Schedule updateToSchedule(Schedule schedule , ScheduleDTO scheduleDTO){
+        schedule.setPlace(scheduleDTO.getPlace());
+        schedule.setDescription(scheduleDTO.getDescription());
+        schedule.setDate(scheduleDTO.getDate());
+        scheduleRepository.save(schedule);
+        return schedule;
     }
 
 }

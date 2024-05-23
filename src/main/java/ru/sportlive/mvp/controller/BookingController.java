@@ -82,8 +82,6 @@ public class BookingController {
     @GetMapping("/couch/user/{couchId}/{userId}")
     public ResponseEntity<List<GetScheduleDateUser>>getBookingCouchForUser(@PathVariable Integer couchId, @PathVariable Integer userId){
         Couch couch = couchService.getCouch(couchId);
-//        User user = userService.getUser(userId);
-//        List<Schedule>couchSchedule = scheduleService.getScheduleCouch(couch);
         List<Booking> bookingUser = bookingService.getUserBooking(userId);
         List<Schedule>scheduleList = bookingService.getAllSchedulesCouchByUser(bookingUser,couch);
         return new ResponseEntity<>(scheduleList.stream().map(Schedule::getScheduleDateUser).collect(Collectors.toList()),HttpStatus.OK);

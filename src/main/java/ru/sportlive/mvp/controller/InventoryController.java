@@ -57,4 +57,12 @@ public class InventoryController {
         List<Inventory> inventory = inventoryService.getInventoryCouch(id);
         return new ResponseEntity<>(inventory,HttpStatus.OK);
     }
+
+    @Operation(summary = "Обновленить инвентарь тренера")
+    @PutMapping("/{id}")
+    public ResponseEntity<Inventory>updateInventory(@PathVariable Integer id, @RequestBody InventoryDTO inventoryDTO){
+        Inventory inventory = inventoryService.getInventory(id);
+        inventory = inventoryService.updateToInventory(inventory,inventoryDTO);
+        return new ResponseEntity<>(inventory,HttpStatus.OK);
+    }
 }

@@ -3,6 +3,7 @@ package ru.sportlive.mvp.services;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.sportlive.mvp.dto.input.OrganisationDTO;
 import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.repository.OrganisationRepository;
 
@@ -30,6 +31,13 @@ public class OrganisationService {
     public Organisation deleteOrganisation(Integer id){
         Organisation organisation = getOrganisation(id);
         organisationRepository.delete(organisation);
+        return organisation;
+    }
+
+    public Organisation updateToOrganisation(Organisation organisation, OrganisationDTO organisationDTO){
+        organisation.setName(organisation.getName());
+        organisation.setDescription(organisationDTO.getDescription());
+        organisationRepository.save(organisation);
         return organisation;
     }
 }
