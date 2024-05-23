@@ -1,0 +1,12 @@
+[Unit]
+Description=Gradle Run Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/mvp
+ExecStart=/usr/bin/gradle run
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
