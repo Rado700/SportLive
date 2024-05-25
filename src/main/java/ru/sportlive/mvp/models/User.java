@@ -38,6 +38,13 @@ public class User {
     @Setter
     private int balance;
 
+
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Login login ;
+
     @Getter
     @Setter
     @JsonManagedReference
@@ -70,6 +77,9 @@ public class User {
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Transaction> transactionList = new HashSet<>();
+
+
+
 
     public User(String name, String surname, int height, int weight) {
         this.name = name;

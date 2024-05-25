@@ -24,6 +24,12 @@ public class Couch {
     @Setter
     private String name;
 
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private Login login;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "couch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Inventory> inventory = new ArrayList<>();
