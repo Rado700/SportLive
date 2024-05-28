@@ -20,7 +20,7 @@ document.getElementById('register').addEventListener('click', function () {
     .then(data => {
         // Handle success response
         console.log('Success:', data);
-        window.location.href = '/mvp/user.html?'; // Navigate to /home
+        window.location.href = '/account'; // Navigate to /home
     })
     .catch((error) => {
         // Handle error response
@@ -52,7 +52,7 @@ document.getElementById('enter').addEventListener('click', function () {
     .then(data => {
         // Handle success response
         console.log('Success:', data);
-        window.location.href = '/mvp/user.html?'; // Navigate to /home
+        window.location.href = '/account'; // Navigate to /home
     })
     .catch((error) => {
         // Handle error response
