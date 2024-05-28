@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainer's App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="couch.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div id="main-screen" class="screen">
+            <div class="text-center">
+                <h1 class="text-white">Приложение для тренера</h1>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <button class="btn btn-primary btn-block" id="add-activity">Добавить занятие</button>
+                    </li>
+                    <li class="list-group-item">
+                        <button class="btn btn-primary btn-block" id="add-equipment">Добавить инвентарь</button>
+                    </li>
+                    <li class="list-group-item">
+                        <button class="btn btn-primary btn-block" id="add-exercises">Добавить упражнения</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="bottom-nav" class="fixed-bottom bg-dark text-white d-flex justify-content-around py-2">
+            <button class="btn btn-secondary" id="stopwatch">Секундомер</button>
+            <button class="btn btn-secondary" id="profile">Профиль</button>
+            <button class="btn btn-secondary" id="info">Информация</button>
+            <button class="btn btn-secondary" id="notes">Заметки</button>
+        </div>
+
+        <div id="profile-screen" class="screen d-none">
+            <h1 class="text-center text-white">Профиль</h1>
+            <form id="profile-form" class="form-group">
+                <label for="name" class="text-white">Имя:</label>
+                <input type="text" id="name" name="name" class="form-control">
+                <label for="org-id" class="text-white">ID Организации:</label>
+                <input type="text" id="org-id" name="org-id" class="form-control">
+                <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
+            </form>
+            <button class="btn btn-secondary back-button mt-3">Назад</button>
+        </div>
+
+        <div id="info-screen" class="screen d-none">
+            <h1 class="text-center text-white">Информация</h1>
+            <p id="sessions-info" class="text-white">Осталось тренировок: <span>0</span></p>
+            <p id="equipment-info" class="text-white">Общее количество инвентаря: <span>0</span></p>
+            <button class="btn btn-secondary back-button mt-3">Назад</button>
+        </div>
+
+        <div id="stopwatch-screen" class="screen d-none">
+            <h1 class="text-center text-white">Секундомер, Таймер, Заметки</h1>
+            <div id="stopwatch-section" class="my-3">
+                <button class="btn btn-success" id="start-stopwatch">Старт</button>
+                <button class="btn btn-danger" id="stop-stopwatch">Стоп</button>
+                <div id="stopwatch-display" class="mt-2 text-white">00:00:00</div>
+            </div>
+            <div id="timer-section" class="my-3">
+                <label for="timer-days" class="text-white">Дни:</label>
+                <input type="number" id="timer-days" class="form-control" min="0">
+                <label for="timer-hours" class="text-white">Часы:</label>
+                <input type="number" id="timer-hours" class="form-control" min="0" max="23">
+                <label for="timer-minutes" class="text-white">Минуты:</label>
+                <input type="number" id="timer-minutes" class="form-control" min="0" max="59">
+                <label for="timer-seconds" class="text-white">Секунды:</label>
+                <input type="number" id="timer-seconds" class="form-control" min="0" max="59">
+                <button class="btn btn-primary mt-2" id="start-timer">Запуск таймера</button>
+                <div id="timer-display" class="mt-2 text-white">00:00:00:00</div>
+            </div>
+            <div id="notes-section" class="my-3">
+                <textarea id="notes" class="form-control" placeholder="Заметки..."></textarea>
+                <button class="btn btn-primary mt-2" id="save-notes">Сохранить заметки</button>
+            </div>
+            <button class="btn btn-secondary back-button mt-3">Назад</button>
+        </div>
+
+        <div id="exercises-screen" class="screen d-none">
+            <h1 class="text-center text-white">Добавить упражнения</h1>
+            <form id="exercises-form" class="form-group">
+                ${Array.from({ length: 10 }, (_, i) => `
+                    <label for="exercise-${i + 1}" class="text-white">Упражнение ${i + 1}:</label>
+                    <input type="text" id="exercise-${i + 1}" name="exercise-${i + 1}" class="form-control">
+                `).join('')}
+                <button type="submit" class="btn btn-primary mt-3">Сохранить упражнения</button>
+            </form>
+            <button class="btn btn-secondary back-button mt-3">Назад</button>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="couch.js"></script>
+</body>
+</html>

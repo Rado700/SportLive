@@ -1,0 +1,26 @@
+body {
+    background-image: url('sport-image.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+#stopwatch-display, #timer-display {
+    font-size: 2em;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.back-button {
+    display: block;
+    width: 100%;
+}

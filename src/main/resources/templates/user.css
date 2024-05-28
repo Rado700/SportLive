@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('sport-image.jpg');
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    block-size: 100vh;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        
+    
+}
+
+.container {
+    max-inline-size: 600px;
+    inline-size: 100%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+#bottom-nav {
+    position: relative;
+    inset-block-end: 0;
+    inline-size: 100%;
+    display: flex;
+    justify-content: space-around;
+    background-color: #333;
+    color: white;
+}
+
+#bottom-nav button {
+    background: center;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    flex: 1;
+}
+
+#bottom-nav button:hover {
+    background-color: #555;
+}
+
+button {
+    display: block;
+    inline-size: 80%;
+    margin: 10px auto;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+button:hover {
+    background-color: #f1f1f1;
+}
+
+.main-image {
+    inline-size: 100%;
+    block-size: center;
+    margin-block-end: 20px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input, textarea {
+    inline-size: calc(100% - 20px);
+    padding: 8px;
+    margin: 5px auto 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#stopwatch-display, #timer-display {
+    font-size: 2em;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.back-button {
+    margin-top: 20px;
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports App</title>
+    <link rel="stylesheet" href="user.css">
+</head>
+<body>
+    <div class="container">
+        <div id="main-screen">
+            <h1>Главное окно</h1>
+            <ul>
+                <li><button id="add-activity">Добавить занятие</button></li>
+                <li><button id="choose-trainer">Выбор тренера</button></li>
+                <li><button id="add-equipment">Добавить инвентарь</button></li>
+                <li><button id="recharge-balance">Пополнить баланс</button></li>
+            </ul>
+        </div>
+
+        <div id="bottom-nav">
+            <button id="stopwatch">Секундомер</button>
+            <button id="profile">Профиль</button>
+            <button id="info">Информация</button>
+        </div>
+
+        <div id="profile-screen" class="hidden">
+            <h1>Профиль</h1>
+            <form id="profile-form">
+                <label for="firstName">Имя:</label>
+                <input type="text" id="firstName" name="firstName">
+                <label for="lastName">Фамилия:</label>
+                <input type="text" id="lastName" name="lastName">
+                <label for="height">Рост:</label>
+                <input type="text" id="height" name="height">
+                <label for="weight">Вес:</label>
+                <input type="text" id="weight" name="weight">
+                <button type="submit">Сохранить</button>
+            </form>
+            <button id="back-to-main-profile">Назад</button>
+        </div>
+
+        <div id="info-screen" class="hidden">
+            <h1>Информация</h1>
+            <p id="trainer-info">Осталось тренировок с тренером: <span>0</span></p>
+            <p id="profile-info">Ваши данные: <span></span></p>
+            <p id="equipment-info">Общее количество инвентаря: <span>0</span></p>
+            <button id="back-to-main-info">Назад</button>
+        </div>
+
+        <div id="stopwatch-screen" class="hidden">
+            <h1>Секундомер, Таймер, Заметки</h1>
+            <div id="stopwatch-section">
+                <button id="start-stopwatch">Старт</button>
+                <button id="stop-stopwatch">Стоп</button>
+                <div id="stopwatch-display">00:00:00</div>
+            </div>
+            <div id="timer-section">
+                <label for="timer-days">Дни:</label>
+                <input type="number" id="timer-days" min="0">
+                <label for="timer-hours">Часы:</label>
+                <input type="number" id="timer-hours" min="0" max="23">
+                <label for="timer-minutes">Минуты:</label>
+                <input type="number" id="timer-minutes" min="0" max="59">
+                <label for="timer-seconds">Секунды:</label>
+                <input type="number" id="timer-seconds" min="0" max="59">
+                <button id="start-timer">Запуск таймера</button>
+                <div id="timer-display">00:00:00:00</div>
+            </div>
+            <div id="notes-section">
+                <textarea id="notes" placeholder="Заметки..."></textarea>
+                <button id="save-notes">Сохранить заметки</button>
+            </div>
+            <button id="back-to-main-stopwatch">Назад</button>
+        </div>
+    </div>
+    <script src="user.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
