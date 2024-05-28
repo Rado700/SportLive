@@ -47,6 +47,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User addUsers(){
+        User user = new User();
+        return userRepository.save(user);
+    }
     public User getUser(Integer Id){
         return userRepository.findById(Id).orElse(null);
 

@@ -1,0 +1,72 @@
+package ru.sportlive.mvp.services;
+
+import org.apache.el.stream.Stream;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import ru.sportlive.mvp.dto.input.LoginDTO;
+import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Login;
+import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.repository.CouchRepository;
+import ru.sportlive.mvp.repository.LoginRepository;
+import ru.sportlive.mvp.repository.UserRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class LoginService {
+
+    @Autowired
+    LoginRepository loginRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    CouchRepository couchRepository;
+
+    public Login getLogin(Integer id){
+        return loginRepository.findById(id).orElse(null);
+    }
+
+    public Login getUserLogin(Integer id){
+        Optional<User> user = userRepository.findById(id);
+        return user.map(User::getLogin).orElse(null);
+    }
+    public Login getCouchLogin(Integer id){
+        Optional<Couch> couch = couchRepository.findById(id);
+        return couch.map(Couch::getLogin).orElse(null);
+    }
+    public Login addLoginUser (String name, String password,User user) {
+        Login login = new Login(name,password);
+        login.setUser(user);
+        return loginRepository.save(login);
+    }
+    public Login addLoginCouch (String name, String password,Couch couch){
+        Login login = new Login(name,password);
+        login.setCouch(couch);
+        return loginRepository.save(login);
+
+    }
+    public Login enterUser (String name, String password) {
+        List<Login> logins = loginRepository.findByLogin(name);
+        for (Login login : logins) {
+            if (login.getPassword().equals(password) && login.getUser() != null) {
+                return login;
+            }
+        }
+        return null;
+    }
+    public Login enterCouch (String name, String password) {
+        List<Login> logins = loginRepository.findByLogin(name);
+        for (Login login : logins) {
+            if (login.getPassword().equals(password) && login.getCouch() != null) {
+                return login;
+            }
+        }
+        return null;
+    }
+}

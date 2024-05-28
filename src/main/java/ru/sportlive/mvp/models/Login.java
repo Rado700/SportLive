@@ -2,17 +2,18 @@ package ru.sportlive.mvp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
 public class Login {
 
     @Getter
     @Setter
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Getter
     @Setter
@@ -21,10 +22,12 @@ public class Login {
     @Setter
     private String password;
 
-    public Login(Integer id, String login, String password) {
-        this.id = id;
+    public Login(String login, String password) {
         this.login = login;
         this.password = password;
+    }
+
+    public Login() {
     }
 
     @Getter
@@ -38,4 +41,6 @@ public class Login {
     @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Couch couch;
+
+
 }

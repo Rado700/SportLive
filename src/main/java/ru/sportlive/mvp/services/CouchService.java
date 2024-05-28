@@ -27,7 +27,11 @@ public class CouchService {
         Couch couch = new Couch(name,organisation_id);
         couchRepository.save(couch);
         return couch;
-
+    }
+    public Couch addCouchs () {
+        Couch couch = new Couch();
+        couchRepository.save(couch);
+        return couch;
     }
     public Couch getCouch(Integer id){
         return couchRepository.findById(id).orElse(null);

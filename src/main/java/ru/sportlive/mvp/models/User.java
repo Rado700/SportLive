@@ -88,6 +88,7 @@ public class User {
         this.weight = weight;
     }
 
+
     public User() {
     }
 
