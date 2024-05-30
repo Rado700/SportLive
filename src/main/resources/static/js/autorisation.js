@@ -1,6 +1,6 @@
 document.getElementById('register').addEventListener('click', function () {
     const type = document.getElementById('userType').value;
-    const url = "http://localhost:8080/login/" + type + "/registration";
+    const url = "/login/" + type + "/registration";
     const name = document.getElementById('name').value;
     const password = document.getElementById('password').value;
 
@@ -31,7 +31,7 @@ document.getElementById('register').addEventListener('click', function () {
 
 document.getElementById('enter').addEventListener('click', function () {
     const type = document.getElementById('userType').value;
-    const url = "http://localhost:8080/login/" + type + "/enter";
+    const url = "/login/" + type + "/enter";
     const name = document.getElementById('name').value;
     const password = document.getElementById('password').value;
 
