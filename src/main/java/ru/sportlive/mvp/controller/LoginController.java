@@ -28,12 +28,20 @@ public class LoginController {
 
     @PostMapping("/user/registration")
     public ResponseEntity<Login>addLoginUser(@RequestBody LoginDTO loginDTO) {
+        Boolean loginOccupied = loginService.isLoginOccupiedUser(loginDTO.getName());
+        if (loginOccupied){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         User user = userService.addUsers();
         Login login = loginService.addLoginUser(loginDTO.getName(), loginDTO.getPassword(),user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping("/couch/registration")
     public ResponseEntity<Login>addLoginCouch(@RequestBody LoginDTO loginDTO) {
+        Boolean loginOccupied = loginService.isLoginOccupiedCouch(loginDTO.getName());
+        if (loginOccupied){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Couch couch = couchService.addCouchs();
         Login login = loginService.addLoginCouch(loginDTO.getName(),loginDTO.getPassword(),couch);
         return new ResponseEntity<>(HttpStatus.OK);

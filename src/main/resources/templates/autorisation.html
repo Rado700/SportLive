@@ -33,10 +33,16 @@
                             <label for="password" class="form-label">Пароль</label>
                             <input type="password" id="password" class="form-control">
                         </div>
+                        <div class="mb-3 text-danger" id="error-message" style="display: none;">
+                            Неверный логин или пароль
+                        </div>
+                        <div class="mb-3 text-danger" id="error-name" style="display: none;">
+                            Логин уже занят
+                        </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-secondary" id="enter">Войти</button>
                             <button type="submit" class="btn btn-primary" id="register">Зарегистрироваться</button>
-                            
+
                         </div>
                     </div>
                 </div>

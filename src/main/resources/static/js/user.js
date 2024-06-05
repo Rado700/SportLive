@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       // Send data to backend
       fetch('https://sportliveapp.ru/user/', {
-          method: 'PUT',
+          method: 'POST',
           headers: {
               'Content-Type': 'application/json'
           },

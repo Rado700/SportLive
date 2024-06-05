@@ -1,5 +1,6 @@
 package ru.sportlive.mvp.services;
 
+import lombok.extern.java.Log;
 import org.apache.el.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,26 @@ public class LoginService {
         login.setUser(user);
         return loginRepository.save(login);
     }
+    public Boolean isLoginOccupiedCouch(String login){
+        List<Login> byLogin = loginRepository.findByLogin(login);
+        for (Login logins:byLogin) {
+            if (logins.getCouch() != null){
+                return true;
+            }
+        }
+        return false;
+
+    }
+    public Boolean isLoginOccupiedUser(String login) {
+        List<Login> byLogin = loginRepository.findByLogin(login);
+        for (Login logins : byLogin) {
+            if (logins.getUser() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Login addLoginCouch (String name, String password,Couch couch){
         Login login = new Login(name,password);
         login.setCouch(couch);

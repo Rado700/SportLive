@@ -51,6 +51,7 @@ public class UserService {
         User user = new User();
         return userRepository.save(user);
     }
+
     public User getUser(Integer Id){
         return userRepository.findById(Id).orElse(null);
 
