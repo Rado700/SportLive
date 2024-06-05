@@ -14,4 +14,9 @@ public class PagesController {
     public String account(){
         return "user";
     }
+
+    @GetMapping("/couches")
+    public String couch(){
+        return "couch";
+    }
 }

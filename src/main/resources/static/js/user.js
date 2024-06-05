@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
           weight: formData.get('weight')
       };
       // Send data to backend
-      fetch('/user/1', {
+      fetch('https://sportliveapp.ru/user/', {
           method: 'PUT',
           headers: {
               'Content-Type': 'application/json'
