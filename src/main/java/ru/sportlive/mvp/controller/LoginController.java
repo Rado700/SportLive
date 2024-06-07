@@ -1,5 +1,6 @@
 package ru.sportlive.mvp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class LoginController {
     @Autowired
     CouchService couchService;
 
+    @Operation(summary = "Регистрация абонента")
     @PostMapping("/user/registration")
     public ResponseEntity<Login>addLoginUser(@RequestBody LoginDTO loginDTO) {
         Boolean loginOccupied = loginService.isLoginOccupiedUser(loginDTO.getName());
@@ -36,6 +38,7 @@ public class LoginController {
         Login login = loginService.addLoginUser(loginDTO.getName(), loginDTO.getPassword(),user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @Operation(summary = "Регистрация тренера")
     @PostMapping("/couch/registration")
     public ResponseEntity<Login>addLoginCouch(@RequestBody LoginDTO loginDTO) {
         Boolean loginOccupied = loginService.isLoginOccupiedCouch(loginDTO.getName());
@@ -47,6 +50,7 @@ public class LoginController {
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
+    @Operation(summary = "Вход абонента")
     @PostMapping("/user/enter")
     public ResponseEntity<Login>enterUser(@RequestBody LoginDTO loginDTO) {
         Login login = loginService.enterUser(loginDTO.getName(), loginDTO.getPassword());
@@ -55,6 +59,7 @@ public class LoginController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @Operation(summary = "Вход тренера")
     @PostMapping("/couch/enter")
     public ResponseEntity<Login>enterCouch(@RequestBody LoginDTO loginDTO) {
         Login login = loginService.enterCouch(loginDTO.getName(), loginDTO.getPassword());
@@ -62,6 +67,19 @@ public class LoginController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @Operation(summary = "Вывести логин по id")
+    @GetMapping("/{id}")
+    public ResponseEntity<Login>getLogin(@PathVariable Integer id){
+        Login login = loginService.getLogin(id);
+        return new ResponseEntity<>(login,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Удалить логин по id")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Login>deleteLogin(@PathVariable Integer id){
+        Login login = loginService.deleteLogin(id);
+        return new ResponseEntity<>(login , HttpStatus.OK);
     }
 
 }

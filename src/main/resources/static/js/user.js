@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fetch('/api/info')
           .then(response => response.json())
           .then(data => {
-              profileInfo.textContent = `${data.firstName} ${data.lastName}, ${data.height} cm, ${data.weight} kg (Дата обновления: ${data.date})`;
+              profileInfo.textContent = `${data.name} ${data.surname}, ${data.height} cm, ${data.weight} kg (Дата обновления: ${data.date})`;
               trainerInfo.textContent = data.remainingSessions;
               equipmentInfo.textContent = data.equipmentCount;
           });
@@ -48,14 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const formData = new FormData(profileForm);
       const profileData = {
-          firstName: formData.get('firstName'),
-          lastName: formData.get('lastName'),
+          name: formData.get('firstName'),
+          surname: formData.get('lastName'),
           height: formData.get('height'),
           weight: formData.get('weight')
       };
       // Send data to backend
-      fetch('https://sportliveapp.ru/user/', {
-          method: 'POST',
+      fetch('/user/2', {
+          method: 'PUT',
           headers: {
               'Content-Type': 'application/json'
           },

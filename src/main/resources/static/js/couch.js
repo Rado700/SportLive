@@ -1,71 +1,199 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const stopwatch = document.getElementById('stopwatch');
-    const timer = document.getElementById('timer');
-    const notesFooter = document.getElementById('notes-footer');
-    const backButton = document.getElementById('back-button');
-    const remainingSessions = document.getElementById('remaining-sessions');
-    const totalEquipment = document.getElementById('total-equipment');
-    const nameField = document.getElementById('name');
-    const orgIdField = document.getElementById('org-id');
+    const profileTraining = document.getElementById('profile-training');
+    const trainingScreen = document.getElementById('trainingScreen');
 
-    stopwatch.addEventListener('click', () => {
-        alert('Секундомер запущен!');
-        // Здесь можно добавить логику запуска секундомера
+    const selectOrganization = document.getElementById('selectOrganization');
+    const statistics = document.getElementById('statistics');
+    const addSport =  document.getElementById('addSport');
+
+    const showScreen = (screen) => {
+        trainingScreen.classList.add('hidden');
+        screen.classList.remove('hidden');
+    };
+
+
+    document.getElementById('addTraining').addEventListener('click', function () {
+        showScreen(trainingScreen);
     });
 
-    timer.addEventListener('click', () => {
-        alert('Таймер установлен!');
-        // Здесь можно добавить логику установки таймера
-    });
-
-    notesFooter.addEventListener('click', () => {
-        alert('Заполнение заметки!');
-        // Здесь можно добавить логику заполнения заметки
-    });
-
-    backButton.addEventListener('click', () => {
-        alert('Возврат на предыдущее окно!');
-        // Здесь можно добавить логику возврата на предыдущее окно
-    });
-
-    function fetchSessions() {
-        fetch('https://sportliveapp.ru/api/sessions') // пример API endpoint
-            .then(response => response.json())
-            .then(data => {
-                remainingSessions.textContent = data.remainingSessions;
-                totalEquipment.textContent = data.totalEquipment;
-            });
-    }
-
-    function addEquipment(equipment) {
-        fetch('https://sportliveapp.ru/api/equipment', { // пример API endpoint
+// add training
+    profileTraining.addEventListener('click', (e) => {
+        e.preventDefault();
+        const date = prompt("Введите дату тренировки (гггг-мм-дд):");
+        const formData = new FormData(profileTraining);
+        const profileData = {
+            place: formData.get('place'),
+            description: formData.get('description'),
+            data: formData.get(date),
+            // couch_id:formData.get('couch_id')
+        };
+        fetch('/schedule', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(equipment)
-        })
-            .then(response => response.json())
-            .then(data => {
-                alert('Инвентарь добавлен');
-                fetchSessions(); // Обновить данные после добавления
-            });
-    }
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(profileData)
+        }).then(response => response.json())
+            .then(data => alert('Тренировка добавлена: ' + JSON.stringify(data)))
+            .catch(error => console.error('Ошибка:', error));
 
-    function logTraining(training) {
-        fetch('https://sportliveapp.ru/api/trainings', { // пример API endpoint
+    });
+
+// Add Inventory
+    document.getElementById('addInventory').addEventListener('click', function () {
+        const name = prompt("Введите название инвентаря:");
+        if (name) {
+            fetch(`/inventory`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: name})
+            }).then(response => response.json())
+                .then(data => alert('Инвентарь добавлен: ' + JSON.stringify(data)))
+                .catch(error => console.error('Ошибка:', error));
+        }
+    });
+
+// Add Exercises
+    document.getElementById('addExercises').addEventListener('click', function () {
+        const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
+        let exerciseInputs = '';
+        for (let i = 1; i <= 5; i++) {
+            exerciseInputs += `
+            <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
+            <input type="text" class="form-control mb-3" id="exercise${i}" required>
+        `;
+        }
+        document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
+        modal.show();
+    });
+
+//добавить упражнения
+    document.getElementById('exerciseForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const exercises = [];
+        for (let i = 1; i <= 5; i++) {
+            exercises.push(document.getElementById('exercise' + i).value);
+        }
+        fetch(`$https://sportliveapp.ru/exercises-controller`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(training)
-        })
-            .then(response => response.json())
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({exercises: exercises})
+        }).then(response => response.json())
             .then(data => {
-                alert('Тренировка записана');
-                fetchSessions(); // Обновить данные после добавления
-            });
-    }
+                alert('Упражнения добавлены: ' + JSON.stringify(data));
+                const modal = bootstrap.Modal.getInstance(document.getElementById('exerciseModal'));
+                modal.hide();
+            })
+            .catch(error => console.error('Ошибка:', error));
+    });
 
-    fetchSessions();
+// Stopwatch and Timer
+    document.getElementById('stopwatchTimer').addEventListener('click', function () {
+        const modal = new bootstrap.Modal(document.getElementById('stopwatchTimerModal'));
+        modal.show();
+    });
+
+    let stopwatchInterval;
+    let stopwatchTime = 0;
+    const stopwatchDisplay = document.getElementById('stopwatchDisplay');
+
+    document.getElementById('startStopwatch').addEventListener('click', function () {
+        if (stopwatchInterval) return;
+        stopwatchInterval = setInterval(() => {
+            stopwatchTime++;
+            const hours = Math.floor(stopwatchTime / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((stopwatchTime % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (stopwatchTime % 60).toString().padStart(2, '0');
+            stopwatchDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+        }, 1000);
+    });
+
+    document.getElementById('stopStopwatch').addEventListener('click', function () {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+    });
+
+    document.getElementById('resetStopwatch').addEventListener('click', function () {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+        stopwatchTime = 0;
+        stopwatchDisplay.textContent = '00:00:00';
+    });
+
+    let timerInterval;
+    const timerDisplay = document.getElementById('timerDisplay');
+
+    document.getElementById('startTimer').addEventListener('click', function () {
+        const timerMinutes = parseInt(document.getElementById('timerMinutes').value);
+        if (isNaN(timerMinutes) || timerMinutes <= 0) {
+            alert('Введите действительное количество минут.');
+            return;
+        }
+        let timerTime = timerMinutes * 60;
+        timerInterval = setInterval(() => {
+            if (timerTime <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = '00:00:00';
+                alert('Таймер завершен!');
+                return;
+            }
+            timerTime--;
+            const minutes = Math.floor(timerTime / 60).toString().padStart(2, '0');
+            const seconds = (timerTime % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `00:${minutes}:${seconds}`;
+        }, 1000);
+    });
+
+    document.getElementById('stopTimer').addEventListener('click', function () {
+        clearInterval(timerInterval);
+    });
+
+    document.getElementById('resetTimer').addEventListener('click', function () {
+        clearInterval(timerInterval);
+        timerDisplay.textContent = '00:00:00';
+        document.getElementById('timerMinutes').value = '';
+    });
+
+// Select Organization
+    document.getElementById('selectOrganization').addEventListener('click', function () {
+        const orgName = prompt("Введите название организации:");
+        if (orgName) {
+            fetch(`${apiUrl}/organisation-controller`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: orgName})
+            }).then(response => response.json())
+                .then(data => alert('Организация выбрана: ' + JSON.stringify(data)))
+                .catch(error => console.error('Ошибка:', error));
+        }
+    });
+
+// View Statistics
+    document.getElementById('statistics').addEventListener('click', function () {
+        Promise.all([
+            fetch(`${apiUrl}/user-controller`).then(res => res.json()),
+            fetch(`${apiUrl}/inventory-controller`).then(res => res.json()),
+            fetch(`${apiUrl}/booking-controller`).then(res => res.json())
+        ]).then(data => {
+            const [users, inventory, bookings] = data;
+            alert(`Статистика:\nПользователи: ${users.length}\nИнвентарь: ${inventory.length}\nБрони: ${bookings.length}`);
+        }).catch(error => console.error('Ошибка:', error));
+    });
+
+// Add Sport
+    document.getElementById('addSport').addEventListener('click', function () {
+        const sportName = prompt("Введите название вида спорта:");
+        if (sportName) {
+            fetch(`${apiUrl}/sport-controller`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: sportName})
+            }).then(response => response.json())
+                .then(data => {
+                    alert('Вид спорта добавлен: ' + JSON.stringify(data));
+                    fetch(`${apiUrl}/booking-controller`)
+                        .then(res => res.json())
+                        .then(bookings => alert(`Общее количество брони: ${bookings.length}`));
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+    });
 });

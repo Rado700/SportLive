@@ -1,12 +1,7 @@
 package ru.sportlive.mvp.services;
 
-import lombok.extern.java.Log;
-import org.apache.el.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.sportlive.mvp.dto.input.LoginDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.models.User;
@@ -31,6 +26,11 @@ public class LoginService {
 
     public Login getLogin(Integer id){
         return loginRepository.findById(id).orElse(null);
+    }
+    public Login deleteLogin(Integer id){
+        Login login = getLogin(id);
+        loginRepository.delete(login);
+        return login;
     }
 
     public Login getUserLogin(Integer id){
