@@ -14,7 +14,7 @@ import ru.sportlive.mvp.services.ScheduleService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping("/api/schedule")
 public class ScheduleController {
     @Autowired
     ScheduleService scheduleService;

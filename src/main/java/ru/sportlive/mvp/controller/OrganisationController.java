@@ -12,7 +12,7 @@ import ru.sportlive.mvp.services.OrganisationService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/organisation")
+@RequestMapping("/api/organisation")
 public class OrganisationController {
 
     @Autowired

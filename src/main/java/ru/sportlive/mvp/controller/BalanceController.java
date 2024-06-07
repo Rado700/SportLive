@@ -12,7 +12,7 @@ import ru.sportlive.mvp.services.TransactionService;
 import ru.sportlive.mvp.services.UserService;
 
 @RestController
-@RequestMapping("/balance")
+@RequestMapping("/api/balance")
 public class BalanceController {
 
     @Autowired

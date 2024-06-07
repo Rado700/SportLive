@@ -12,7 +12,7 @@ import ru.sportlive.mvp.services.SportService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sport")
+@RequestMapping("/api/sport")
 public class SportController {
     @Autowired
     SportService sportService;//TODO: Протестировать получение

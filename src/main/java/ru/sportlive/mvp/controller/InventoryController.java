@@ -14,7 +14,7 @@ import ru.sportlive.mvp.services.InventoryService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/inventory")
+@RequestMapping("/api/inventory")
 public class InventoryController {
 
     @Autowired

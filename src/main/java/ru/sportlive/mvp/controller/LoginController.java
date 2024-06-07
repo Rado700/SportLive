@@ -1,6 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import ru.sportlive.mvp.services.LoginService;
 import ru.sportlive.mvp.services.UserService;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api/login")
 public class LoginController {
 
     @Autowired
@@ -27,45 +28,50 @@ public class LoginController {
     @Autowired
     CouchService couchService;
 
-    @Operation(summary = "Регистрация абонента")
+    @Operation(summary = "Регистрация пользователя")
     @PostMapping("/user/registration")
-    public ResponseEntity<Login>addLoginUser(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Login>addLoginUser(@RequestBody LoginDTO loginDTO, HttpSession httpSession) {
         Boolean loginOccupied = loginService.isLoginOccupiedUser(loginDTO.getName());
         if (loginOccupied){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
         User user = userService.addUsers();
         Login login = loginService.addLoginUser(loginDTO.getName(), loginDTO.getPassword(),user);
+        httpSession.setAttribute("userId",user.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Operation(summary = "Регистрация тренера")
     @PostMapping("/couch/registration")
-    public ResponseEntity<Login>addLoginCouch(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Login>addLoginCouch(@RequestBody LoginDTO loginDTO, HttpSession httpSession) {
         Boolean loginOccupied = loginService.isLoginOccupiedCouch(loginDTO.getName());
         if (loginOccupied){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Couch couch = couchService.addCouchs();
+        httpSession.setAttribute("couchId",couch.getId());
         Login login = loginService.addLoginCouch(loginDTO.getName(),loginDTO.getPassword(),couch);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
-    @Operation(summary = "Вход абонента")
+    @Operation(summary = "Вход пользователя")
     @PostMapping("/user/enter")
-    public ResponseEntity<Login>enterUser(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Login>enterUser(@RequestBody LoginDTO loginDTO, HttpSession httpSession) {
         Login login = loginService.enterUser(loginDTO.getName(), loginDTO.getPassword());
         if (login == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        httpSession.setAttribute("userId",login.getUser().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Operation(summary = "Вход тренера")
     @PostMapping("/couch/enter")
-    public ResponseEntity<Login>enterCouch(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Login>enterCouch(@RequestBody LoginDTO loginDTO,HttpSession httpSession) {
         Login login = loginService.enterCouch(loginDTO.getName(), loginDTO.getPassword());
         if (login == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        httpSession.setAttribute("couchId",login.getCouch().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Operation(summary = "Вывести логин по id")

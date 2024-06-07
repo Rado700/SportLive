@@ -1,6 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import ru.sportlive.mvp.services.OrganisationService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/couch")
+@RequestMapping("/api/couch")
 public class CouchController {
     @Autowired
     CouchService couchService;
@@ -24,7 +25,7 @@ public class CouchController {
     OrganisationService organisationService;
 
     @Operation(summary = "Вывести всех тренеров")
-    @GetMapping("/")
+    @GetMapping("/all")
     public ResponseEntity<List<Couch>> getAllUsers() {
         List<Couch> getAll = couchService.getAllCouches();
         return new ResponseEntity<>(getAll, HttpStatus.OK);
@@ -33,10 +34,11 @@ public class CouchController {
 
     @Operation(summary = "Добавить тренера", description = "Добавть тренера и зарегестировать на организацию")
     @PostMapping("/")
-    public ResponseEntity<Couch> addCouch(@RequestBody CouchDTO couchDTO) {
+    public ResponseEntity<Couch> addCouch(@RequestBody CouchDTO couchDTO, HttpSession httpSession) {
         try {
             Organisation organisation = organisationService.getOrganisation(couchDTO.getOrganisation_id());
             Couch couch = couchService.addCouch(couchDTO.getName(), organisation);
+            httpSession.setAttribute("couchId",couch.getId());
             return new ResponseEntity<>(couch, HttpStatus.OK);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -44,8 +46,12 @@ public class CouchController {
     }
 
     @Operation(summary = "Удалить тренера по id")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Couch> deleteCouch(@PathVariable Integer id) {
+    @DeleteMapping("/")
+    public ResponseEntity<Couch> deleteCouch(HttpSession httpSession) {
+        Integer id = (Integer) httpSession.getAttribute("couchId");
+        if (id == null){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Couch couch = couchService.deleteCouch(id);
         return new ResponseEntity<>(couch, HttpStatus.OK);
     }
@@ -56,12 +62,23 @@ public class CouchController {
         Couch couch = couchService.getCouch(id);
         return new ResponseEntity<>(couch, HttpStatus.OK);
     }
+    @Operation(summary = "Вывести тренера ")
+    @GetMapping("/")
+    public ResponseEntity<Couch> getCouchAuth(HttpSession httpSession) {
+        Integer id = (Integer) httpSession.getAttribute("couchId");
+        if (id == null){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Couch couch = couchService.getCouch(id);
+        return new ResponseEntity<>(couch, HttpStatus.OK);
+    }
+
 
     @Operation(summary = "Добавить нового тренера в организацию")
     @PostMapping("/organisation/")
-    public ResponseEntity<Object> addCouchForOrganisation(@RequestBody CouchOrganisationDTO couchDTO) {
+    public ResponseEntity<Object> addCouchForOrganisation(@RequestBody CouchOrganisationDTO couchDTO,HttpSession httpSession) {
         Organisation organisation = organisationService.getOrganisation(couchDTO.getOrganisation_id());
-        Couch couch = couchService.getCouch(couchDTO.getCouch_id());
+        Couch couch = couchService.getCouch((Integer) httpSession.getAttribute("couchId"));
         if (couch == null){
             return new ResponseEntity<>("Такого тренера не существует",HttpStatus.BAD_REQUEST);
         }
@@ -72,13 +89,12 @@ public class CouchController {
         return new ResponseEntity<>(couch1,HttpStatus.OK);
     }
     @Operation(summary = "Обновления данных у тренера")
-    @PutMapping("/{couch_id}")
-    public ResponseEntity<Couch>updateCouch(@PathVariable Integer couch_id,@RequestBody CouchDTO couchDTO){
-        Couch couch = couchService.getCouch(couch_id);
+    @PutMapping("/")
+    public ResponseEntity<Couch>updateCouch(@RequestBody CouchDTO couchDTO,HttpSession httpSession){
+        Couch couch = couchService.getCouch((Integer) httpSession.getAttribute("couchId"));
         couch = couchService.updateToCouch(couch,couchDTO);
         return new ResponseEntity<>(couch,HttpStatus.OK);
     }
-
 }
 
 
