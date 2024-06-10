@@ -100,6 +100,52 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Ошибка:', error));
     });
 
+    // Select Organization
+    document.getElementById('selectOrganization').addEventListener('click', function () {
+        const orgName = prompt("Введите название организации:");
+        if (orgName) {
+            fetch(`${apiUrl}/organisation-controller`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: orgName})
+            }).then(response => response.json())
+                .then(data => alert('Организация выбрана: ' + JSON.stringify(data)))
+                .catch(error => console.error('Ошибка:', error));
+        }
+    });
+
+    // Add Sport
+    document.getElementById('addSport').addEventListener('click', function () {
+        const sportName = prompt("Введите название вида спорта:");
+        if (sportName) {
+            fetch(`${apiUrl}/sport-controller`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: sportName})
+            }).then(response => response.json())
+                .then(data => {
+                    alert('Вид спорта добавлен: ' + JSON.stringify(data));
+                    fetch(`${apiUrl}/booking-controller`)
+                        .then(res => res.json())
+                        .then(bookings => alert(`Общее количество брони: ${bookings.length}`));
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+    });
+
+// View Statistics
+    document.getElementById('statistics').addEventListener('click', function () {
+        Promise.all([
+            fetch(`${apiUrl}/user-controller`).then(res => res.json()),
+            fetch(`${apiUrl}/inventory-controller`).then(res => res.json()),
+            fetch(`${apiUrl}/booking-controller`).then(res => res.json())
+        ]).then(data => {
+            const [users, inventory, bookings] = data;
+            alert(`Статистика:\nПользователи: ${users.length}\nИнвентарь: ${inventory.length}\nБрони: ${bookings.length}`);
+        }).catch(error => console.error('Ошибка:', error));
+    });
+
+
 // Stopwatch and Timer
     document.getElementById('stopwatchTimer').addEventListener('click', function () {
         const modal = new bootstrap.Modal(document.getElementById('stopwatchTimerModal'));
@@ -167,48 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('timerMinutes').value = '';
     });
 
-// Select Organization
-    document.getElementById('selectOrganization').addEventListener('click', function () {
-        const orgName = prompt("Введите название организации:");
-        if (orgName) {
-            fetch(`${apiUrl}/organisation-controller`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({name: orgName})
-            }).then(response => response.json())
-                .then(data => alert('Организация выбрана: ' + JSON.stringify(data)))
-                .catch(error => console.error('Ошибка:', error));
-        }
-    });
 
-// View Statistics
-    document.getElementById('statistics').addEventListener('click', function () {
-        Promise.all([
-            fetch(`${apiUrl}/user-controller`).then(res => res.json()),
-            fetch(`${apiUrl}/inventory-controller`).then(res => res.json()),
-            fetch(`${apiUrl}/booking-controller`).then(res => res.json())
-        ]).then(data => {
-            const [users, inventory, bookings] = data;
-            alert(`Статистика:\nПользователи: ${users.length}\nИнвентарь: ${inventory.length}\nБрони: ${bookings.length}`);
-        }).catch(error => console.error('Ошибка:', error));
-    });
 
-// Add Sport
-    document.getElementById('addSport').addEventListener('click', function () {
-        const sportName = prompt("Введите название вида спорта:");
-        if (sportName) {
-            fetch(`${apiUrl}/sport-controller`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({name: sportName})
-            }).then(response => response.json())
-                .then(data => {
-                    alert('Вид спорта добавлен: ' + JSON.stringify(data));
-                    fetch(`${apiUrl}/booking-controller`)
-                        .then(res => res.json())
-                        .then(bookings => alert(`Общее количество брони: ${bookings.length}`));
-                })
-                .catch(error => console.error('Ошибка:', error));
-        }
-    });
+
 });
