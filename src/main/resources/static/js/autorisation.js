@@ -1,6 +1,6 @@
 document.getElementById('register').addEventListener('click', function () {
     const type = document.getElementById('userType').value;
-    const url = "/login/"+type+"/registration";
+    const url = "/api/login/"+type+"/registration";
     const name = document.getElementById('name').value;
     const password = document.getElementById('password').value;
 
@@ -40,7 +40,7 @@ document.getElementById('register').addEventListener('click', function () {
 
 document.getElementById('enter').addEventListener('click', function () {
     let type = document.getElementById('userType').value;
-    const url = "/login/"+type+"/enter";
+    const url = "/api/login/"+type+"/enter";
     const name = document.getElementById('name').value;
     const password = document.getElementById('password').value;
 

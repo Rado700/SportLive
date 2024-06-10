@@ -1,6 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +42,9 @@ public class BookingController {
     }
     @Operation(summary = "Добавить бронь",description = "Добавляем бронь по user,добавляем в расписание")
     @PostMapping("/")
-    public ResponseEntity<Booking>addBooking(@RequestBody BookingDTO bookingDTO){
-        User user = userService.getUser(bookingDTO.getUser_id());
+    public ResponseEntity<Booking>addBooking(@RequestBody BookingDTO bookingDTO, HttpSession httpSession){
+        Integer id = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(id);
         Schedule schedule = scheduleService.getSchedule(bookingDTO.getSchedule_id());
         Booking booking = bookingService.addBooking(schedule,user);
         return new ResponseEntity<>(booking,HttpStatus.OK);
@@ -65,7 +67,14 @@ public class BookingController {
     @Operation(summary = "Все брони пользователя по id")
     @GetMapping("/user/{id}")
     public ResponseEntity<List<Booking>>getUserBooking(@PathVariable Integer id){
-        List<Booking> booking = bookingService.getUserBooking(id);
+        List<Booking> booking = bookingService.getUserBookings(id);
+        return new ResponseEntity<>(booking,HttpStatus.OK);
+    }
+    @Operation(summary = "Все брони пользователя")
+    @GetMapping("/getAllBookingUser")
+    public ResponseEntity<List<Booking>>getUserBooking(HttpSession httpSession){
+        Integer id = (Integer) httpSession.getAttribute("userId");
+        List<Booking> booking = bookingService.getUserBookings(id);
         return new ResponseEntity<>(booking,HttpStatus.OK);
     }
 
@@ -78,11 +87,22 @@ public class BookingController {
         return new ResponseEntity<>(bookings.stream().map(Booking::getBookingUserCouch).collect(Collectors.toList()), HttpStatus.OK);
     }
 
+    @Operation(summary = "Все брони тренера")
+    @GetMapping("/couchBooking")
+    public ResponseEntity<List<BookingUserCouchDTO>>getCouchBookingBySchedule(HttpSession httpSession){
+        Integer id = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(id);
+        List<Schedule>schedules = scheduleService.getScheduleCouch(couch);
+        List<Booking>bookings = bookingService.getCouchBookingBySchedules(schedules);
+        return new ResponseEntity<>(bookings.stream().map(Booking::getBookingUserCouch).collect(Collectors.toList()), HttpStatus.OK);
+    }
+
+
     @Operation(summary = "Вывод всех броней которые были проведены тренером для user")
     @GetMapping("/couch/user/{couchId}/{userId}")
     public ResponseEntity<List<GetScheduleDateUser>>getBookingCouchForUser(@PathVariable Integer couchId, @PathVariable Integer userId){
         Couch couch = couchService.getCouch(couchId);
-        List<Booking> bookingUser = bookingService.getUserBooking(userId);
+        List<Booking> bookingUser = bookingService.getUserBookings(userId);
         List<Schedule>scheduleList = bookingService.getAllSchedulesCouchByUser(bookingUser,couch);
         return new ResponseEntity<>(scheduleList.stream().map(Schedule::getScheduleDateUser).collect(Collectors.toList()),HttpStatus.OK);
     }

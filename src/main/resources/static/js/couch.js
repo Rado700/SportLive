@@ -2,12 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const profileTraining = document.getElementById('profile-training');
     const trainingScreen = document.getElementById('trainingScreen');
 
+    const profileInventory = document.getElementById('profile-inventory');
+    const inventoryScreen = document.getElementById('inventoryScreen');
+
     const selectOrganization = document.getElementById('selectOrganization');
     const statistics = document.getElementById('statistics');
-    const addSport =  document.getElementById('addSport');
+    const addSport = document.getElementById('addSport');
 
     const showScreen = (screen) => {
         trainingScreen.classList.add('hidden');
+        inventoryScreen.classList.add('hidden');
         screen.classList.remove('hidden');
     };
 
@@ -17,17 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 // add training
-    profileTraining.addEventListener('click', (e) => {
+    profileTraining.addEventListener('submit', (e) => {
         e.preventDefault();
-        const date = prompt("Введите дату тренировки (гггг-мм-дд):");
         const formData = new FormData(profileTraining);
         const profileData = {
             place: formData.get('place'),
             description: formData.get('description'),
-            data: formData.get(date),
-            // couch_id:formData.get('couch_id')
+            date: formData.get('date'),
+
         };
-        fetch('/schedule', {
+        fetch('/api/schedule/', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(profileData)
@@ -39,17 +42,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Add Inventory
     document.getElementById('addInventory').addEventListener('click', function () {
-        const name = prompt("Введите название инвентаря:");
-        if (name) {
-            fetch(`/inventory`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({name: name})
-            }).then(response => response.json())
-                .then(data => alert('Инвентарь добавлен: ' + JSON.stringify(data)))
-                .catch(error => console.error('Ошибка:', error));
-        }
+        showScreen(inventoryScreen);
     });
+
+    profileInventory.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const formData = new FormData(profileInventory);
+        const profileDate = {
+            name: formData.get('name'),
+            price: formData.get('price'),
+            type: formData.get('type'),
+            size: formData.get('size'),
+        }
+
+        fetch('/api/inventory/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(profileDate)
+        }).then(response => response.json())
+            .then(data => alert('Инвентарь добавлен: ' + JSON.stringify(data)))
+            .catch(error => console.error('Ошибка:', error));
+
+    });
+
 
 // Add Exercises
     document.getElementById('addExercises').addEventListener('click', function () {

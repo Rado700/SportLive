@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.sportlive.mvp.dto.output.GetScheduleDateUser;
+import ru.sportlive.mvp.dto.output.UserInfoDTO;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -24,7 +26,7 @@ public class Schedule implements Comparable<Schedule> {
     private String description;
     @Getter
     @Setter
-    private Date date;
+    private Timestamp date;
 
     @Getter
     @Setter
@@ -43,7 +45,7 @@ public class Schedule implements Comparable<Schedule> {
     public Schedule() {
     }
 
-    public Schedule(String place, String description, Date date, Couch couch) {
+    public Schedule(String place, String description, Timestamp date, Couch couch) {
         this.place = place;
         this.description = description;
         this.date = date;
@@ -56,6 +58,10 @@ public class Schedule implements Comparable<Schedule> {
     }
 
     public GetScheduleDateUser getScheduleDateUser (){
-        return new GetScheduleDateUser(id,place, date,couch.getCouchInfo(),booking.getUser().getUserInfo());
+        UserInfoDTO userBooking = null;
+        if (this.booking != null){
+            userBooking = booking.getUser().getUserInfo();
+        }
+        return new GetScheduleDateUser(id,place, date,couch.getCouchInfo(),userBooking);
     }
 }

@@ -8,6 +8,7 @@ import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.ScheduleRepository;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class ScheduleService {
     public Schedule getSchedule(Integer schedule_id) {
         return scheduleRepository.findById(schedule_id).orElse(null);
     }
-    public Schedule addSchedule(String place, String description, Date date, Couch couch_id){
+    public Schedule addSchedule(String place, String description, Timestamp date, Couch couch_id){
         Schedule schedule = new Schedule(place,description,date,couch_id);
         scheduleRepository.save(schedule);
         return schedule;

@@ -1,6 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,11 @@ public class InventoryController {
     @Autowired
     InventoryService inventoryService;
 
-    @Operation(summary = "Добавить инвентарь",description = "Добавить инвентарь и тренера по id")
+    @Operation(summary = "Добавить инвентарь",description = "Добавить инвентарь для тренера ")
     @PostMapping("/")
-    public ResponseEntity<Inventory>addInventory(@RequestBody InventoryDTO inventoryDTO){
-        Couch couch = couchService.getCouch(inventoryDTO.getCouch_id());
+    public ResponseEntity<Inventory>addInventory(@RequestBody InventoryDTO inventoryDTO, HttpSession httpSession){
+        Integer id = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(id);
         Inventory inventory = inventoryService.addInventory (inventoryDTO.getName(),inventoryDTO.getPrice(),inventoryDTO.getType(),inventoryDTO.getSize(),couch);
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
@@ -43,6 +45,13 @@ public class InventoryController {
         Inventory inventory = inventoryService.deleteInventory(id);
         return new ResponseEntity<>(inventory,HttpStatus.OK);
     }
+    @Operation(summary = "удалить инвентарь")
+    @DeleteMapping("/")
+    public ResponseEntity<Inventory>deleteInventory(HttpSession httpSession) {   // Доделать Удалить у тренера
+        Integer id = (Integer) httpSession.getAttribute("couchId");
+        Inventory inventory = inventoryService.deleteInventory(id);
+        return new ResponseEntity<>(inventory,HttpStatus.OK);
+    }
 
     @Operation(summary = "Вывести весь инвентарь")
     @GetMapping("/")
@@ -51,14 +60,22 @@ public class InventoryController {
         return new ResponseEntity<>(inventory,HttpStatus.OK);
     }
 
-    @Operation(summary = "Вывести весь инвентарь тренера")
+    @Operation(summary = "Вывести весь инвентарь тренера по id")
     @GetMapping("/couch/{id}")
     public ResponseEntity<List<Inventory>>getCouchInventory(@PathVariable Integer id){
         List<Inventory> inventory = inventoryService.getInventoryCouch(id);
         return new ResponseEntity<>(inventory,HttpStatus.OK);
     }
+    @Operation(summary = "Вывести весь инвентарь тренера")
+    @GetMapping("/couchInventory")
+    public ResponseEntity<List<Inventory>>getCouchInventory(HttpSession httpSession){
+        Integer id = (Integer) httpSession.getAttribute("couchId");
+        List<Inventory> inventory = inventoryService.getInventoryCouch(id);
+        return new ResponseEntity<>(inventory,HttpStatus.OK);
+    }
 
-    @Operation(summary = "Обновленить инвентарь тренера")
+
+    @Operation(summary = "Обновить инвентарь тренера")
     @PutMapping("/{id}")
     public ResponseEntity<Inventory>updateInventory(@PathVariable Integer id, @RequestBody InventoryDTO inventoryDTO){
         Inventory inventory = inventoryService.getInventory(id);

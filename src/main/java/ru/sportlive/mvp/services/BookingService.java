@@ -7,7 +7,6 @@ import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.repository.BookingRepository;
-import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
-    public List<Booking>getUserBooking(Integer id){
+    public List<Booking> getUserBookings(Integer id){
         Optional<User> user = userRepository.findById(id);
         return user.map(User::getBooking).orElse(null);
     }

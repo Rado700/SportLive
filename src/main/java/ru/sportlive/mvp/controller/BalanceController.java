@@ -1,6 +1,8 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +22,16 @@ public class BalanceController {
     @Autowired
     TransactionService transactionService;
 
-    @Operation(summary = "Добавить депозит на счет",description = "Ввести пользователя и сумму пополнения")
+    @Operation(summary = "Добавить депозит на счет",description = "Ввести сумму пополнения")
     @PostMapping("/deposit")
-    public ResponseEntity<User> deposit (@RequestBody UserPayDTO userPayDTO) {
-        User user = userService.getUser(userPayDTO.getUser_id());
+    public ResponseEntity<User> deposit (@RequestBody UserPayDTO userPayDTO,HttpSession httpSession) {
+        Integer user_id =(Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(user_id);
         user = userService.deposit(userPayDTO.getSum(), user);
         transactionService.addTransaction(user,userPayDTO.getSum(),"deposit");
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
-    @Operation(summary = "Снять со счета",description = "Снять со счета у пользователя и ввсети сумму снятия")
+    @Operation(summary = "Снять со счета",description = "Снять со счета у пользователя, ввести сумму снятия")
     @PostMapping("/withdraw")
     public ResponseEntity<Object> withdrawBalanceUser (@RequestBody UserPayDTO userPayDTO) {
         User user = userService.getUser(userPayDTO.getUser_id());
@@ -42,6 +45,13 @@ public class BalanceController {
         Integer userBalance = userService.getUserBalance(userId);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
+    @Operation(summary = "Выводит баланс пользователя")
+    @GetMapping("/balanceUser")
+    public ResponseEntity<Integer> getUserBalance(HttpSession httpSession) {
+        Integer user_id = (Integer) httpSession.getAttribute("userId");
+        Integer userBalance = userService.getUserBalance(user_id);
+        return new ResponseEntity<>(userBalance, HttpStatus.OK);
+    }
 
     @Operation(summary = "Выводит транзакцию по id")
     @GetMapping("/{id}")
@@ -49,6 +59,15 @@ public class BalanceController {
         Transaction transaction = transactionService.getTransaction(id);
         return new ResponseEntity<>(transaction,HttpStatus.OK);
     }
+
+    @Operation(summary = "Выводит транзакцию пользователя")
+    @GetMapping("/transactionUser")
+    public ResponseEntity<Transaction>getTransaction(HttpSession httpSession){
+        Integer id = (Integer) httpSession.getAttribute("userId");
+        Transaction transaction = transactionService.getTransaction(id);
+        return new ResponseEntity<>(transaction,HttpStatus.OK);
+    }
+
     @Operation(summary = "Удаляет транзакцию по id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Transaction>deleteTransaction(@PathVariable Integer id){

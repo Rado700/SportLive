@@ -1,6 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,12 @@ public class ScheduleController {
 
     @Operation(summary = "Добавить расписание",description = "Добавить расписание и тренера по id")
     @PostMapping("/")
-    public ResponseEntity<Schedule>addSchedule(@RequestBody ScheduleDTO scheduleDTO){
-        Couch couch = couchService.getCouch(scheduleDTO.getCouch_id());
+    public ResponseEntity<Schedule>addSchedule(@RequestBody ScheduleDTO scheduleDTO, HttpSession httpSession){
+        Integer couchId = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couchId);
+        if (couch == null){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Schedule schedule = scheduleService.addSchedule(scheduleDTO.getPlace(),scheduleDTO.getDescription(),scheduleDTO.getDate(),couch);
         return new ResponseEntity<>(schedule,HttpStatus.OK);
     }
