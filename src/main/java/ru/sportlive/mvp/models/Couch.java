@@ -27,28 +27,31 @@ public class Couch {
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Login login;
 
+    @Getter
+    @Setter
     @JsonManagedReference
     @OneToMany(mappedBy = "couch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Inventory> inventory = new ArrayList<>();
-
+    @Getter
+    @Setter
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "organisation_id", foreignKey = @ForeignKey(
-            foreignKeyDefinition = "FOREIGN KEY (organisation_id) REFERENCES Organisation ON DELETE CASCADE ON UPDATE CASCADE"
-    ))
-    private Organisation organisation;
+    @ManyToMany(mappedBy = "couches", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Organisation> organisations = new HashSet<>();
 
-
+    @Getter
+    @Setter
     @JsonBackReference
-    @ManyToMany(mappedBy = "selectedCouches",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "selectedCouches", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<User> user = new HashSet<>();
 
+    @Getter
+    @Setter
     @JsonManagedReference
-    @OneToMany(mappedBy = "couch",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private Set<Schedule>schedules = new HashSet<>();
+    @OneToMany(mappedBy = "couch", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Schedule> schedules = new HashSet<>();
 
 //    @Getter
 //    @Setter
@@ -60,35 +63,11 @@ public class Couch {
     public Couch() {
     }
 
-    public Couch(String name, Organisation organisation) {
+    public Couch(String name, Set<Organisation> organisations) {
         this.name = name;
-        this.organisation = organisation;
+        this.organisations = organisations;
     }
     public CouchInfoDTO getCouchInfo(){
         return new CouchInfoDTO(id,name);
-    }
-
-    public List<Inventory> getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(List<Inventory> inventory) {
-        this.inventory = inventory;
-    }
-
-    public Organisation getOrganisation() {
-        return organisation;
-    }
-
-    public void setOrganisation(Organisation organisation) {
-        this.organisation = organisation;
-    }
-
-    public Set<Schedule> getSchedules() {
-        return schedules;
-    }
-
-    public void setSchedules(Set<Schedule> schedules) {
-        this.schedules = schedules;
     }
 }

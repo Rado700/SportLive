@@ -1,16 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('my-container')
+
     const profileTraining = document.getElementById('profile-training');
     const trainingScreen = document.getElementById('trainingScreen');
 
     const profileInventory = document.getElementById('profile-inventory');
     const inventoryScreen = document.getElementById('inventoryScreen');
 
-    const selectOrganization = document.getElementById('selectOrganization');
+    const infoScreen = document.getElementById('info-screen');
     const statistics = document.getElementById('statistics');
+    const refreshButton = document.getElementById('refresh-data');
+
+
+    const selectOrganization = document.getElementById('selectOrganization');
     const addSport = document.getElementById('addSport');
+    const addCouch = document.getElementById('addCouch');
+
+    const trainerInfo = document.getElementById('trainer-info');
+    const profileInfo = document.getElementById('profile-info');
+    const equipmentInfo = document.getElementById('equipment-info');
 
     const showScreen = (screen) => {
         trainingScreen.classList.add('hidden');
+        inventoryScreen.classList.add('hidden');
         inventoryScreen.classList.add('hidden');
         screen.classList.remove('hidden');
     };
@@ -64,6 +76,48 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Ошибка:', error));
 
     });
+
+    document.getElementById('statistics').addEventListener('click', () => {
+        showScreen(infoScreen)
+
+        const fetchData = () => {
+            fetch('/api/inventory/couchInventory')
+                .then(response => response.json())
+                .then(data => {
+                    equipmentInfo.innerHTML = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    equipmentInfo.innerHTML = 'Ошибка загрузки данных инвентаря: ' + error;
+                });
+
+            fetch('/api/booking/couchBooking')
+                .then(response => response.json())
+                .then(data => {
+                    trainerInfo.innerHTML = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    trainerInfo.innerHTML = 'Ошибка загрузки данных расписания: ' + error;
+                });
+
+            fetch('/api/couch/getCouch')
+                .then(response => response.json())
+                .then(data => {
+                    profileInfo.innerHTML = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    profileInfo.innerHTML = 'Ошибка загрузки данных авторизации: ' + error;
+                });
+        };
+
+        refreshButton.addEventListener('click', fetchData);
+
+        fetchData();
+    })
+
+    document.getElementById('back-to-main-info').addEventListener('click', () => {
+        showScreen(container);
+    });
+
 
 
 // Add Exercises

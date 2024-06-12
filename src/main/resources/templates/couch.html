@@ -9,6 +9,7 @@
 </head>
 <body>
 <div class="container">
+    <div id="my-container">
     <h1 class="text-center my-5">Меню тренера</h1>
     <div class="d-flex justify-content-center mb-5">
         <div class="btn-group-vertical">
@@ -17,6 +18,7 @@
             <button class="btn btn-primary mb-3" id="addExercises">Добавить упражнения</button>
 
         </div>
+    </div>
     </div>
     <div id="trainingScreen" class="hidden">
         <h1>Добавить тренировку</h1>
@@ -45,10 +47,19 @@
             <button type="submit">Сохранить</button>
         </form>
     </div>
+    <div id="info-screen" class="hidden">
+        <h1>Информация</h1>
+        <p id="trainer-info">Осталось тренировоки тренера: <span>0</span></p>
+        <p id="profile-info">Ваши данные: <span></span></p>
+        <p id="equipment-info">Общее количество инвентаря: <span>0</span></p>
+        <button class="btn btn-primary mt-3" id="refresh-data">Обновить данные</button>
+        <button class="btn btn-primary mt-3" id="back-to-main-info">Назад</button>
+    </div>
 
     <div class="footer d-flex justify-content-around">
         <button class="icon btn" id="stopwatchTimer">⏱⏲ Секундомер и Таймер</button>
         <button class="icon btn" id="selectOrganization">🏢 Выбрать организацию</button>
+        <button class="icon btn" id="addCouch">🏅 Выбрать тренера</button>
         <button class="icon btn" id="statistics">📊 Общая статистика</button>
         <button class="icon btn" id="addSport">🏅 Вид спорта</button>
     </div>

@@ -51,6 +51,7 @@ public class LoginController {
         Couch couch = couchService.addCouchs();
         httpSession.setAttribute("couchId",couch.getId());
         Login login = loginService.addLoginCouch(loginDTO.getName(),loginDTO.getPassword(),couch);
+
         return new ResponseEntity<>(HttpStatus.OK);
 
     }

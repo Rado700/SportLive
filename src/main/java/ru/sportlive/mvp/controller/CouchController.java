@@ -13,7 +13,9 @@ import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.OrganisationService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/couch")
@@ -36,7 +38,7 @@ public class CouchController {
     @PostMapping("/")
     public ResponseEntity<Couch> addCouch(@RequestBody CouchDTO couchDTO, HttpSession httpSession) {
         try {
-            Organisation organisation = organisationService.getOrganisation(couchDTO.getOrganisation_id());
+            Set<Organisation> organisation = new HashSet<>();
             Couch couch = couchService.addCouch(couchDTO.getName(), organisation);
             httpSession.setAttribute("couchId",couch.getId());
             return new ResponseEntity<>(couch, HttpStatus.OK);
@@ -63,7 +65,7 @@ public class CouchController {
         return new ResponseEntity<>(couch, HttpStatus.OK);
     }
     @Operation(summary = "Вывести тренера ")
-    @GetMapping("/")
+    @GetMapping("/getCouch")
     public ResponseEntity<Couch> getCouchAuth(HttpSession httpSession) {
         Integer id = (Integer) httpSession.getAttribute("couchId");
         if (id == null){

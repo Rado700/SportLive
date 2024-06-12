@@ -1,16 +1,16 @@
 package ru.sportlive.mvp.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 public class Sport {
-    @Getter
-    @Setter
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,6 +26,15 @@ public class Sport {
     @Getter
     @Setter
     private String equipment;
+
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "sportOrganisation_id")
+    private List<SportOrganisation> sportOrganisation;
+
+
 
 
     public Sport(String name_sport, String description, String instruction, String equipment) {

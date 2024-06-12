@@ -14,6 +14,10 @@ body {
     margin-top: 50px;
 
 }
+#info-screen{
+    background-color: #e7e7e7;
+    color: blue;
+}
 
 .footer {
     display: flex;

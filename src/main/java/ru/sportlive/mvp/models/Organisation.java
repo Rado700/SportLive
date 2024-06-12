@@ -2,9 +2,7 @@ package ru.sportlive.mvp.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -27,8 +25,21 @@ public class Organisation {
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToMany(mappedBy = "organisation", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Couch> couch = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "couch_organisation",
+            joinColumns = @JoinColumn(name = "couch_id"),
+            inverseJoinColumns = @JoinColumn(name = "organisation_id"))
+    private List<Couch> couches = new ArrayList<>();
+
+
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "sportOrganisation_id")
+    private List<SportOrganisation> sportOrganisation;
+
 
     public Organisation() {
 

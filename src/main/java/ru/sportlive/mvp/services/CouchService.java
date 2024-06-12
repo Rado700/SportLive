@@ -5,12 +5,10 @@ import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Organisation;
-import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -23,7 +21,7 @@ public class CouchService {
     public List<Couch> getAllCouches(){
         return couchRepository.findAll();
     }
-    public Couch addCouch (String name, Organisation organisation_id){
+    public Couch addCouch (String name, Set<Organisation> organisation_id){
         Couch couch = new Couch(name,organisation_id);
         couchRepository.save(couch);
         return couch;
@@ -44,7 +42,7 @@ public class CouchService {
     }
 
     public Couch addCouchToOrganisation (Organisation organisation, Couch couch){
-        couch.setOrganisation(organisation);
+        couch.getOrganisations().add(organisation);
         couchRepository.save(couch);
         return couch;
     }

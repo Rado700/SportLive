@@ -41,6 +41,11 @@ public class Schedule implements Comparable<Schedule> {
     @OneToOne(mappedBy = "schedule",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Booking booking;
 
+    @Getter
+    @Setter
+    @JsonBackReference
+    @ManyToOne(cascade = CascadeType.ALL)
+    private SportOrganisation sportOrganisation;
 
     public Schedule() {
     }
