@@ -9,7 +9,7 @@ public class CouchDTO {
     @Setter
     private String name;
 
-    public CouchDTO(String name, Integer organisation_id) {
+    public CouchDTO(String name) {
         this.name = name;
     }
 

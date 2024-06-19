@@ -24,18 +24,20 @@ public class SportOrganisation {
     @Setter
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "organisation_id")
     private Organisation organisation;
 
     @Getter
     @Setter
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "sport_id")
     private Sport sport;
 
     @Getter
     @Setter
     @JsonBackReference
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "sportOrganisation",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Schedule>schedules;
 
 

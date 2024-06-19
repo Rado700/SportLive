@@ -19,4 +19,9 @@ public class PagesController {
     public String couch(){
         return "couch";
     }
+
+    @GetMapping("/account/couch/select")
+    public String organisationCouch(){
+        return "enterForOrganisation";
+    }
 }

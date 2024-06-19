@@ -45,6 +45,7 @@ public class Schedule implements Comparable<Schedule> {
     @Setter
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "sportOrganisation_id")
     private SportOrganisation sportOrganisation;
 
     public Schedule() {

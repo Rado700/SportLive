@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.dto.input.CouchOrganisationDTO;
+import ru.sportlive.mvp.dto.output.CouchInfoDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.services.CouchService;
@@ -74,7 +75,13 @@ public class CouchController {
         Couch couch = couchService.getCouch(id);
         return new ResponseEntity<>(couch, HttpStatus.OK);
     }
-
+    @Operation(summary = "Вывести тренеров у организаций по id")
+    @GetMapping("/organisation/{id}")
+    public ResponseEntity<List<Couch>>getAllCouchForOrganisation(@PathVariable Integer id){
+        Organisation organisation = organisationService.getOrganisation(id);
+        List<Couch>getAll = organisation.getCouches() ;
+        return new ResponseEntity<>(getAll,HttpStatus.OK);
+    }
 
     @Operation(summary = "Добавить нового тренера в организацию")
     @PostMapping("/organisation/")
@@ -90,6 +97,24 @@ public class CouchController {
         Couch couch1 = couchService.addCouchToOrganisation(organisation, couch);
         return new ResponseEntity<>(couch1,HttpStatus.OK);
     }
+    @Operation(summary = "Добавить нового тренера в организацию по id")
+    @PostMapping("/organisation/{organisation_id}/{couch_id}")
+    public ResponseEntity<Object> addCouchForOrganisation(@PathVariable Integer organisation_id, @PathVariable Integer couch_id) {
+        Organisation organisation = organisationService.getOrganisation(organisation_id);
+        Couch couch = couchService.getCouch(couch_id);
+        if (couch == null){
+            return new ResponseEntity<>("Такого тренера не существует",HttpStatus.BAD_REQUEST);
+        }
+        if (organisation == null){
+            return new ResponseEntity<>("Такой организаций не существует",HttpStatus.BAD_REQUEST);
+        }
+        Organisation organisation1 = couchService.addOrganisationToCouch(organisation, couch);
+        return new ResponseEntity<>(organisation1,HttpStatus.OK);
+    }
+
+//    @Operation(summary = "Добавить в организацию тренера при регистарций")
+//    @PostMapping("/")
+//
     @Operation(summary = "Обновления данных у тренера")
     @PutMapping("/")
     public ResponseEntity<Couch>updateCouch(@RequestBody CouchDTO couchDTO,HttpSession httpSession){

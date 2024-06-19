@@ -30,8 +30,7 @@ public class Sport {
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "sportOrganisation_id")
+    @OneToMany(mappedBy = "sport",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<SportOrganisation> sportOrganisation;
 
 

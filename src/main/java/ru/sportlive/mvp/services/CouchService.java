@@ -7,6 +7,7 @@ import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
+import ru.sportlive.mvp.repository.OrganisationRepository;
 
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,8 @@ public class CouchService {
     CouchRepository couchRepository;
     @Autowired
     InventoryRepository inventoryRepository;
+    @Autowired
+    OrganisationRepository organisationRepository;
 
     public List<Couch> getAllCouches(){
         return couchRepository.findAll();
@@ -46,10 +49,17 @@ public class CouchService {
         couchRepository.save(couch);
         return couch;
     }
+    public Organisation addOrganisationToCouch (Organisation organisation, Couch couch){
+        organisation.getCouches().add(couch);
+        organisationRepository.save(organisation);
+        return organisation;
+    }
 
     public Couch updateToCouch(Couch couch, CouchDTO couchDTO){
         couch.setName(couchDTO.getName());
         return couch;
     }
+
+
 
 }

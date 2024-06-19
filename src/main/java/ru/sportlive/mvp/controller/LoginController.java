@@ -28,6 +28,27 @@ public class LoginController {
     @Autowired
     CouchService couchService;
 
+//    @Operation(summary = "Выбор Организаций")
+//    @PostMapping("/organisationType")
+//    public ResponseEntity<Login>enterCouch(@RequestBody LoginDTO loginDTO,HttpSession httpSession) {
+//        Login login = loginService.enterCouch(loginDTO.getName(), loginDTO.getPassword());
+//        if (login == null){
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
+//        httpSession.setAttribute("couchId",login.getCouch().getId());
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+//    @Operation(summary = "Выбор Тренера")
+//    @PostMapping("/couchEnter")
+//    public ResponseEntity<Login>enterCouch(@RequestBody LoginDTO loginDTO,HttpSession httpSession) {
+//        Login login = loginService.enterCouch(loginDTO.getName(), loginDTO.getPassword());
+//        if (login == null){
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
+//        httpSession.setAttribute("couchId",login.getCouch().getId());
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/user/registration")
     public ResponseEntity<Login>addLoginUser(@RequestBody LoginDTO loginDTO, HttpSession httpSession) {
@@ -75,6 +96,7 @@ public class LoginController {
         httpSession.setAttribute("couchId",login.getCouch().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @Operation(summary = "Вывести логин по id")
     @GetMapping("/{id}")
     public ResponseEntity<Login>getLogin(@PathVariable Integer id){
