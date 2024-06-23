@@ -1,9 +1,11 @@
 package ru.sportlive.mvp.dto.input;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+@NoArgsConstructor
 public class CouchDTO {
     @Getter
     @Setter

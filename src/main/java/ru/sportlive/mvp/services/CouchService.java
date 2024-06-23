@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Organisation;
+import ru.sportlive.mvp.models.Sport;
+import ru.sportlive.mvp.models.SportSection;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
 import ru.sportlive.mvp.repository.OrganisationRepository;
@@ -21,11 +23,12 @@ public class CouchService {
     @Autowired
     OrganisationRepository organisationRepository;
 
+
     public List<Couch> getAllCouches(){
         return couchRepository.findAll();
     }
-    public Couch addCouch (String name, Set<Organisation> organisation_id){
-        Couch couch = new Couch(name,organisation_id);
+    public Couch addCouch (String name, List<SportSection> sportSections_id){
+        Couch couch = new Couch(name,sportSections_id);
         couchRepository.save(couch);
         return couch;
     }
@@ -44,11 +47,7 @@ public class CouchService {
         return couch;
     }
 
-    public Couch addCouchToOrganisation (Organisation organisation, Couch couch){
-        couch.getOrganisations().add(organisation);
-        couchRepository.save(couch);
-        return couch;
-    }
+
     public Organisation addOrganisationToCouch (Organisation organisation, Couch couch){
         organisation.getCouches().add(couch);
         organisationRepository.save(organisation);
@@ -60,6 +59,8 @@ public class CouchService {
         return couch;
     }
 
-
-
+    public Couch addCouchToSportSection(SportSection sportSection, Couch couch) {
+        couch.addSportSection(sportSection);
+        return couchRepository.save(couch);
+    }
 }

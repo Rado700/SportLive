@@ -1,6 +1,5 @@
 package ru.sportlive.mvp.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,23 +34,29 @@ public class Couch {
     @JsonManagedReference
     @OneToMany(mappedBy = "couch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Inventory> inventory = new ArrayList<>();
-    @Getter
-    @Setter
-    @JsonBackReference
-    @ManyToMany(mappedBy = "couches", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Organisation> organisations = new HashSet<>();
+
 
     @Getter
     @Setter
-    @JsonBackReference
-    @ManyToMany(mappedBy = "selectedCouches", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<User> user = new HashSet<>();
+    @JsonManagedReference
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "couch_sport_section",
+            joinColumns = @JoinColumn(name = "sport_section_id"),
+            inverseJoinColumns = @JoinColumn(name = "couch_id"))
+    private List<SportSection> selectedSportSections = new ArrayList<>();
+
 
     @Getter
     @Setter
     @JsonManagedReference
     @OneToMany(mappedBy = "couch", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Schedule> schedules = new HashSet<>();
+
+    public void addSportSection(SportSection sportSection){
+        this.selectedSportSections.add(sportSection);
+    }
+
 
 //    @Getter
 //    @Setter
@@ -63,9 +68,9 @@ public class Couch {
     public Couch() {
     }
 
-    public Couch(String name, Set<Organisation> organisations) {
+    public Couch(String name, List<SportSection> selectedSportSections) {
         this.name = name;
-        this.organisations = organisations;
+        this.selectedSportSections = selectedSportSections;
     }
     public CouchInfoDTO getCouchInfo(){
         return new CouchInfoDTO(id,name);

@@ -8,11 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
-public class SportOrganisation {
+public class SportSection {
 
     @Getter
     @Setter
@@ -20,6 +22,9 @@ public class SportOrganisation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Getter
+    @Setter
+    private String name;
     @Getter
     @Setter
     @JsonBackReference
@@ -37,12 +42,22 @@ public class SportOrganisation {
     @Getter
     @Setter
     @JsonBackReference
-    @OneToMany(mappedBy = "sportOrganisation",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "sportSection",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Schedule>schedules;
 
+    @Getter
+    @Setter
+    @JsonBackReference
+    @ManyToMany(mappedBy = "selectedSportSections",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<User>users;
 
+    @Getter
+    @Setter
+    @JsonBackReference
+    @ManyToMany(mappedBy = "selectedSportSections",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Couch>couches;
 
-    public SportOrganisation(Organisation organisation, Sport sport) {
+    public SportSection(Organisation organisation, Sport sport) {
         this.organisation = organisation;
         this.sport = sport;
     }

@@ -21,28 +21,28 @@
                     <div class="mb-3">
                         <label for="organisationType" class="form-label">Выберите организацию:</label>
                         <select id="organisationType" class="form-select">
-                            <option value="organisation">Организация</option>
+                            <option value="organisation" disabled selected hidden>Организация</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label for="sportType" class="form-label">Выберите спорт:</label>
                         <select id="sportType" class="form-select">
-                            <option value="sport">Спорт</option>
+                            <option value="sport"  disabled selected hidden>Спорт</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label for="couchType" class="form-label">Выберите тренера:</label>
                         <select id="couchType" class="form-select">
-                            <option value="couch">Тренер</option>
+                            <option value="couch"  disabled selected hidden>Тренер</option>
                         </select>
                     </div>
 
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-secondary" id="next">Дальше</button>
-                        <button type="submit" class="btn btn-secondary" id="Skip">Пропустить</button>
+                        <button type="submit" class="btn btn-secondary" id="next" onclick="next()">Дальше</button>
+                        <button type="submit" class="btn btn-secondary" id="skip" onclick="skip()">Пропустить</button>
                     </div>
 
                 </div>

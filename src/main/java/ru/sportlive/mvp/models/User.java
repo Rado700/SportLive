@@ -63,13 +63,15 @@ public class User {
     private Set<Inventory> selectedInventory = new HashSet<>();
 
 
+    @Getter
+    @Setter
     @JsonManagedReference
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_couch",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "couch_id"))
-    private Set<Couch> selectedCouches = new HashSet<>();
+            name = "user_sport_section",
+            joinColumns = @JoinColumn(name = "sport_section_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<SportSection> selectedSportSections = new HashSet<>();
 
 
     @Getter

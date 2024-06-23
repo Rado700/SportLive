@@ -6,11 +6,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Sport {
-
+    @Getter
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -31,9 +34,7 @@ public class Sport {
     @Setter
     @JsonManagedReference
     @OneToMany(mappedBy = "sport",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<SportOrganisation> sportOrganisation;
-
-
+    private List<SportSection> sportSection;
 
 
     public Sport(String name_sport, String description, String instruction, String equipment) {

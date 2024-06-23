@@ -9,7 +9,6 @@ import ru.sportlive.mvp.dto.output.GetScheduleDateUser;
 import ru.sportlive.mvp.dto.output.UserInfoDTO;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Entity
 public class Schedule implements Comparable<Schedule> {
@@ -45,8 +44,8 @@ public class Schedule implements Comparable<Schedule> {
     @Setter
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sportOrganisation_id")
-    private SportOrganisation sportOrganisation;
+    @JoinColumn(name = "sport_section_id")
+    private SportSection sportSection;
 
     public Schedule() {
     }

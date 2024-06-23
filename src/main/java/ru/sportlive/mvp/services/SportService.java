@@ -3,12 +3,12 @@ package ru.sportlive.mvp.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.SportDTO;
-import ru.sportlive.mvp.models.Organisation;
-import ru.sportlive.mvp.models.Sport;
-import ru.sportlive.mvp.models.SportOrganisation;
+import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.SportRepository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +46,20 @@ public class SportService {
     }
 
     public List<Sport>getAllSportForOrganisation(Organisation organisation){
-        List<SportOrganisation> sport = organisation.getSportOrganisation();
-        return sport.stream().map(SportOrganisation::getSport).collect(Collectors.toList());
+        List<SportSection> sport = organisation.getSportSection();
+        return sport.stream().map(SportSection::getSport).collect(Collectors.toList());
+    }
+
+//    public List<Sport>getAllSportForCouch(Couch couch){
+//        List<CouchSport>getAllCouch = couch.getCouchSport();
+//        return getAllCouch.stream().map(CouchSport::getSport).collect(Collectors.toList());
+//    }
+    public List<Couch>getAllCouchForSport(Sport sport){
+        List<SportSection>getAllSportSections = sport.getSportSection();
+        Set<Couch>couches = new HashSet<>();
+        for (SportSection section : getAllSportSections){
+            couches.addAll(section.getCouches());
+        }
+        return couches.stream().toList();
     }
 }

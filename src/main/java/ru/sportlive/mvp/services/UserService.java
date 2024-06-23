@@ -3,6 +3,8 @@ package ru.sportlive.mvp.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.UsersDTO;
+import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Sport;
 import ru.sportlive.mvp.repository.TransactionRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 import ru.sportlive.mvp.models.User;
@@ -72,5 +74,22 @@ public class UserService {
         userRepository.save(user);
         return user;
     }
+
+//    public User addUserToOrganisation(Integer user_id, Organisation organisation){
+//        User user = userRepository.findById(user_id).orElse(null);
+//        organisation.getUsers().add(user);
+//        return user;
+//    }
+//    public User addUserToSport(User user, Sport sport){
+//        sport.getUsers().add(user);
+//        userRepository.save(user);
+//        return user;
+//    }
+//    public User addUserToCouch(User user, Couch couch){
+//        user.getSportSections().add(couch);
+//        userRepository.save(user);
+//        return user;
+//    }
+
 
 }

@@ -37,9 +37,14 @@ public class Organisation {
     @Setter
     @JsonManagedReference
     @OneToMany(mappedBy = "organisation",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<SportOrganisation> sportOrganisation;
+    private List<SportSection> sportSection;
 
 
+//    @Getter
+//    @Setter
+//    @JsonBackReference
+//    @ManyToMany(mappedBy = "selectedOrganisation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    private List<User> users = new ArrayList<>();
     public Organisation() {
 
     }
