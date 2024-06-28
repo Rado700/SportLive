@@ -2,15 +2,12 @@ package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
-import org.aspectj.weaver.ast.Or;
-import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.dto.input.CouchOrganisationDTO;
-import ru.sportlive.mvp.dto.output.CouchInfoDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.models.Sport;
@@ -21,9 +18,7 @@ import ru.sportlive.mvp.services.SportSectionService;
 import ru.sportlive.mvp.services.SportService;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/couch")
@@ -123,9 +118,23 @@ public class CouchController {
         return new ResponseEntity<>(organisation1,HttpStatus.OK);
     }
 
-//    @Operation(summary = "Добавить в организацию тренера при регистарций")
-//    @PostMapping("/")
-//
+    @Operation(summary = "Добавить нового тренера в организацию")
+    @PostMapping("/organisation/{organisation_id}")
+    public ResponseEntity<Object> addCouchForOrganisation(@PathVariable Integer organisation_id, HttpSession httpSession) {
+        Organisation organisation = organisationService.getOrganisation(organisation_id);
+        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couch_id);
+        if (couch == null){
+            return new ResponseEntity<>("Такого тренера не существует",HttpStatus.BAD_REQUEST);
+        }
+        if (organisation == null){
+            return new ResponseEntity<>("Такой организаций не существует",HttpStatus.BAD_REQUEST);
+        }
+        Organisation organisation1 = couchService.addOrganisationToCouch(organisation, couch);
+        return new ResponseEntity<>(organisation1,HttpStatus.OK);
+    }
+
+
     @Operation(summary = "Обновления данных у тренера")
     @PutMapping("/")
     public ResponseEntity<Couch>updateCouch(@RequestBody CouchDTO couchDTO,HttpSession httpSession){
@@ -140,19 +149,15 @@ public class CouchController {
 //        List<Sport>getAllSport = sportService.getAllSportForCouch(couch);
 //        return new ResponseEntity<>(getAllSport,HttpStatus.OK);
 //    }
+
     @Operation(summary = "Вывести всех тренеров у спорта и организаций")
     @GetMapping("/sport/organisation/{sport_id}/{organisation_id}")
-    public ResponseEntity<Set<Couch>>getAllCouchToSportAndOrganisation(@PathVariable Integer sport_id,@PathVariable Integer organisation_id){
+    public ResponseEntity<List<Couch>>getAllCouchToSportAndOrganisation(@PathVariable Integer sport_id,@PathVariable Integer organisation_id){
         Sport sport = sportService.getSport(sport_id);
         Organisation organisation = organisationService.getOrganisation(organisation_id);
-        List<Couch>getAllCouchBySport = sportService.getAllCouchForSport(sport);
-        List<Couch>getAllCouchByOrganisation = organisation.getCouches();
-        Set<Couch>allCouchBySport = new HashSet<>(getAllCouchBySport);
-        Set<Couch>allCouchByOrganisation = new HashSet<>(getAllCouchByOrganisation);
-        allCouchBySport.retainAll(allCouchByOrganisation);
+        List<Couch>allCouchBySport = sportService.getAllCouchForSportOrganisation(sport, organisation);
         return new ResponseEntity<>(allCouchBySport, HttpStatus.OK);
     }
-
 }
 
 

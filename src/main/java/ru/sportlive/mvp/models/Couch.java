@@ -1,5 +1,6 @@
 package ru.sportlive.mvp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -42,8 +43,8 @@ public class Couch {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "couch_sport_section",
-            joinColumns = @JoinColumn(name = "sport_section_id"),
-            inverseJoinColumns = @JoinColumn(name = "couch_id"))
+            joinColumns = @JoinColumn(name = "couch_id"),
+            inverseJoinColumns = @JoinColumn(name = "sport_section_id"))
     private List<SportSection> selectedSportSections = new ArrayList<>();
 
 
@@ -52,6 +53,18 @@ public class Couch {
     @JsonManagedReference
     @OneToMany(mappedBy = "couch", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Schedule> schedules = new HashSet<>();
+
+    @Getter
+    @Setter
+    @JsonBackReference
+    @ManyToMany(mappedBy = "selectedCouches",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<User>users;
+
+    @Getter
+    @Setter
+    @JsonBackReference
+    @ManyToMany(mappedBy = "couches",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Organisation>organisations;
 
     public void addSportSection(SportSection sportSection){
         this.selectedSportSections.add(sportSection);

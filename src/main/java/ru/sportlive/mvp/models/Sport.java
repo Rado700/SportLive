@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.sportlive.mvp.dto.output.SportInfoDTO;
 
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +46,10 @@ public class Sport {
     }
 
     public Sport() {
+    }
+
+    public SportInfoDTO getSportInfoDTO() {
+        return new SportInfoDTO(id,name_sport,description,instruction,equipment);
     }
 
 }

@@ -69,8 +69,8 @@ public class User {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_sport_section",
-            joinColumns = @JoinColumn(name = "sport_section_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "sport_section_id"))
     private Set<SportSection> selectedSportSections = new HashSet<>();
 
 
@@ -81,6 +81,15 @@ public class User {
     private Set<Transaction> transactionList = new HashSet<>();
 
 
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_couch",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "couch_id"))
+    private List<Couch> selectedCouches = new ArrayList<>();
 
 
     public User(String name, String surname, int height, int weight) {
@@ -90,11 +99,19 @@ public class User {
         this.weight = weight;
     }
 
-
     public User() {
     }
 
     public UserInfoDTO getUserInfo(){
         return new UserInfoDTO(id,name,surname,height,weight);
     }
+
+    public void addSportSection(SportSection section){
+        this.selectedSportSections.add(section);
+    }
+
+    public void addCouch(Couch couch){
+        this.selectedCouches.add(couch);
+    }
+
 }

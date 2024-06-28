@@ -61,4 +61,10 @@ public class SportSection {
         this.organisation = organisation;
         this.sport = sport;
     }
+
+    public SportSection(String name, Sport sport, Organisation organisation) {
+        this.name = name;
+        this.sport = sport;
+        this.organisation = organisation;
+    }
 }

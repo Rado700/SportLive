@@ -13,6 +13,7 @@ import ru.sportlive.mvp.services.OrganisationService;
 import ru.sportlive.mvp.services.SportService;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/organisation")
@@ -58,6 +59,7 @@ public class OrganisationController {
         organisation = organisationService.updateToOrganisation(organisation,organisationDTO);
         return new ResponseEntity<>(organisation,HttpStatus.OK);
     }
+
     @Operation(summary = "Добавить спорт в организацию по id")
     @PostMapping("/sport/{sport_id}/{organisation_id}")
     public ResponseEntity<Organisation>addSport(@PathVariable Integer sport_id,@PathVariable Integer organisation_id){
@@ -68,9 +70,9 @@ public class OrganisationController {
     }
     @Operation(summary = "Вывести все виды спорта у организаций по id")
     @GetMapping("/sport/{id}")
-    public ResponseEntity<List<Sport>>getAllSports(@PathVariable Integer id){
+    public ResponseEntity<Set<Sport>>getAllSports(@PathVariable Integer id){
         Organisation organisation = organisationService.getOrganisation(id);
-        List<Sport>getAllSport = organisationService.getAllSportForOrganisation(organisation);
+        Set<Sport> getAllSport = organisationService.getAllSportForOrganisation(organisation);
         return new ResponseEntity<>(getAllSport,HttpStatus.OK);
     }
 }

@@ -20,7 +20,6 @@ import java.util.List;
 public class SportController {
     @Autowired
     SportService sportService;//TODO: Протестировать получение
-
     @Autowired
     OrganisationService organisationService;
     @Autowired
@@ -41,13 +40,13 @@ public class SportController {
         return new ResponseEntity<>(sport,HttpStatus.OK);
     }
 
-    @Operation(summary = "Вывести всех тренеров у спорта по id")
-    @GetMapping("/couch/{sport_id}")
-    public ResponseEntity<List<Couch>>getAllCouchToSport(@PathVariable Integer sport_id){
-        Sport sport = sportService.getSport(sport_id);
-        List<Couch>getAll= sportService.getAllCouchForSport(sport);
-        return new ResponseEntity<>(getAll,HttpStatus.OK);
-    }
+//    @Operation(summary = "Вывести всех тренеров у спорта по id")
+//    @GetMapping("/couch/{sport_id}")
+//    public ResponseEntity<List<Couch>>getAllCouchToSport(@PathVariable Integer sport_id){
+//        Sport sport = sportService.getSport(sport_id);
+//        List<Couch>getAll= sportService.getAllCouchForSportOrganisation(sport);
+//        return new ResponseEntity<>(getAll,HttpStatus.OK);
+//    }
 
     @Operation(summary = "Вывести все виды спорта")
     @GetMapping("/")
@@ -69,6 +68,7 @@ public class SportController {
         Sport sport = sportService.getSport(id);
         return new ResponseEntity<>(sport,HttpStatus.OK);
     }
+
     @Operation(summary = "Обновления данных у спорта")
     @PutMapping("/{id}")
     public ResponseEntity<Sport>updateSport(@PathVariable Integer id,@RequestBody SportDTO sportDTO){
@@ -76,6 +76,5 @@ public class SportController {
         sport = sportService.updateToSport(sport,sportDTO);
         return new ResponseEntity<>(sport,HttpStatus.OK);
     }
-
 
 }

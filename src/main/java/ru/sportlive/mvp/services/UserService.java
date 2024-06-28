@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Sport;
+import ru.sportlive.mvp.models.SportSection;
 import ru.sportlive.mvp.repository.TransactionRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 import ru.sportlive.mvp.models.User;
@@ -74,6 +75,14 @@ public class UserService {
         userRepository.save(user);
         return user;
     }
+    public SportSection addUserToSportSection(SportSection sportSection, User user){
+        user.addSportSection(sportSection);
+        userRepository.save(user);
+        return sportSection;
+    }
+
+
+
 
 //    public User addUserToOrganisation(Integer user_id, Organisation organisation){
 //        User user = userRepository.findById(user_id).orElse(null);
@@ -85,11 +94,11 @@ public class UserService {
 //        userRepository.save(user);
 //        return user;
 //    }
-//    public User addUserToCouch(User user, Couch couch){
-//        user.getSportSections().add(couch);
-//        userRepository.save(user);
-//        return user;
-//    }
+    public User addUserToCouch(User user, Couch couch){
+        user.addCouch(couch);
+        userRepository.save(user);
+        return user;
+    }
 
 
 }

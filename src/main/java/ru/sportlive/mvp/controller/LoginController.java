@@ -56,7 +56,6 @@ public class LoginController {
         if (loginOccupied){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
         User user = userService.addUsers();
         Login login = loginService.addLoginUser(loginDTO.getName(), loginDTO.getPassword(),user);
         httpSession.setAttribute("userId",user.getId());

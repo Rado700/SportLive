@@ -54,11 +54,13 @@ public class SportService {
 //        List<CouchSport>getAllCouch = couch.getCouchSport();
 //        return getAllCouch.stream().map(CouchSport::getSport).collect(Collectors.toList());
 //    }
-    public List<Couch>getAllCouchForSport(Sport sport){
+    public List<Couch> getAllCouchForSportOrganisation(Sport sport, Organisation organisation){
         List<SportSection>getAllSportSections = sport.getSportSection();
         Set<Couch>couches = new HashSet<>();
         for (SportSection section : getAllSportSections){
-            couches.addAll(section.getCouches());
+            if (section.getOrganisation() == organisation) {
+                couches.addAll(section.getCouches());
+            }
         }
         return couches.stream().toList();
     }

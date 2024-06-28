@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.sportlive.mvp.dto.output.OrganisationInfoDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,8 @@ public class Organisation {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "couch_organisation",
-            joinColumns = @JoinColumn(name = "couch_id"),
-            inverseJoinColumns = @JoinColumn(name = "organisation_id"))
+            joinColumns = @JoinColumn(name = "organisation_id"),
+            inverseJoinColumns = @JoinColumn(name = "couch_id"))
     private List<Couch> couches = new ArrayList<>();
 
 
@@ -54,5 +55,8 @@ public class Organisation {
         this.description = description;
     }
 
+    public OrganisationInfoDTO getOrganisationInfoDTO() {
+        return new OrganisationInfoDTO(id,name,description);
+    }
 
 }

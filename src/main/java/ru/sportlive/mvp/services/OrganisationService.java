@@ -10,6 +10,7 @@ import ru.sportlive.mvp.repository.OrganisationRepository;
 import ru.sportlive.mvp.repository.SportOrganisationRepository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,10 +56,9 @@ public class OrganisationService {
         return organisation;
     }
 
-    public List<Sport>getAllSportForOrganisation(Organisation organisation){
+    public Set<Sport> getAllSportForOrganisation(Organisation organisation){
         List<SportSection> sportSection = organisation.getSportSection();
-        return sportSection.stream().map(SportSection::getSport).collect(Collectors.toList());
+        return sportSection.stream().map(SportSection::getSport).collect(Collectors.toSet());
     }
-
 
 }

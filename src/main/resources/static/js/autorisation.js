@@ -24,9 +24,10 @@ document.getElementById('register').addEventListener('click', function () {
             // Handle success response
             console.log('Success:', data);
             if (type === "user") {
+                window.location.href = '/account/user/select';
+            }
+            if (type === "couch"){
                 window.location.href = '/account/couch/select';
-            } else {
-                window.location.href = '/couches';
             }
         })
 

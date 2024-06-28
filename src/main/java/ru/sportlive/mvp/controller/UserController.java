@@ -11,11 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.CouchUserDTO;
 import ru.sportlive.mvp.dto.input.SportUserDTO;
 import ru.sportlive.mvp.dto.input.UsersDTO;
-import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.Organisation;
-import ru.sportlive.mvp.models.Sport;
-import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.CouchService;
+import ru.sportlive.mvp.services.SportSectionService;
 import ru.sportlive.mvp.services.SportService;
 import ru.sportlive.mvp.services.UserService;
 
@@ -32,6 +30,9 @@ public class UserController {
 
     @Autowired
     SportService sportService;
+
+    @Autowired
+    SportSectionService sportSectionService;
 
     @PostMapping("/")
     @Operation(summary = "Добавляет нового пользователя")
@@ -90,6 +91,31 @@ public class UserController {
         User user = userService.getUser(id);
         user = userService.updateToUser(user, usersDTO);
         return new ResponseEntity<>(user,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Вывести всех users в спортсекций по id")
+    @GetMapping("/sport-section/{sport_section_id}")
+    public ResponseEntity<List<User>>getUsersSportSection(@PathVariable Integer sport_section_id){
+        SportSection section = sportSectionService.getSportSection(sport_section_id);
+        List<User> users = section.getUsers();
+        return new ResponseEntity<>(users,HttpStatus.OK);
+    }
+    @Operation(summary = "Добавить user к couch")
+    @PostMapping("/couch/{couch_id}")
+    public ResponseEntity<User>addUserForCouch(@PathVariable Integer couch_id,HttpSession httpSession){
+        Integer userId = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(userId);
+        Couch couch = couchService.getCouch(couch_id);
+        userService.addUserToCouch(user,couch);
+        return new ResponseEntity<>(user,HttpStatus.OK);
+    }
+    @Operation(summary = "Получить всех couches для user")
+    @GetMapping("/couch")
+    public ResponseEntity<List<Couch>>getUsersSportSection(HttpSession httpSession){
+        Integer userId = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(userId);
+        List<Couch> couches = user.getSelectedCouches();
+        return new ResponseEntity<>(couches,HttpStatus.OK);
     }
 
 //    @Operation(summary = "Добавить user в организацию")
