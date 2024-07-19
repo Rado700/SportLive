@@ -6,8 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const profileForm = document.getElementById('profile-form');
   const profileInfo = document.getElementById('profile-info span');
-  const trainerInfo = document.getElementById('trainer-info span');
-  const equipmentInfo = document.getElementById('equipment-info span');
+    const trainerInfo = document.getElementById('trainer-info span');
+    const equipmentInfo = document.getElementById('equipment-info span');
+
+    const addEquipment = document.getElementById('add-equipment');
+    const addActivity = document.getElementById('add-activity');
+    const addBalance = document.getElementById('add-balance');
+    //TODO const firstName = document.getElementById('firstName')
+
+
 
   const stopwatchDisplay = document.getElementById('stopwatch-display');
   let stopwatchInterval;
@@ -26,6 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('profile').addEventListener('click', () => {
       showScreen(profileScreen);
+      //TODO похоже как на 39 строчке fetch('/api/info')...
+      //TODO firstName.value = data.name;
+
+
   });
 
   document.getElementById('info').addEventListener('click', () => {
@@ -39,6 +50,49 @@ document.addEventListener('DOMContentLoaded', () => {
               equipmentInfo.textContent = data.equipmentCount;
           });
   });
+
+
+
+  addEquipment.addEventListener('submit', () => {
+
+      const url = "/api/inventory/couchInventory"
+      fetch(url)
+          .then(response => {
+              if (!response.ok){
+                  throw new Error("Нету такого инвентаря тренера")
+              }
+              return response.json();
+          })
+          .then(data => {
+
+
+      function setEquipment(data) {
+          const getAllEquipment = document.getElementById("add-equipment");
+          data.forEach(item => {
+              const option = document.createElement("option");
+              option.value = item.id;
+              option.textContent = item.name;
+              option.textContent = item.price;
+              option.textContent = item.size;
+              option.textContent = item.type;
+              getAllEquipment.appendChild(option);
+          })
+      }
+      const getAllEquipment = document.getElementById("add-equipment")
+      const equipmentId = getAllEquipment.value
+
+      fetch("api/inventory/couch/"+equipmentId)
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error("Неверная организация")
+              }
+              return response.json();
+          })
+          .then(data => setEquipment(data))
+          .catch(error => console.error(error));
+  })
+  });
+
 
   document.getElementById('stopwatch').addEventListener('click', () => {
       showScreen(stopwatchScreen);
@@ -138,3 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
       showScreen(mainScreen);
   });
 });
+
+function exit(){
+
+    fetch("/api/login/user/exit")
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/";
+            }
+        }).catch(error => console.error('Error:', error))
+}

@@ -1,4 +1,8 @@
+let sportSections = false;
+let couchSections = false;
+
 document.addEventListener('DOMContentLoaded', function () {
+
     const url = "/api/organisation/";
 
     function setOrganisation(data) {
@@ -55,7 +59,6 @@ let getAllSportForOrganisation = document.getElementById("sportType")
 getAllSportForOrganisation.addEventListener('change', function () {
     getAllSportForOrganisation = document.getElementById("sportType")
     const url = "/api/couch/sport/organisation/" + getAllSportForOrganisation.value + "/" + getAllOrganisation.value;
-
     function setCouch(data) {
         const getAllCouch = document.getElementById("couchType");
         getAllCouch.innerHTML = "<option value=\"couch\"  disabled selected hidden>Тренер</option>";
@@ -80,8 +83,14 @@ getAllSportForOrganisation.addEventListener('change', function () {
 
 const getAllCouch = document.getElementById("couchType");
 
+
+
 function skip() {
     window.location.href = '/account';
+}
+function closeConfirmationModal(){
+    const hidden = document.getElementById("confirmationModal")
+    $("#confirmationModal").modal('hide');
 }
 
 function next() {
@@ -89,45 +98,79 @@ function next() {
     const sportId = getAllSportForOrganisation.value;
     const organisationId = getAllOrganisation.value;
 
+    const firstName = document.getElementById("firstName").value
+    const lastName = document.getElementById("lastName").value
+    const weight = document.getElementById("weight").value
+    const height = document.getElementById("height").value
 
-    const url = `/api/sport-section/sport/organisation/${sportId}/${organisationId}`;
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Неверная организация")
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log(data)
-            const sportSectionId = data.id;
-            fetch("/api/sport-section/user/" + sportSectionId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Нет такого тренера")
-                    }
-                    return response;
-                })
-        })
-        .catch(error => console.error(error));
+    const profileData = {
+        name: firstName,
+        surname: lastName,
+        height: height,
+        weight: weight
+    };
 
-    fetch("/api/user/couch/" + couchId, {
-        method: 'POST',
+    fetch('/api/user/', {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
+        body: JSON.stringify(profileData)
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Нет такого тренера")
-            }
-            return response;
+        .then(response => response.json())
+        .catch(error=>console.error(error));
+    if (sportId !== "sport" && organisationId !== "organisation" && sportSections === false) {
+
+        const url = `/api/sport-section/sport/organisation/${sportId}/${organisationId}`;
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Неверная организация")
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data)
+                const sportSectionId = data.id;
+                fetch("/api/sport-section/user/" + sportSectionId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Нет такого тренера")
+                        }
+                        sportSections = true;
+                        return response;
+                    })
+            })
+            .catch(error => console.error(error));
+    }else {
+        $("#confirmationModal").modal('show');
+        return;
+    }
+
+    if (couchId !== "couch" && couchSections === false) {
+
+        fetch("/api/user/couch/" + couchId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
         })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Нет такого тренера")
+                }
+                couchSections = true;
+                return response;
+            })
+    }else {
+        $("#confirmationModal").modal('show');
+        return;
+    }
     window.location.href = '/account';
 }
 

@@ -26,14 +26,18 @@ public class Couch {
 
     @Getter
     @Setter
+    private int balance;
+
+    @Getter
+    @Setter
     @JsonManagedReference
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "couch",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Login login;
 
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToMany(mappedBy = "couch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "couch", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Inventory> inventory = new ArrayList<>();
 
 
@@ -78,14 +82,16 @@ public class Couch {
 //    private List<Booking>bookings = new ArrayList<>();
 
 
+
     public Couch() {
     }
 
     public Couch(String name, List<SportSection> selectedSportSections) {
         this.name = name;
         this.selectedSportSections = selectedSportSections;
+        this.balance = 0;
     }
     public CouchInfoDTO getCouchInfo(){
-        return new CouchInfoDTO(id,name);
+        return new CouchInfoDTO(id,name,balance);
     }
 }

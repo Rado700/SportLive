@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.SportSectionDTO;
 import ru.sportlive.mvp.dto.output.OrganisationInfoDTO;
 import ru.sportlive.mvp.dto.output.SportInfoDTO;
+import ru.sportlive.mvp.dto.output.SportSectionGetAllDTO;
 import ru.sportlive.mvp.dto.output.SportSectionOrganisationSportDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.*;
@@ -68,7 +69,7 @@ public class SportSectionController {
 
     @Operation(summary = "Добавить user в спортсекцию")
     @PostMapping("/user/{section_id}")
-    public ResponseEntity<SportSection>addUserToSportSections( @PathVariable Integer section_id, HttpSession httpSession){
+    public ResponseEntity<SportSection>addUserToSportSections(@PathVariable Integer section_id, HttpSession httpSession){
         Integer userId = (Integer) httpSession.getAttribute("userId");
         if (userId == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -82,8 +83,8 @@ public class SportSectionController {
 
     @Operation(summary = "Вывести все спортсекций")
     @GetMapping("/")
-    public ResponseEntity<List<SportSection>>getAllSportSections(){
-        List<SportSection> sportSection = sportSectionService.getAllSportSections();
+    public ResponseEntity<List<SportSectionGetAllDTO>>getAllSportSections(){
+        List<SportSectionGetAllDTO> sportSection = sportSectionService.getAllSportSections();
         return new ResponseEntity<>(sportSection,HttpStatus.OK);
     }
 

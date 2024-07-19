@@ -55,13 +55,12 @@ public class CouchController {
     }
 
     @Operation(summary = "Удалить тренера по id")
-    @DeleteMapping("/")
-    public ResponseEntity<Couch> deleteCouch(HttpSession httpSession) {
-        Integer id = (Integer) httpSession.getAttribute("couchId");
-        if (id == null){
+    @DeleteMapping("/{couchId}")
+    public ResponseEntity<Couch> deleteCouch(HttpSession httpSession, Integer couchId) {
+        if (couchId == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        Couch couch = couchService.deleteCouch(id);
+        Couch couch = couchService.deleteCouch(couchId);
         return new ResponseEntity<>(couch, HttpStatus.OK);
     }
 

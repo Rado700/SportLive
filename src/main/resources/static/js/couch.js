@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const showScreen = (screen) => {
         trainingScreen.classList.add('hidden');
         inventoryScreen.classList.add('hidden');
-        inventoryScreen.classList.add('hidden');
         screen.classList.remove('hidden');
     };
 
@@ -115,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.getElementById('back-to-main-info').addEventListener('click', () => {
-        showScreen(container);
+        window.location.href = "/";
     });
 
 
@@ -267,7 +266,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('timerMinutes').value = '';
     });
 
-
-
-
 });
+function exit(){
+
+    fetch("/api/login/couch/exit")
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/";
+            }
+        }).catch(error => console.error('Error:', error))
+}

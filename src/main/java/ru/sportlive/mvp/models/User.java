@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-//import ru.sportlive.mvp.dto.output.GetUserBooking;
 import ru.sportlive.mvp.dto.output.UserInfoDTO;
 
 import java.util.ArrayList;
@@ -51,7 +50,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Booking> booking = new ArrayList<>();
 
-
     @Getter
     @Setter
     @JsonManagedReference
@@ -61,7 +59,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "inventory_id"))
     private Set<Inventory> selectedInventory = new HashSet<>();
-
 
     @Getter
     @Setter
@@ -73,14 +70,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "sport_section_id"))
     private Set<SportSection> selectedSportSections = new HashSet<>();
 
-
-    @Getter
-    @Setter
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Transaction> transactionList = new HashSet<>();
-
-
     @Getter
     @Setter
     @JsonManagedReference
@@ -91,19 +80,19 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "couch_id"))
     private List<Couch> selectedCouches = new ArrayList<>();
 
-
     public User(String name, String surname, int height, int weight) {
         this.name = name;
         this.surname = surname;
         this.height = height;
         this.weight = weight;
+        this.balance = 0;
     }
 
     public User() {
     }
 
     public UserInfoDTO getUserInfo(){
-        return new UserInfoDTO(id,name,surname,height,weight);
+        return new UserInfoDTO(id,name,surname,height,weight,balance);
     }
 
     public void addSportSection(SportSection section){
@@ -112,6 +101,9 @@ public class User {
 
     public void addCouch(Couch couch){
         this.selectedCouches.add(couch);
+    }
+    public void addInventoryToUser(List<Inventory> inventory){
+        this.selectedInventory.add((Inventory) inventory);
     }
 
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -55,4 +56,7 @@ public class Inventory {
         this.couch = couch;
     }
 
+    public Inventory(Set<User> user) {
+        this.user = user;
+    }
 }

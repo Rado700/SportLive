@@ -5,11 +5,14 @@ import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.InventoryDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Inventory;
+import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
+import ru.sportlive.mvp.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class InventoryService {
@@ -18,6 +21,8 @@ public class InventoryService {
     InventoryRepository inventoryRepository;
     @Autowired
     CouchRepository couchRepository;
+    @Autowired
+    UserRepository userRepository;
 
     public Inventory getInventory(Integer id){
         return inventoryRepository.findById(id).orElse(null);
@@ -52,5 +57,9 @@ public class InventoryService {
         inventoryRepository.save(inventory);
         return inventory;
     }
-
+    public User addInventoryToUser(List<Inventory> getInventory, User user) {
+       user.addInventoryToUser(getInventory);
+       userRepository.save(user);
+       return user;
+    }
 }

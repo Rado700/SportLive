@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.sportlive.mvp.dto.output.SportSectionGetAllDTO;
 
 import java.util.HashSet;
 import java.util.List;
@@ -66,5 +67,9 @@ public class SportSection {
         this.name = name;
         this.sport = sport;
         this.organisation = organisation;
+    }
+
+    public SportSectionGetAllDTO getSportSectionAllDTO(){
+        return new SportSectionGetAllDTO(id,name,sport.getSportInfoDTO(),organisation.getOrganisationInfoDTO());
     }
 }

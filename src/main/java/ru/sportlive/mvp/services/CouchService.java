@@ -3,15 +3,13 @@ package ru.sportlive.mvp.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.CouchDTO;
-import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.Organisation;
-import ru.sportlive.mvp.models.Sport;
-import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
 import ru.sportlive.mvp.repository.OrganisationRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -47,7 +45,6 @@ public class CouchService {
         return couch;
     }
 
-
     public Organisation addOrganisationToCouch (Organisation organisation, Couch couch){
         organisation.getCouches().add(couch);
         organisationRepository.save(organisation);
@@ -62,5 +59,26 @@ public class CouchService {
     public Couch addCouchToSportSection(SportSection sportSection, Couch couch) {
         couch.addSportSection(sportSection);
         return couchRepository.save(couch);
+    }
+
+    public Couch deposit(Integer amount, Couch couch){
+        int dep = couch.getBalance();
+        dep += amount;
+        couch.setBalance(dep);
+        couchRepository.save(couch);
+        return couch;
+    }
+
+    public Couch withdraw (Integer amount, Couch couch){
+        int dep =couch.getBalance();
+        dep -= amount;
+        couch.setBalance(dep);
+        couchRepository.save(couch);
+        return couch;
+    }
+
+    public Integer getCouchBalance(Integer id){
+        Optional<Couch> user = couchRepository.findById(id);
+        return user.map(Couch::getBalance).orElse(null);
     }
 }

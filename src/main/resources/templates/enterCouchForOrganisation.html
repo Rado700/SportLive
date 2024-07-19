@@ -19,7 +19,7 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label for="organisationType" class="form-label">Выберите организацию:</label>
+                        <label for="organisationType" class="form-label" >Выберите организацию:</label>
                         <select id="organisationType" class="form-select">
                             <option value="organisation" disabled selected hidden>Организация</option>
                         </select>
@@ -32,17 +32,35 @@
                         </select>
                     </div>
 
-
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-secondary" id="next" onclick="next()">Дальше</button>
                         <button type="submit" class="btn btn-secondary" id="skip" onclick="skip()">Пропустить</button>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Подтверждение действия</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Вы не выбрали организация и спорт хотите ли продолжить?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick = "closeConfirmationModal()">Нет</button>
+                <button type="button" class="btn btn-primary" onclick="skip()">Да</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="/js/enterCouchForOrganisation.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>

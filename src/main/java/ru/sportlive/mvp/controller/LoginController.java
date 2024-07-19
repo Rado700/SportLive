@@ -1,6 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,7 @@ public class LoginController {
         User user = userService.addUsers();
         Login login = loginService.addLoginUser(loginDTO.getName(), loginDTO.getPassword(),user);
         httpSession.setAttribute("userId",user.getId());
+        httpSession.setAttribute("loginUserId",login.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Operation(summary = "Регистрация тренера")
@@ -71,9 +73,9 @@ public class LoginController {
         Couch couch = couchService.addCouchs();
         httpSession.setAttribute("couchId",couch.getId());
         Login login = loginService.addLoginCouch(loginDTO.getName(),loginDTO.getPassword(),couch);
+        httpSession.setAttribute("loginCouchId",login.getId());
 
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
     @Operation(summary = "Вход пользователя")
     @PostMapping("/user/enter")
@@ -82,7 +84,9 @@ public class LoginController {
         if (login == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
         httpSession.setAttribute("userId",login.getUser().getId());
+        httpSession.setAttribute("loginUserId",login.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Operation(summary = "Вход тренера")
@@ -93,7 +97,28 @@ public class LoginController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         httpSession.setAttribute("couchId",login.getCouch().getId());
+        httpSession.setAttribute("loginCouchId",login.getId());
+
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Обновить Login у тренера")
+    @PutMapping("/couch/")
+    public ResponseEntity<Login>updateCouchLogin(@RequestBody LoginDTO loginDTO,HttpSession httpSession){
+        Integer couch_id = (Integer) httpSession.getAttribute("loginCouchId");
+        Login login = loginService.getLogin(couch_id);
+        login = loginService.updateLoginCouch(login,loginDTO);
+        return new ResponseEntity<>(login,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Обновить Login у пользователя")
+    @PutMapping("/user/")
+    public ResponseEntity<Login>updateUserLogin(@RequestBody LoginDTO loginDTO,HttpSession httpSession){
+//        Integer user_id = (Integer) httpSession.getAttribute("userId");
+        Integer login_id = (Integer)httpSession.getAttribute("loginUserId");
+        Login login = loginService.getLogin(login_id);
+        login = loginService.updateLoginCouch(login,loginDTO);
+        return new ResponseEntity<>(login,HttpStatus.OK);
     }
 
     @Operation(summary = "Вывести логин по id")
@@ -101,6 +126,18 @@ public class LoginController {
     public ResponseEntity<Login>getLogin(@PathVariable Integer id){
         Login login = loginService.getLogin(id);
         return new ResponseEntity<>(login,HttpStatus.OK);
+    }
+    @Operation(summary = "Выход из тренера")
+    @GetMapping("/couch/exit")
+    public ResponseEntity<Couch>getExitCouch(HttpSession httpSession){
+        httpSession.removeAttribute("couchId");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @Operation(summary = "Выход из пользователя")
+    @GetMapping("/user/exit")
+    public ResponseEntity<User>getExitUser(HttpSession httpSession){
+        httpSession.removeAttribute("userId");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "Удалить логин по id")

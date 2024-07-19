@@ -118,6 +118,7 @@ public class UserController {
         return new ResponseEntity<>(couches,HttpStatus.OK);
     }
 
+
 //    @Operation(summary = "Добавить user в организацию")
 //    @PostMapping("/organisation/")
 //    public ResponseEntity<User>addUserForOrganisation(@RequestBody Organisation organisation,HttpSession httpSession){

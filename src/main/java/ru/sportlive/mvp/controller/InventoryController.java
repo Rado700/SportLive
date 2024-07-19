@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.InventoryDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Inventory;
+import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.InventoryService;
+import ru.sportlive.mvp.services.UserService;
 
 import java.util.List;
 
@@ -24,15 +26,28 @@ public class InventoryController {
     @Autowired
     InventoryService inventoryService;
 
+    @Autowired
+    UserService userService;
+
     @Operation(summary = "Добавить инвентарь",description = "Добавить инвентарь для тренера ")
-    @PostMapping("/")
-    public ResponseEntity<Inventory>addInventory(@RequestBody InventoryDTO inventoryDTO, HttpSession httpSession){
+    @PostMapping("/couch")
+    public ResponseEntity<Inventory> addInventoryCouch(@RequestBody InventoryDTO inventoryDTO, HttpSession httpSession){
         Integer id = (Integer) httpSession.getAttribute("couchId");
         Couch couch = couchService.getCouch(id);
         Inventory inventory = inventoryService.addInventory (inventoryDTO.getName(),inventoryDTO.getPrice(),inventoryDTO.getType(),inventoryDTO.getSize(),couch);
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
+    @Operation(summary = "добавить инвентарь для user")
+    @PostMapping("/user/{couch_id}")
+    public ResponseEntity <List<Inventory>>addInventoryUser(@PathVariable Integer couch_id, HttpSession httpSession){
+//        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+        Integer id = (Integer) httpSession.getAttribute("userId");
+        List<Inventory>getInventory = inventoryService.getInventoryCouch(couch_id);
+        User user = userService.getUser(id);
+        User user2 = inventoryService.addInventoryToUser(getInventory,user);
+        return new ResponseEntity<>(getInventory,HttpStatus.OK);
 
+    }
     @Operation(summary = "Вывести инвентрарь по id")
     @GetMapping("/{id}")
     public ResponseEntity<Inventory>getInventoryId(@PathVariable Integer id) {

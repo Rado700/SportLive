@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.sportlive.mvp.dto.input.LoginDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.models.User;
@@ -32,7 +33,6 @@ public class LoginService {
         loginRepository.delete(login);
         return login;
     }
-
     public Login getUserLogin(Integer id){
         Optional<User> user = userRepository.findById(id);
         return user.map(User::getLogin).orElse(null);
@@ -89,5 +89,12 @@ public class LoginService {
             }
         }
         return null;
+    }
+
+    public Login updateLoginCouch(Login login, LoginDTO loginDTO){
+        login.setLogin(loginDTO.getName());
+        login.setPassword(loginDTO.getPassword());
+        loginRepository.save(login);
+        return login;
     }
 }

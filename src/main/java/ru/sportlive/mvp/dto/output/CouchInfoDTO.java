@@ -15,9 +15,13 @@ public class CouchInfoDTO {
     @Getter
     @Setter
     private String name;
+    @Getter
+    @Setter
+    private Integer balance;
 
-    public CouchInfoDTO(Integer id, String name) {
+    public CouchInfoDTO(Integer id, String name,Integer balance) {
         this.id = id;
         this.name = name;
+        this.balance = balance;
     }
 }

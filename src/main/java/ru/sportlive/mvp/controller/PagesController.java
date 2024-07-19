@@ -44,11 +44,19 @@ public class PagesController {
     }
 
     @GetMapping("/account/user/select")
-    public String organisationUser(){
+    public String organisationUser(HttpSession httpSession){
+        Integer userId = (Integer) httpSession.getAttribute("userId");
+        if (userId == null){
+            return "redirect:/";
+        }
         return "enterUserForOrganisation";
     }
     @GetMapping("/account/couch/select")
-    public String organisationCouch(){
+    public String organisationCouch(HttpSession httpSession){
+        Integer couchID = (Integer) httpSession.getAttribute("couchId");
+        if (couchID == null){
+            return "redirect:/";
+        }
         return "enterCouchForOrganisation";
     }
 }
