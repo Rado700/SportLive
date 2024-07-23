@@ -1,9 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +49,7 @@ public class LoginController {
 //    }
 
     @Operation(summary = "Регистрация пользователя")
-    @PostMapping("/user/registration")
+    @PostMapping("/user/registration/")
     public ResponseEntity<Login>addLoginUser(@RequestBody LoginDTO loginDTO, HttpSession httpSession) {
         Boolean loginOccupied = loginService.isLoginOccupiedUser(loginDTO.getName());
         if (loginOccupied){
@@ -64,7 +62,7 @@ public class LoginController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Operation(summary = "Регистрация тренера")
-    @PostMapping("/couch/registration")
+    @PostMapping("/couch/registration/")
     public ResponseEntity<Login>addLoginCouch(@RequestBody LoginDTO loginDTO, HttpSession httpSession) {
         Boolean loginOccupied = loginService.isLoginOccupiedCouch(loginDTO.getName());
         if (loginOccupied){
@@ -78,19 +76,18 @@ public class LoginController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Operation(summary = "Вход пользователя")
-    @PostMapping("/user/enter")
+    @PostMapping("/user/enter/")
     public ResponseEntity<Login>enterUser(@RequestBody LoginDTO loginDTO, HttpSession httpSession) {
         Login login = loginService.enterUser(loginDTO.getName(), loginDTO.getPassword());
         if (login == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
         httpSession.setAttribute("userId",login.getUser().getId());
         httpSession.setAttribute("loginUserId",login.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Operation(summary = "Вход тренера")
-    @PostMapping("/couch/enter")
+    @PostMapping("/couch/enter/")
     public ResponseEntity<Login>enterCouch(@RequestBody LoginDTO loginDTO,HttpSession httpSession) {
         Login login = loginService.enterCouch(loginDTO.getName(), loginDTO.getPassword());
         if (login == null){
@@ -107,17 +104,22 @@ public class LoginController {
     public ResponseEntity<Login>updateCouchLogin(@RequestBody LoginDTO loginDTO,HttpSession httpSession){
         Integer couch_id = (Integer) httpSession.getAttribute("loginCouchId");
         Login login = loginService.getLogin(couch_id);
-        login = loginService.updateLoginCouch(login,loginDTO);
+
+        login = loginService.updateLogin(login,loginDTO);
         return new ResponseEntity<>(login,HttpStatus.OK);
     }
 
     @Operation(summary = "Обновить Login у пользователя")
     @PutMapping("/user/")
-    public ResponseEntity<Login>updateUserLogin(@RequestBody LoginDTO loginDTO,HttpSession httpSession){
+    public ResponseEntity<Object>updateUserLogin(@RequestBody LoginDTO loginDTO,HttpSession httpSession){
 //        Integer user_id = (Integer) httpSession.getAttribute("userId");
         Integer login_id = (Integer)httpSession.getAttribute("loginUserId");
         Login login = loginService.getLogin(login_id);
-        login = loginService.updateLoginCouch(login,loginDTO);
+        Boolean isOccupiedLogin = loginService.isLoginOccupiedUser(loginDTO.getName());
+        if (isOccupiedLogin && !login.getLogin().equals(loginDTO.getName())){
+            return new ResponseEntity<>("Такой никнейм уже занят",HttpStatus.BAD_REQUEST);
+        }
+        login = loginService.updateLogin(login,loginDTO);
         return new ResponseEntity<>(login,HttpStatus.OK);
     }
 
@@ -127,6 +129,22 @@ public class LoginController {
         Login login = loginService.getLogin(id);
         return new ResponseEntity<>(login,HttpStatus.OK);
     }
+
+    @Operation(summary = "Вывести логин ")
+    @GetMapping("/")
+    public ResponseEntity<Object>getLogin(HttpSession httpSession){
+        Integer loginUserId = (Integer) httpSession.getAttribute("loginUserId");
+        Integer loginCouchId = (Integer) httpSession.getAttribute("loginCouchId");
+        if (loginCouchId == null && loginUserId == null){
+            return new ResponseEntity<>("Не авторизирован",HttpStatus.UNAUTHORIZED);
+        }
+        Login login = loginService.getLogin(loginUserId);
+        if (login == null){
+            login = loginService.getLogin(loginCouchId);
+        }
+        return new ResponseEntity<>(login,HttpStatus.OK);
+    }
+
     @Operation(summary = "Выход из тренера")
     @GetMapping("/couch/exit")
     public ResponseEntity<Couch>getExitCouch(HttpSession httpSession){
@@ -146,5 +164,6 @@ public class LoginController {
         Login login = loginService.deleteLogin(id);
         return new ResponseEntity<>(login , HttpStatus.OK);
     }
+
 
 }

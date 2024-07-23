@@ -71,7 +71,7 @@ public class BookingController {
         return new ResponseEntity<>(booking,HttpStatus.OK);
     }
     @Operation(summary = "Все брони пользователя")
-    @GetMapping("/getAllBookingUser")
+    @GetMapping("/getAllBookingUser/")
     public ResponseEntity<List<Booking>>getUserBooking(HttpSession httpSession){
         Integer id = (Integer) httpSession.getAttribute("userId");
         List<Booking> booking = bookingService.getUserBookings(id);
@@ -88,7 +88,7 @@ public class BookingController {
     }
 
     @Operation(summary = "Все брони тренера")
-    @GetMapping("/couchBooking")
+    @GetMapping("/couchBooking/")
     public ResponseEntity<List<BookingUserCouchDTO>>getCouchBookingBySchedule(HttpSession httpSession){
         Integer id = (Integer) httpSession.getAttribute("couchId");
         Couch couch = couchService.getCouch(id);

@@ -70,6 +70,6 @@ public class SportSection {
     }
 
     public SportSectionGetAllDTO getSportSectionAllDTO(){
-        return new SportSectionGetAllDTO(id,name,sport.getSportInfoDTO(),organisation.getOrganisationInfoDTO());
+        return new SportSectionGetAllDTO(id,name,sport.getSportInfoDTO(),organisation.getOrganisationInfoDTO(),couches.get(0).getCouchInfo());
     }
 }

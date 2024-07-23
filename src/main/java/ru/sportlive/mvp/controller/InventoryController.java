@@ -30,7 +30,7 @@ public class InventoryController {
     UserService userService;
 
     @Operation(summary = "Добавить инвентарь",description = "Добавить инвентарь для тренера ")
-    @PostMapping("/couch")
+    @PostMapping("/couch/")
     public ResponseEntity<Inventory> addInventoryCouch(@RequestBody InventoryDTO inventoryDTO, HttpSession httpSession){
         Integer id = (Integer) httpSession.getAttribute("couchId");
         Couch couch = couchService.getCouch(id);
@@ -82,7 +82,7 @@ public class InventoryController {
         return new ResponseEntity<>(inventory,HttpStatus.OK);
     }
     @Operation(summary = "Вывести весь инвентарь тренера")
-    @GetMapping("/couchInventory")
+    @GetMapping("/couchInventory/")
     public ResponseEntity<List<Inventory>>getCouchInventory(HttpSession httpSession){
         Integer id = (Integer) httpSession.getAttribute("couchId");
         List<Inventory> inventory = inventoryService.getInventoryCouch(id);

@@ -35,7 +35,7 @@ public class CouchController {
     SportSectionService sportSectionService;
 
     @Operation(summary = "Вывести всех тренеров")
-    @GetMapping("/all")
+    @GetMapping("/all/")
     public ResponseEntity<List<Couch>> getAllUsers() {
         List<Couch> getAll = couchService.getAllCouches();
         return new ResponseEntity<>(getAll, HttpStatus.OK);
@@ -71,7 +71,7 @@ public class CouchController {
         return new ResponseEntity<>(couch, HttpStatus.OK);
     }
     @Operation(summary = "Вывести тренера ")
-    @GetMapping("/getCouch")
+    @GetMapping("/getCouch/")
     public ResponseEntity<Couch> getCouchAuth(HttpSession httpSession) {
         Integer id = (Integer) httpSession.getAttribute("couchId");
         if (id == null){

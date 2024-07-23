@@ -125,4 +125,14 @@ public class SportSectionController {
         return new ResponseEntity<>(section,HttpStatus.OK);
     }
 
+    @Operation(summary = "Добавить couch в спортсекцию по id")
+    @PostMapping("/couch/{section_id}/{couch_id}")
+    public ResponseEntity<SportSection>addCouchToSportSections( @PathVariable Integer section_id, @PathVariable Integer couch_id){
+        Couch couch = couchService.getCouch(couch_id);
+        SportSection sportSection = sportSectionService.getSportSection(section_id);
+        couchService.addCouchToSportSection(sportSection,couch);
+        SportSection section = sportSectionService.getSportSection(section_id);
+        return new ResponseEntity<>(section,HttpStatus.OK);
+    }
+
 }

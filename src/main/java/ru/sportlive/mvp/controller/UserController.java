@@ -110,7 +110,7 @@ public class UserController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
     @Operation(summary = "Получить всех couches для user")
-    @GetMapping("/couch")
+    @GetMapping("/couch/")
     public ResponseEntity<List<Couch>>getUsersSportSection(HttpSession httpSession){
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = userService.getUser(userId);

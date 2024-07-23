@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.Sport;
 import ru.sportlive.mvp.models.SportSection;
 import ru.sportlive.mvp.repository.TransactionRepository;
 import ru.sportlive.mvp.repository.UserRepository;
@@ -75,10 +74,9 @@ public class UserService {
         userRepository.save(user);
         return user;
     }
-    public SportSection addUserToSportSection(SportSection sportSection, User user){
+    public void addUserToSportSection(SportSection sportSection, User user){
         user.addSportSection(sportSection);
         userRepository.save(user);
-        return sportSection;
     }
 
 

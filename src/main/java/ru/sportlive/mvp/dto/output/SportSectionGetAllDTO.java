@@ -17,10 +17,15 @@ public class SportSectionGetAllDTO {
     @Setter
     private OrganisationInfoDTO organisationInfoDTO;
 
-    public SportSectionGetAllDTO(Integer id, String name, SportInfoDTO sportInfoDTO, OrganisationInfoDTO organisationInfoDTO) {
+    @Getter
+    @Setter
+    private CouchInfoDTO couchInfoDTO;
+
+    public SportSectionGetAllDTO(Integer id, String name, SportInfoDTO sportInfoDTO, OrganisationInfoDTO organisationInfoDTO,CouchInfoDTO couchInfoDTO) {
         this.id = id;
         this.name = name;
         this.sportInfoDTO = sportInfoDTO;
         this.organisationInfoDTO = organisationInfoDTO;
+        this.couchInfoDTO = couchInfoDTO;
     }
 }

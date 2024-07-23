@@ -91,9 +91,11 @@ public class LoginService {
         return null;
     }
 
-    public Login updateLoginCouch(Login login, LoginDTO loginDTO){
+    public Login updateLogin(Login login, LoginDTO loginDTO){
         login.setLogin(loginDTO.getName());
-        login.setPassword(loginDTO.getPassword());
+        if (!loginDTO.getPassword().equals("")) {
+            login.setPassword(loginDTO.getPassword());
+        }
         loginRepository.save(login);
         return login;
     }

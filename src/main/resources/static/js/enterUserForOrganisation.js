@@ -54,7 +54,7 @@ getAllOrganisation.addEventListener('change', function () {
         .catch(error => console.error());
 })
 
-let getAllSportForOrganisation = document.getElementById("sportType")
+let getAllSportForOrganisation = document.getElementById("sportType");
 
 getAllSportForOrganisation.addEventListener('change', function () {
     getAllSportForOrganisation = document.getElementById("sportType")

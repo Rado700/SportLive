@@ -8,21 +8,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const inventoryScreen = document.getElementById('inventoryScreen');
 
     const infoScreen = document.getElementById('info-screen');
-    const statistics = document.getElementById('statistics');
+    // const statistics = document.getElementById('statistics');
     const refreshButton = document.getElementById('refresh-data');
 
 
-    const selectOrganization = document.getElementById('selectOrganization');
-    const addSport = document.getElementById('addSport');
-    const addCouch = document.getElementById('addCouch');
+    // const selectOrganization = document.getElementById('selectOrganization');
+    // const addSport = document.getElementById('addSport');
+    // const addCouch = document.getElementById('addCouch');
 
     const trainerInfo = document.getElementById('trainer-info');
     const profileInfo = document.getElementById('profile-info');
     const equipmentInfo = document.getElementById('equipment-info');
 
     const showScreen = (screen) => {
-        trainingScreen.classList.add('hidden');
-        inventoryScreen.classList.add('hidden');
+        // trainingScreen.classList.add('hidden');
+        // inventoryScreen.classList.add('hidden');
+        infoScreen.classList.add('hidden');
         screen.classList.remove('hidden');
     };
 
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             size: formData.get('size'),
         }
 
-        fetch('/api/inventory/', {
+        fetch('/api/inventory/couch/', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(profileDate)
@@ -77,10 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('statistics').addEventListener('click', () => {
-        showScreen(infoScreen)
+        showScreen(infoScreen);
 
         const fetchData = () => {
-            fetch('/api/inventory/couchInventory')
+            fetch('/api/inventory/couchInventory/')
                 .then(response => response.json())
                 .then(data => {
                     equipmentInfo.innerHTML = JSON.stringify(data, null, 2);
@@ -89,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     equipmentInfo.innerHTML = 'Ошибка загрузки данных инвентаря: ' + error;
                 });
 
-            fetch('/api/booking/couchBooking')
+            fetch('/api/booking/couchBooking/')
                 .then(response => response.json())
                 .then(data => {
                     trainerInfo.innerHTML = JSON.stringify(data, null, 2);
@@ -98,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     trainerInfo.innerHTML = 'Ошибка загрузки данных расписания: ' + error;
                 });
 
-            fetch('/api/couch/getCouch')
+            fetch('/api/couch/getCouch/')
                 .then(response => response.json())
                 .then(data => {
                     profileInfo.innerHTML = JSON.stringify(data, null, 2);
@@ -118,8 +119,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
+    // // Select Organization
+    // document.getElementById('selectOrganization').addEventListener('click', function () {
+    //     const orgName = prompt("Введите название организации:");
+    //     if (orgName) {
+    //         fetch(`${apiUrl}/organisation-controller`, {
+    //             method: 'POST',
+    //             headers: {'Content-Type': 'application/json'},
+    //             body: JSON.stringify({name: orgName})
+    //         }).then(response => response.json())
+    //             .then(data => alert('Организация выбрана: ' + JSON.stringify(data)))
+    //             .catch(error => console.error('Ошибка:', error));
+    //     }
+    // });
 
-// Add Exercises
+    // // Add Sport
+    // document.getElementById('addSport').addEventListener('click', function () {
+    //     const sportName = prompt("Введите название вида спорта:");
+    //     if (sportName) {
+    //         fetch(`${apiUrl}/sport-controller`, {
+    //             method: 'POST',
+    //             headers: {'Content-Type': 'application/json'},
+    //             body: JSON.stringify({name: sportName})
+    //         }).then(response => response.json())
+    //             .then(data => {
+    //                 alert('Вид спорта добавлен: ' + JSON.stringify(data));
+    //                 fetch(`${apiUrl}/booking-controller`)
+    //                     .then(res => res.json())
+    //                     .then(bookings => alert(`Общее количество брони: ${bookings.length}`));
+    //             })
+    //             .catch(error => console.error('Ошибка:', error));
+    //     }
+    // });
+
+
+    // Add Exercises
     document.getElementById('addExercises').addEventListener('click', function () {
         const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
         let exerciseInputs = '';
@@ -151,51 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.hide();
             })
             .catch(error => console.error('Ошибка:', error));
-    });
-
-    // Select Organization
-    document.getElementById('selectOrganization').addEventListener('click', function () {
-        const orgName = prompt("Введите название организации:");
-        if (orgName) {
-            fetch(`${apiUrl}/organisation-controller`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({name: orgName})
-            }).then(response => response.json())
-                .then(data => alert('Организация выбрана: ' + JSON.stringify(data)))
-                .catch(error => console.error('Ошибка:', error));
-        }
-    });
-
-    // Add Sport
-    document.getElementById('addSport').addEventListener('click', function () {
-        const sportName = prompt("Введите название вида спорта:");
-        if (sportName) {
-            fetch(`${apiUrl}/sport-controller`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({name: sportName})
-            }).then(response => response.json())
-                .then(data => {
-                    alert('Вид спорта добавлен: ' + JSON.stringify(data));
-                    fetch(`${apiUrl}/booking-controller`)
-                        .then(res => res.json())
-                        .then(bookings => alert(`Общее количество брони: ${bookings.length}`));
-                })
-                .catch(error => console.error('Ошибка:', error));
-        }
-    });
-
-// View Statistics
-    document.getElementById('statistics').addEventListener('click', function () {
-        Promise.all([
-            fetch(`${apiUrl}/user-controller`).then(res => res.json()),
-            fetch(`${apiUrl}/inventory-controller`).then(res => res.json()),
-            fetch(`${apiUrl}/booking-controller`).then(res => res.json())
-        ]).then(data => {
-            const [users, inventory, bookings] = data;
-            alert(`Статистика:\nПользователи: ${users.length}\nИнвентарь: ${inventory.length}\nБрони: ${bookings.length}`);
-        }).catch(error => console.error('Ошибка:', error));
     });
 
 
@@ -267,7 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
-function exit(){
+
+function exit() {
 
     fetch("/api/login/couch/exit")
         .then(response => {

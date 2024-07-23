@@ -26,12 +26,11 @@ public class BalanceController {
     UserService userService;
     @Autowired
     TransactionService transactionService;
-
     @Autowired
     CouchService couchService;
 
     @Operation(summary = "Добавить депозит на счет для пользователя",description = "Ввести сумму пополнения")
-    @PostMapping("/user/deposit")
+    @PostMapping("/user/deposit/")
     public ResponseEntity<Object> deposit (@RequestBody UserPayDTO userPayDTO,HttpSession httpSession) {
         Integer user_id =(Integer) httpSession.getAttribute("userId");
         if (user_id == null){
@@ -43,7 +42,7 @@ public class BalanceController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
     @Operation(summary = "Снять со счета",description = "Снять со счета у пользователя, ввести сумму снятия")
-    @PostMapping("/user/withdraw")
+    @PostMapping("/user/withdraw/")
     public ResponseEntity<Object> withdrawBalanceUser (@RequestBody UserPayDTO userPayDTO,HttpSession httpSession) {
         Integer user_id = (Integer)httpSession.getAttribute("userId");
         if (user_id == null){
@@ -64,7 +63,7 @@ public class BalanceController {
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
     @Operation(summary = "Выводит баланс пользователя")
-    @GetMapping("/balanceUser")
+    @GetMapping("/balanceUser/")
     public ResponseEntity<Integer> getUserBalance(HttpSession httpSession) {
         Integer user_id = (Integer) httpSession.getAttribute("userId");
         Integer userBalance = userService.getUserBalance(user_id);
@@ -79,7 +78,7 @@ public class BalanceController {
     }
 
     @Operation(summary = "Выводит транзакцию пользователя")
-    @GetMapping("/transactionUser")
+    @GetMapping("/transactionUser/")
     public ResponseEntity<Transaction>getTransaction(HttpSession httpSession){
         Integer id = (Integer) httpSession.getAttribute("userId");
         Transaction transaction = transactionService.getTransaction(id);
@@ -119,7 +118,7 @@ public class BalanceController {
     }
 
     @Operation(summary = "Добавить на счет для тренера",description = "Внести сумму пополнения")
-    @PostMapping("/couch/deposit")
+    @PostMapping("/couch/deposit/")
     public ResponseEntity<Object>addBalanceCouch(@RequestBody UserPayDTO userPayDTO, HttpSession httpSession){
         Integer couch_id = (Integer) httpSession.getAttribute("couchId");
         if (couch_id == null){
@@ -132,7 +131,7 @@ public class BalanceController {
     }
 
     @Operation(summary = "Снять со счета у тренера")
-    @PostMapping("/couch/withdraw")
+    @PostMapping("/couch/withdraw/")
     public ResponseEntity<Object>withdrawBalanceCouch(@RequestBody UserPayDTO userPayDTO,HttpSession httpSession){
         Integer couch_id = (Integer) httpSession.getAttribute("couchId");
         if (couch_id == null){
