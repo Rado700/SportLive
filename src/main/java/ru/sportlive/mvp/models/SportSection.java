@@ -7,11 +7,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.sportlive.mvp.dto.output.CouchInfoDTO;
 import ru.sportlive.mvp.dto.output.SportSectionGetAllDTO;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
@@ -70,6 +73,7 @@ public class SportSection {
     }
 
     public SportSectionGetAllDTO getSportSectionAllDTO(){
-        return new SportSectionGetAllDTO(id,name,sport.getSportInfoDTO(),organisation.getOrganisationInfoDTO(),couches.get(0).getCouchInfo());
+        List<CouchInfoDTO>newListCouches = couches.stream().map(Couch::getCouchInfo).toList();
+        return new SportSectionGetAllDTO(id,name,sport.getSportInfoDTO(),organisation.getOrganisationInfoDTO(),newListCouches);
     }
 }

@@ -143,6 +143,7 @@ function next() {
                             throw new Error("Нет такого тренера")
                         }
                         sportSections = true;
+                        window.location.href = '/account';
                         return response;
                     })
             })
@@ -165,12 +166,12 @@ function next() {
                     throw new Error("Нет такого тренера")
                 }
                 couchSections = true;
+                window.location.href = '/account';
                 return response;
             })
     }else {
         $("#confirmationModal").modal('show');
         return;
     }
-    window.location.href = '/account';
 }
 

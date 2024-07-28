@@ -2,7 +2,9 @@ let organisations = false;
 let sports = false;
 
 document.addEventListener('DOMContentLoaded', function () {
+
     const url = "/api/organisation/";
+
     function setOrganisation(data) {
         const getAllOrganisation = document.getElementById("organisationType");
         data.forEach(item => {
@@ -57,18 +59,33 @@ function skip() {
     window.location.href = '/couches';
 }
 
-function closeConfirmationModal(){
+function closeConfirmationModal() {
     const hidden = document.getElementById("confirmationModal")
     $("#confirmationModal").modal('hide');
 }
 
 function next() {
-    const getAllSportForOrganisation = document.getElementById("sportType")
+    const getAllSportForOrganisation = document.getElementById("sportType");
     const getAllOrganisation = document.getElementById("organisationType");
     const sportId = getAllSportForOrganisation.value;
     const organisationId = getAllOrganisation.value;
 
+    const couchName = document.getElementById("name").value;
 
+
+    const urlCouch = "/api/couch/";
+    fetch(urlCouch, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({name: couchName})
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error("Нужно зарегестрировать тренера")
+        }
+        return response;
+    })
 
     const url = `/api/sport-section/sport/organisation/${sportId}/${organisationId}`;
     fetch(url)
@@ -80,24 +97,26 @@ function next() {
         })
 
         .then(data => {
-                console.log(data)
-                const sportSectionId = data.id;
-                fetch("/api/sport-section/couch/" + sportSectionId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Нет такого тренера")
-                        }
-                        organisations = true;
-                        return response;
-
-                    })
+            console.log(data)
+            const sportSectionId = data.id;
+            fetch("/api/sport-section/couch/" + sportSectionId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
             })
-                .catch(error => console.error(error));
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Нет такого тренера")
+                    }
+                    organisations = true;
+                    window.location.href = '/couches';
+
+                    return response;
+
+                })
+        })
+        .catch(error => console.error(error));
 
 
     if (organisationId !== "organisation" && organisations === false) {
@@ -112,15 +131,15 @@ function next() {
                 throw new Error("Неверная организация")
             }
             organisations = true;
+            window.location.href = '/couches';
             return response.json();
         })
             .catch(error => console.error(error));
-    }else {
+    } else {
         $("#confirmationModal").modal('show');
         return;
     }
 
-    window.location.href = '/couches';
 }
 
 

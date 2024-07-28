@@ -12,7 +12,7 @@
         <h1>Главное окно</h1>
         <ul>
             <li>
-                <button id="add-activity">Добавить занятие</button>
+                <button id="add-activity">Записаться на занятие</button>
             </li>
             <li>
                 <button id="choose-trainer">Выбор тренера</button>
@@ -32,14 +32,55 @@
         <button id="info">Информация</button>
     </div>
 
+
+    <div id="recordForSection" class="hidden">
+        <h1>Запись на тренеровку</h1>
+        <div class="dropdown">
+            <label for="sports-section">Выберите секцию:</label>
+            <select id="sports-section" class="form-select">
+                <option value="SportSection" disabled selected hidden>Спорт</option>
+            </select>
+        </div>
+
+        <div class="dropdown">
+            <label for="coach">Выберите тренера:</label>
+            <select id="coach" class="form-select">
+                <option value="couch" disabled selected hidden>Тренер</option>
+            </select>
+        </div>
+
+
+        <div id="calendar-container">
+            <label for="month">Выберите месяц:</label>
+            <select id="month">
+                <option value="0">Январь</option>
+                <option value="1">Февраль</option>
+                <option value="2">Март</option>
+                <option value="3">Апрель</option>
+                <option value="4">Май</option>
+                <option value="5">Июнь</option>
+                <option value="6">Июль</option>
+                <option value="7">Август</option>
+                <option value="8">Сентябрь</option>
+                <option value="9">Октябрь</option>
+                <option value="10">Ноябрь</option>
+                <option value="11">Декабрь</option>
+            </select>
+        </div>
+        <div class="calendar" id="calendar"></div>
+        <button id="bookTraining">Записаться на тренировку</button>
+        <button id="back-to-main-record">Назад</button>
+    </div>
+
+
     <div id="profile-screen" class="hidden">
         <h1>Профиль</h1>
         <form id="profile-form">
-            <label for ="login">Логин:</label>
-            <input type="text" id="login" name = "login">
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login">
             <p id="newLogin" style="display:none; color:red">Такой никнейм уже занят</p>
-            <label for ="password">Пароль:</label>
-            <input type="password" id="password" name = "password" placeholder="введите обновленный пароль">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" placeholder="введите обновленный пароль">
             <label for="firstName">Имя:</label>
             <input type="text" id="firstName" name="firstName">
             <label for="lastName">Фамилия:</label>

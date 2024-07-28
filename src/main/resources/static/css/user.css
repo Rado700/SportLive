@@ -22,6 +22,24 @@ body {
     text-align: center;
 }
 
+#calendar-container {
+    margin-top: 20px;
+}
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+.calendar button {
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+.calendar button.selected {
+    background-color: #add8e6;
+}
+
 .screen {
     display: none;
 }
