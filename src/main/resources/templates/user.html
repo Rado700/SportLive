@@ -18,7 +18,7 @@
                 <button id="choose-trainer">Выбор тренера</button>
             </li>
             <li>
-                <button id="add-equipment" class="form-label">Добавить инвентарь:</button>
+                <button id="add-equipment">Добавить инвентарь:</button>
             </li>
             <li>
                 <button id="add-balance">Пополнить баланс</button>
@@ -32,6 +32,23 @@
         <button id="info">Информация</button>
     </div>
 
+
+    <div id="recordForEquipment" class="hidden">
+
+        <div class="dropdown">
+            <label for="coachForInventory">Выберите тренера:</label>
+            <select id="coachForInventory" class="form-select">
+                <option value="couch" disabled selected hidden>Тренер</option>
+            </select>
+
+            <div id="getAllEquipment" class="form-select" style="display: none">
+                <div>Выбрать инвентарь:</div>
+                <div id="equipmentList"></div>
+            </div>
+        </div>
+
+
+    </div>
 
     <div id="recordForSection" class="hidden">
         <h1>Запись на тренеровку</h1>
@@ -96,7 +113,8 @@
 
     <div id="info-screen" class="hidden">
         <h1>Информация</h1>
-        <p id="trainer-info">Осталось тренировок с тренером: <span>0</span></p>
+        <p id="trainer-info">Данные о тренере: <span></span></p>
+        <p id="trainer-rest">Осталось тренировок с тренером: <span>0</span></p>
         <p id="profile-info">Ваши данные: <span></span></p>
         <p id="equipment-info">Общее количество инвентаря: <span>0</span></p>
         <button type="submit" class="btn btn-secondary" id="exit" onclick="exit()">Выход</button>

@@ -15,6 +15,7 @@ import ru.sportlive.mvp.services.InventoryService;
 import ru.sportlive.mvp.services.UserService;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/inventory")
@@ -38,14 +39,13 @@ public class InventoryController {
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
     @Operation(summary = "добавить инвентарь для user")
-    @PostMapping("/user/{couch_id}")
-    public ResponseEntity <List<Inventory>>addInventoryUser(@PathVariable Integer couch_id, HttpSession httpSession){
-//        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+    @PostMapping("/user/{inventory_id}")
+    public ResponseEntity <Inventory>addInventoryUser(@PathVariable Integer inventory_id, HttpSession httpSession){
+        Inventory inventory = inventoryService.getInventory(inventory_id);
         Integer id = (Integer) httpSession.getAttribute("userId");
-        List<Inventory>getInventory = inventoryService.getInventoryCouch(couch_id);
         User user = userService.getUser(id);
-        User user2 = inventoryService.addInventoryToUser(getInventory,user);
-        return new ResponseEntity<>(getInventory,HttpStatus.OK);
+        User user2 = inventoryService.addInventoryToUser(inventory,user);
+        return new ResponseEntity<>(inventory,HttpStatus.OK);
 
     }
     @Operation(summary = "Вывести инвентрарь по id")
@@ -96,5 +96,12 @@ public class InventoryController {
         Inventory inventory = inventoryService.getInventory(id);
         inventory = inventoryService.updateToInventory(inventory,inventoryDTO);
         return new ResponseEntity<>(inventory,HttpStatus.OK);
+    }
+    @Operation(summary = "Вывести весь инвентарь пользователя")
+    @GetMapping("/userInventory/")
+    public ResponseEntity<Set<Inventory>>getAllInventoryUser(HttpSession httpSession){
+        Integer user_id = (Integer) httpSession.getAttribute("userId");
+        Set<Inventory> inventory = inventoryService.getInventoryUser(user_id);
+        return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
 }

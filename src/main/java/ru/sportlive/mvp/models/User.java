@@ -102,8 +102,9 @@ public class User {
     public void addCouch(Couch couch){
         this.selectedCouches.add(couch);
     }
-    public void addInventoryToUser(List<Inventory> inventory){
-        this.selectedInventory.add((Inventory) inventory);
+    public void addInventoryToUser(Inventory inventory){
+        this.selectedInventory.add(inventory);
     }
+
 
 }

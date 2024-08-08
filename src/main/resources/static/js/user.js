@@ -4,12 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoScreen = document.getElementById('info-screen');
     const stopwatchScreen = document.getElementById('stopwatch-screen');
     const recordForSection = document.getElementById('recordForSection');
+    const recordForEquipment = document.getElementById('recordForEquipment');
+    const chooseTrainer = document.getElementById('choose-trainer');
 
 
     const profileForm = document.getElementById('profile-form');
-    const profileInfo = document.getElementById('profile-info span');
-    const trainerInfo = document.getElementById('trainer-info span');
-    const equipmentInfo = document.getElementById('equipment-info span');
+    const profileInfo = document.getElementById('profile-info');
+    const trainerInfo = document.getElementById('trainer-info');
+    const trainerRest = document.getElementById('trainer-rest');
+    const equipmentInfo = document.getElementById('equipment-info');
 
     const addEquipment = document.getElementById('add-equipment');
     const addActivity = document.getElementById('add-activity');
@@ -27,7 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const allSportSection = document.getElementById("sports-section");
     const allCouchForSportSection = document.getElementById("coach");
+    const coachForInventory = document.getElementById("coachForInventory");
 
+
+    const getAllEquipment = document.getElementById('getAllEquipment')
 
     const stopwatchDisplay = document.getElementById('stopwatch-display');
     let stopwatchInterval;
@@ -43,9 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
         infoScreen.classList.add('hidden');
         stopwatchScreen.classList.add('hidden');
         recordForSection.classList.add('hidden');
+        recordForEquipment.classList.add('hidden');
         screen.classList.remove('hidden');
     };
 
+    // Отображение Данных пользователя
     document.getElementById('profile').addEventListener('click', () => {
         showScreen(profileScreen);
         fetch("/api/user/")
@@ -73,18 +81,34 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
     });
-
+    // Отображение Общей информаций
     document.getElementById('info').addEventListener('click', () => {
         showScreen(infoScreen);
 
 
-        fetch('/api/info/')
+        fetch('/api/user/')
             .then(response => response.json())
             .then(data => {
-                profileInfo.textContent = `${data.name} ${data.surname}, ${data.height} cm, ${data.weight} kg (Дата обновления: ${data.date})`;
-                trainerInfo.textContent = data.remainingSessions;
-                equipmentInfo.textContent = data.equipmentCount;
+                profileInfo.textContent = `${data.name} ${data.surname}, ${data.height} cm, ${data.weight} kg `;
             });
+
+        fetch('/api/user/couch/', {
+            method: 'GET',
+            headers: {'Content-type': 'application/json'},
+        })
+            .then(response => response.json())
+            .then(data => {
+                trainerInfo.innerHTML = JSON.stringify(data,null,2)
+            });
+        fetch('/api/inventory/userInventory/', {
+            method: 'GET',
+            headers: {'Content-type': 'application/json'},
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                equipmentInfo.innerHTML = JSON.stringify(data, null, 2);
+            })
     });
     // ЗАПИСЬ НА ТРЕНЕРОВКУ
 
@@ -127,49 +151,131 @@ document.addEventListener('DOMContentLoaded', () => {
             })
     })
 
-    addEquipment.addEventListener('submit', () => {
+    // Добавление инвентаря для пользователя
 
-        const url = "/api/inventory/couchInventory/"
+
+    addEquipment.addEventListener('click', () => {
+        showScreen(recordForEquipment)
+
+        const url = "/api/user/"
         fetch(url)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Нету такого инвентаря тренера")
+                    throw new Error("Не авторизован")
                 }
                 return response.json();
             })
             .then(data => {
-                function setEquipment(data) {
-                    const getAllEquipment = document.getElementById("add-equipment");
-                    data.forEach(item => {
-                        const option = document.createElement("option");
-                        option.value = item.id;
-                        option.textContent = item.name;
-                        option.textContent = item.price;
-                        option.textContent = item.size;
-                        option.textContent = item.type;
-                        getAllEquipment.appendChild(option);
+                const coachForInventoryDB = data.selectedCouches;
+                coachForInventory.innerHTML = "<option value=\"couch\"  disabled selected hidden>Тренер</option>";
+                if (coachForInventoryDB === []) {
+                    alert("notCouches");
+                }
+                coachForInventoryDB.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.name;
+                    coachForInventory.appendChild(option);
+                })
+
+            });
+    });
+
+
+    document.getElementById("coachForInventory").addEventListener("change", function () {
+        fetch("/api/inventory/couch/" + this.value, {
+            method: "GET",
+            headers: {'Content-type': 'application/json'},
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Неверная организация");
+                }
+                return response.json();
+            })
+            .then(data => displayEquipment(data))
+            .catch(error => console.error(error));
+    });
+
+    function displayEquipment(equipmentList) {
+        const container = document.getElementById("equipmentList");
+        container.innerHTML = ''; // Clear previous content
+
+        if (equipmentList.length === 0) {
+            container.innerHTML = '<p>No equipment available.</p>';
+            return;
+        }
+
+        equipmentList.forEach(equipment => {
+            const equipmentDiv = document.createElement("div");
+            equipmentDiv.classList.add("equipment-item");
+
+            const name = document.createElement("h3");
+            name.textContent = equipment.name;
+            equipmentDiv.appendChild(name);
+
+            const type = document.createElement("p");
+            type.textContent = `Type: ${equipment.type}`;
+            equipmentDiv.appendChild(type);
+
+            const size = document.createElement("p");
+            size.textContent = `Size: ${equipment.size}`;
+            equipmentDiv.appendChild(size);
+
+            const price = document.createElement("p");
+            price.textContent = `Price: ${equipment.price} RUB`;
+            equipmentDiv.appendChild(price);
+
+            const selectButton = document.createElement("button");
+            selectButton.textContent = "Выбрать";
+            selectButton.addEventListener("click", () => selectEquipment(equipment.id, equipment.price, equipment.name));
+            equipmentDiv.appendChild(selectButton);
+
+            container.appendChild(equipmentDiv);
+        });
+
+        document.getElementById("getAllEquipment").style.display = "block";
+    }
+
+    function selectEquipment(id, price, name) {
+        const couch_id = coachForInventory.value;
+
+        fetch("api/balance/transfer/user/couch/" + couch_id, {
+            method: "POST",
+            headers: {"Content-type": "application/json"},
+            body: JSON.stringify({sum: price})
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        alert(text);
+                        throw new Error(text);
+                    });
+                }
+                return response.json();
+
+            }).then(data => {
+            console.log("Selected equipment ID:", id);
+            const url = "api/inventory/user/" + id
+            fetch(url, {
+                method: "POST",
+                headers: {"Content-type": "application/json"}
+            }).then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        alert(text);
+                        throw new Error(text);
                     })
                 }
+                alert("Было куплено " + name + " сумма перевода " + price);
 
-                const getAllEquipment = document.getElementById("add-equipment")
-                const equipmentId = getAllEquipment.value
-
-                fetch("api/inventory/couch/" + equipmentId)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Неверная организация")
-                        }
-                        return response.json();
-                    })
-                    .then(data => setEquipment(data))
-                    .catch(error => console.error(error));
+                return response.json();
             })
-    });
+        })
+    }
 
 
-    document.getElementById('stopwatch').addEventListener('click', () => {
-        showScreen(stopwatchScreen);
-    });
+    //Обновление данных у пользователя
 
     profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -219,6 +325,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
+    //ТАЙМЕР
+
+    document.getElementById('stopwatch').addEventListener('click', () => {
+        showScreen(stopwatchScreen);
+    });
+
     // Stopwatch functionality
     document.getElementById('start-stopwatch').addEventListener('click', () => {
         if (stopwatchInterval) clearInterval(stopwatchInterval);
@@ -259,6 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     });
 
+    //....
     document.getElementById('save-notes').addEventListener('click', () => {
         const notes = document.getElementById('notes').value;
         // Send notes to backend
@@ -310,7 +423,7 @@ function exit() {
         }).catch(error => console.error('Error:', error))
 }
 
-document.getElementById("month").addEventListener('change',function (){
+document.getElementById("month").addEventListener('change', function () {
     generateCalendar(this.value);
 })
 
@@ -318,8 +431,8 @@ function generateCalendar(month) {
 
     const calendar = document.getElementById('calendar');
     calendar.innerHTML = '';
-    let weekDays = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
-    for (let i = 0; i < 7; i++){
+    let weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+    for (let i = 0; i < 7; i++) {
         const emptySlot = document.createElement('div');
         emptySlot.textContent = weekDays[i];
         calendar.appendChild(emptySlot);
@@ -327,8 +440,8 @@ function generateCalendar(month) {
     const date = new Date();
     date.setMonth(month);
     date.setDate(1);
-    let firstDay = date.getDay()-1;
-    if (firstDay < 0){
+    let firstDay = date.getDay() - 1;
+    if (firstDay < 0) {
         firstDay = 6;
     }
     const year = date.getFullYear();

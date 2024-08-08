@@ -57,9 +57,14 @@ public class InventoryService {
         inventoryRepository.save(inventory);
         return inventory;
     }
-    public User addInventoryToUser(List<Inventory> getInventory, User user) {
+    public User addInventoryToUser(Inventory getInventory, User user) {
        user.addInventoryToUser(getInventory);
        userRepository.save(user);
        return user;
+    }
+
+    public Set<Inventory>getInventoryUser(Integer user_id){
+        Optional<User>user = userRepository.findById(user_id);
+        return user.map(User::getSelectedInventory).orElse(null);
     }
 }
