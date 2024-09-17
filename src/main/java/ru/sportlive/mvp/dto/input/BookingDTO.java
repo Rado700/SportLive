@@ -7,8 +7,10 @@ public class BookingDTO {
 
     private Integer schedule_id;
 
-    public BookingDTO( Integer schedule_id) {
+    public BookingDTO() {
+    }
 
+    public BookingDTO(Integer schedule_id) {
         this.schedule_id = schedule_id;
     }
 

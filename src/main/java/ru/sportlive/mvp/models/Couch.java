@@ -30,6 +30,14 @@ public class Couch {
 
     @Getter
     @Setter
+    private String experience;
+
+    @Getter
+    @Setter
+    private String photo;
+
+    @Getter
+    @Setter
     @JsonManagedReference
     @OneToOne(mappedBy = "couch",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Login login;
@@ -86,12 +94,18 @@ public class Couch {
     public Couch() {
     }
 
-    public Couch(String name, List<SportSection> selectedSportSections) {
+    public Couch(String name) {
+        this.name = name;
+    }
+
+    public Couch(String name, List<SportSection> selectedSportSections, String experience) {
         this.name = name;
         this.selectedSportSections = selectedSportSections;
+        this.experience = experience;
         this.balance = 0;
     }
+
     public CouchInfoDTO getCouchInfo(){
-        return new CouchInfoDTO(id,name,balance);
+        return new CouchInfoDTO(id,name,balance,experience,photo);
     }
 }

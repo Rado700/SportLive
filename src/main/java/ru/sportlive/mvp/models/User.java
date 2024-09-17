@@ -102,8 +102,15 @@ public class User {
     public void addCouch(Couch couch){
         this.selectedCouches.add(couch);
     }
+    public void deleteCouchForUser(Couch couch){
+        this.selectedCouches.remove(couch);
+    }
     public void addInventoryToUser(Inventory inventory){
         this.selectedInventory.add(inventory);
+    }
+
+    public boolean getCouchEquals(Couch couch){
+        return this.selectedCouches.contains(couch);
     }
 
 

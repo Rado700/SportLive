@@ -13,9 +13,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +31,7 @@ public class UserControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
 //
 //    @BeforeEach
 //    public void setup() {
@@ -61,9 +65,11 @@ public class UserControllerTest {
 //        MvcResult result= mockMvc.perform(get("/api/user/all"))
 //                .andExpect(status().isOk())
 //               .andReturn();
-//        String jsonResponse = result.getResponse().getContentAsString();
+//        String jsonResponse = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+//        assertTrue(jsonResponse.contains("\"name\":\"Антон\""),"Не найдено имя Антон");
+
 //        List<User> usersResponse = objectMapper.readValue(jsonResponse, new TypeReference<List<User>>() {});
-//        assertTrue(usersResponse.stream().allMatch(u -> u.getName().equals("Anton")));
 //        assertTrue(usersResponse.stream().allMatch(u -> u.getName().equals("Sergei")));
     }
+
 }

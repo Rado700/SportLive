@@ -33,6 +33,19 @@
     </div>
 
 
+    <div id="changeToCoach" class="hidden">
+        <div class="dropdown">
+            <label for="getAllCoaches">Мои тренера: </label>
+<!--            <select id="coachForUser" class="form-select">-->
+<!--                <option value="coachForUser" disabled selected hidden></option>-->
+<!--            </select>-->
+            <div id="getAllCoaches"></div>
+            <!--<button type="submit" class="btn btn-primary" id ="enterForCoach">Выбрать</button>-->
+            <button type="submit" class="btn btn-secondary" id="change" onclick="change()">Добавить нового тренера</button>
+        </div>
+    </div>
+
+
     <div id="recordForEquipment" class="hidden">
 
         <div class="dropdown">
@@ -46,25 +59,29 @@
                 <div id="equipmentList"></div>
             </div>
         </div>
-
-
     </div>
 
     <div id="recordForSection" class="hidden">
         <h1>Запись на тренеровку</h1>
         <div class="dropdown">
             <label for="sports-section">Выберите секцию:</label>
-            <select id="sports-section" class="form-select">
-                <option value="SportSection" disabled selected hidden>Спорт</option>
+            <select id="sports-section" class="form-select" onchange="getSchedule()">
+                <option value="" disabled selected hidden>Спорт</option>
             </select>
         </div>
 
         <div class="dropdown">
             <label for="coach">Выберите тренера:</label>
-            <select id="coach" class="form-select">
-                <option value="couch" disabled selected hidden>Тренер</option>
+            <select id="coach" class="form-select" onchange="getSchedule()">
+                <option value="" disabled selected hidden>Тренер</option>
             </select>
         </div>
+
+        <p>Выбрите тип тренировки</p>
+            <input type="radio" id="allTraining" name="training_type" value="general">
+            <label for="allTraining">Общие тренировки</label><br>
+            <input type="radio" id="oneTraining" name="training_type" value="individual">
+            <label for="oneTraining">Индивидуальные тренировки</label><br>
 
 
         <div id="calendar-container">
@@ -85,7 +102,6 @@
             </select>
         </div>
         <div class="calendar" id="calendar"></div>
-        <button id="bookTraining">Записаться на тренировку</button>
         <button id="back-to-main-record">Назад</button>
     </div>
 

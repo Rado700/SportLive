@@ -100,15 +100,26 @@ public class UserController {
         List<User> users = section.getUsers();
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
-    @Operation(summary = "Добавить user к couch")
+    @Operation(summary = "Добавить couch к user")
     @PostMapping("/couch/{couch_id}")
-    public ResponseEntity<User>addUserForCouch(@PathVariable Integer couch_id,HttpSession httpSession){
+    public ResponseEntity<User>addUserForCouch(@PathVariable Integer couch_id,HttpSession httpSession) throws Exception {
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = userService.getUser(userId);
         Couch couch = couchService.getCouch(couch_id);
         userService.addUserToCouch(user,couch);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
+
+    @Operation(summary = "Удалить тренера у user")
+    @DeleteMapping("/couch/{couch_id}")
+    public ResponseEntity<Couch>deleteCouchForUser(@PathVariable Integer couch_id ,HttpSession httpSession){
+        Couch couch = couchService.getCouch(couch_id);
+        Integer user_id = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(user_id);
+        userService.deleteCouchForUser(couch,user);
+        return new ResponseEntity<>(couch,HttpStatus.OK);
+    }
+
     @Operation(summary = "Получить всех couches для user")
     @GetMapping("/couch/")
     public ResponseEntity<List<Couch>>getUsersSportSection(HttpSession httpSession){

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.dto.input.CouchOrganisationDTO;
 import ru.sportlive.mvp.models.Couch;
@@ -17,11 +18,15 @@ import ru.sportlive.mvp.services.OrganisationService;
 import ru.sportlive.mvp.services.SportSectionService;
 import ru.sportlive.mvp.services.SportService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/couch")
+@RequestMapping("/api/couch/")
 public class CouchController {
     @Autowired
     CouchService couchService;
@@ -34,6 +39,36 @@ public class CouchController {
     @Autowired
     SportSectionService sportSectionService;
 
+    private static String UPLOADED_FOLDER = "/static/coach/photo/";
+
+    //   consumes = "multipart/form-data"
+    @PostMapping("/")
+    public ResponseEntity<Couch> addCouch(
+            @RequestParam("name") String name,
+            @RequestParam("experience") String experience,
+            @RequestParam("photo") MultipartFile photo,
+            HttpSession httpSession) throws IOException {
+
+
+        Couch couch = couchService.addCouch(name, new ArrayList<>(), experience);
+        couch = couchService.addCouchPhoto(couch, photo);
+        httpSession.setAttribute("couchId", couch.getId());
+        return new ResponseEntity<>(couch, HttpStatus.OK);
+
+    }
+
+//    @Operation(summary = "Добавить тренера", description = "Добавть тренера и зарегестировать на организацию")
+//    @PostMapping("/")
+//    public ResponseEntity<Couch> addCouch(@RequestBody CouchDTO couchDTO, HttpSession httpSession) {
+//        try {
+//            Couch couch = couchService.addCouch(couchDTO.getName(), new ArrayList<>(), couchDTO.getExperience(),couchDTO.getPhoto());
+//            httpSession.setAttribute("couchId",couch.getId());
+//            return new ResponseEntity<>(couch, HttpStatus.OK);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
+
     @Operation(summary = "Вывести всех тренеров")
     @GetMapping("/all/")
     public ResponseEntity<List<Couch>> getAllUsers() {
@@ -42,17 +77,6 @@ public class CouchController {
 
     }
 
-    @Operation(summary = "Добавить тренера", description = "Добавть тренера и зарегестировать на организацию")
-    @PostMapping("/")
-    public ResponseEntity<Couch> addCouch(@RequestBody CouchDTO couchDTO, HttpSession httpSession) {
-        try {
-            Couch couch = couchService.addCouch(couchDTO.getName(), new ArrayList<>());
-            httpSession.setAttribute("couchId",couch.getId());
-            return new ResponseEntity<>(couch, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
 
     @Operation(summary = "Удалить тренера по id")
     @DeleteMapping("/{couchId}")
@@ -86,6 +110,16 @@ public class CouchController {
         Organisation organisation = organisationService.getOrganisation(id);
         List<Couch>getAll = organisation.getCouches() ;
         return new ResponseEntity<>(getAll,HttpStatus.OK);
+    }
+    @Operation(summary = "Вывести спортивную секцию у тренера")
+    @GetMapping("/sport-section/")
+    public ResponseEntity<Object>allCouchForSportSection(HttpSession httpSession) {
+        Couch couch = couchService.getCouch((Integer) httpSession.getAttribute("couchId"));
+        if (couch == null){
+            return new ResponseEntity<>("Такого тренера не существует",HttpStatus.BAD_REQUEST);
+        }
+        List<SportSection> sportSection = couch.getSelectedSportSections();
+        return new ResponseEntity<>(sportSection,HttpStatus.OK);
     }
 
     @Operation(summary = "Добавить нового тренера в спортивную секцию")

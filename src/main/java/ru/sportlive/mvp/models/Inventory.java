@@ -56,6 +56,13 @@ public class Inventory {
         this.couch = couch;
     }
 
+    public Inventory(String name, Integer price, String type, String size) {
+        this.name = name;
+        this.price = price;
+        this.type = type;
+        this.size = size;
+    }
+
     public Inventory(Set<User> user) {
         this.user = user;
     }

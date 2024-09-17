@@ -73,7 +73,13 @@ public class SportSection {
     }
 
     public SportSectionGetAllDTO getSportSectionAllDTO(){
-        List<CouchInfoDTO>newListCouches = couches.stream().map(Couch::getCouchInfo).toList();
-        return new SportSectionGetAllDTO(id,name,sport.getSportInfoDTO(),organisation.getOrganisationInfoDTO(),newListCouches);
+        List<CouchInfoDTO>newListCouches;
+        if (couches== null){
+            newListCouches = new ArrayList<>();
+        }else {
+            newListCouches = couches.stream().map(Couch::getCouchInfo).toList();
+        }
+            return new SportSectionGetAllDTO(id, name, sport.getSportInfoDTO(), organisation.getOrganisationInfoDTO(), newListCouches);
+
     }
 }

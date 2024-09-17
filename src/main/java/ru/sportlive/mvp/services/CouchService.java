@@ -2,15 +2,20 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
 import ru.sportlive.mvp.repository.OrganisationRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class CouchService {
@@ -25,16 +30,30 @@ public class CouchService {
     public List<Couch> getAllCouches(){
         return couchRepository.findAll();
     }
-    public Couch addCouch (String name, List<SportSection> sportSections_id){
-        Couch couch = new Couch(name,sportSections_id);
+
+    public Couch addCouch (String name, List<SportSection> sportSections_id, String experience){
+        Couch couch = new Couch(name,sportSections_id, experience);
         couchRepository.save(couch);
         return couch;
     }
-    public Couch addCouchs () {
+    public Couch addCouchPhoto(Couch couch, MultipartFile photo) throws IOException {
+
+        if (photo != null) {
+            String fileName = couch.getId() +"."+ photo.getContentType().split("/")[1];
+            Path targetLocation = Paths.get("src/main/resources/static/coach/photo").resolve(fileName);
+            Files.copy(photo.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            couch.setPhoto("/coach/photo/"+ fileName);
+        }
+        couchRepository.save(couch);
+        return couch;
+    }
+
+    public Couch addCouches() {
         Couch couch = new Couch();
         couchRepository.save(couch);
         return couch;
     }
+
     public Couch getCouch(Integer id){
         return couchRepository.findById(id).orElse(null);
     }

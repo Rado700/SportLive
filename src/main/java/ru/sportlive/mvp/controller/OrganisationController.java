@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.OrganisationDTO;
+import ru.sportlive.mvp.dto.output.SportInfoDTO;
 import ru.sportlive.mvp.models.Organisation;
 import ru.sportlive.mvp.models.Sport;
 import ru.sportlive.mvp.services.OrganisationService;
@@ -14,6 +15,7 @@ import ru.sportlive.mvp.services.SportService;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/organisation")
@@ -70,9 +72,9 @@ public class OrganisationController {
     }
     @Operation(summary = "Вывести все виды спорта у организаций по id")
     @GetMapping("/sport/{id}")
-    public ResponseEntity<Set<Sport>>getAllSports(@PathVariable Integer id){
+    public ResponseEntity<Set<SportInfoDTO>>getAllSports(@PathVariable Integer id){
         Organisation organisation = organisationService.getOrganisation(id);
         Set<Sport> getAllSport = organisationService.getAllSportForOrganisation(organisation);
-        return new ResponseEntity<>(getAllSport,HttpStatus.OK);
+        return new ResponseEntity<>(getAllSport.stream().map(Sport::getSportInfoDTO).collect(Collectors.toSet()),HttpStatus.OK);
     }
 }

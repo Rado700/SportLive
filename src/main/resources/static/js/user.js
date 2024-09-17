@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const recordForSection = document.getElementById('recordForSection');
     const recordForEquipment = document.getElementById('recordForEquipment');
     const chooseTrainer = document.getElementById('choose-trainer');
+    const changeToCoach = document.getElementById('changeToCoach');
 
 
     const profileForm = document.getElementById('profile-form');
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const allSportSection = document.getElementById("sports-section");
     const allCouchForSportSection = document.getElementById("coach");
     const coachForInventory = document.getElementById("coachForInventory");
+    const coachForUser = document.getElementById("coachForUser");
 
 
     const getAllEquipment = document.getElementById('getAllEquipment')
@@ -50,8 +52,150 @@ document.addEventListener('DOMContentLoaded', () => {
         stopwatchScreen.classList.add('hidden');
         recordForSection.classList.add('hidden');
         recordForEquipment.classList.add('hidden');
+        changeToCoach.classList.add('hidden');
         screen.classList.remove('hidden');
     };
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    if(urlParams.get("page") === 'recordScreen'){
+        openRecordScreenWithData(urlParams.get('couch'));
+    }
+
+
+    //Заменить тренера у пользователя
+    chooseTrainer.addEventListener('click',() => {
+        showScreen(changeToCoach);
+
+        fetch("/api/user/couch/",{
+            method:"GET",
+            headers:{'Content-Type':'application/json'},
+        }).
+        then(response=>{
+            if(!response.ok){
+                throw new Error(response.message);
+            }
+            return response.json();
+        }).then(getData => {
+            getAllCouch(getData);
+        })
+
+        // fetch("/api/user/")
+        //     .then(response=>{
+        //         if (!response.ok){
+        //             console.error("нету такого пользователя")
+        //         }
+        //         return response.json()
+        //     })
+        //     .then(data=>{
+        //         const coachChangeDB = data.selectedCouches;
+        //         coachForUser.innerHTML = "<option value=\"coachForUser\" disabled selected hidden></option>";
+        //         coachChangeDB.forEach(item => {
+        //             const option = document.createElement("option")
+        //             option.value = item.id;
+        //             option.name = item.name;
+        //             coachForUser.appendChild(option);
+        //         })
+        //
+        // });
+
+        // function enterForCoach() {
+        //     fetch("/api/user/couch/" + coachForUser.value, {
+        //         method: 'POST',
+        //         headers: {"Content-Type": "application/json"},
+        //     })
+        //         .then(response => {
+        //             if (!response.ok) {
+        //                 alert("нету такого тренера")
+        //             }
+        //         }).then(data => {getAllCouch(data)})
+        //
+        // }
+        function getAllCouch(getData) {
+            const coach = document.getElementById("getAllCoaches");
+            coach.innerHTML = "";
+
+            if (getData.length === 0) {
+                coach.innerHTML = '<p>Нету выбранных тренеров</p>';
+                return;
+            }
+
+            getData.forEach(item => {
+                const getCoach = document.createElement("div");
+                getCoach.classList.add("coach-container");
+
+                // Создаем контейнер для фотографии и информации
+                const coachInfo = document.createElement("div");
+                coachInfo.classList.add("coach-info");
+
+                // Фотография тренера
+                const photo = document.createElement("img");
+                photo.src = item.photo || '/coach/photo/default.jpg';
+                photo.alt = `${item.name}`;
+                photo.classList.add("coach-photo");
+                coachInfo.appendChild(photo);
+
+                // Контейнер для текста (имя, стаж, виды спорта)
+                const textInfo = document.createElement("div");
+                textInfo.classList.add("text-info");
+
+                // Имя тренера
+                const name = document.createElement("p");
+                name.textContent = `${item.name}`;
+                textInfo.appendChild(name);
+
+                // Стаж тренера
+                const experience = document.createElement("p");
+                experience.textContent = `Опыт: ${item.experience || 'Неизвестно'}`;
+                textInfo.appendChild(experience);
+
+                // Добавляем информацию в coachInfo
+                coachInfo.appendChild(textInfo);
+
+                // Контейнер для кнопок
+                const buttonsContainer = document.createElement("div");
+                buttonsContainer.classList.add("buttons-container");
+
+                // Кнопка "Выбрать"
+                const selectButton = document.createElement("button");
+                selectButton.textContent = "Выбрать";
+                selectButton.onclick = () => {window.location.href = 'account?page=recordScreen&couch='+item.name}
+                selectButton.classList.add("select-button");
+                buttonsContainer.appendChild(selectButton);
+
+                // Кнопка "Удалить"
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Удалить";
+                deleteButton.classList.add("delete-button");
+                deleteButton.addEventListener("click", () => {
+                    fetch(`/api/user/couch/${item.id}`, {
+                        method: 'DELETE'
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                getCoach.remove(); // Удаляем элемент из DOM
+                            } else {
+                                throw new Error(response.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to delete the coach.');
+                        });
+                });
+                buttonsContainer.appendChild(deleteButton);
+
+                // Добавляем все элементы в главный контейнер getCoach
+                getCoach.appendChild(coachInfo);
+                getCoach.appendChild(buttonsContainer);
+
+                // Добавляем getCoach в DOM
+                coach.appendChild(getCoach);
+            });
+        }
+    })
+
 
     // Отображение Данных пользователя
     document.getElementById('profile').addEventListener('click', () => {
@@ -86,11 +230,17 @@ document.addEventListener('DOMContentLoaded', () => {
         showScreen(infoScreen);
 
 
+        const profileInfo = document.getElementById('profile-info').querySelector('span');
+        const trainerInfo = document.getElementById('trainer-info').querySelector('span');
+        const equipmentInfo = document.getElementById('equipment-info').querySelector('span');
+
+
         fetch('/api/user/')
             .then(response => response.json())
             .then(data => {
-                profileInfo.textContent = `${data.name} ${data.surname}, ${data.height} cm, ${data.weight} kg `;
+                profileInfo.textContent = `${data.name} ${data.surname}, ${data.height} cm, ${data.weight} kg`;
             });
+
 
         fetch('/api/user/couch/', {
             method: 'GET',
@@ -98,21 +248,124 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(response => response.json())
             .then(data => {
-                trainerInfo.innerHTML = JSON.stringify(data,null,2)
+                trainerInfo.textContent = JSON.stringify(data, null, 2);
             });
+
+
         fetch('/api/inventory/userInventory/', {
             method: 'GET',
             headers: {'Content-type': 'application/json'},
         })
             .then(response => response.json())
-            .then(data => {
-
-                equipmentInfo.innerHTML = JSON.stringify(data, null, 2);
-            })
+            .then(data => {getEquipment(data)});
     });
-    // ЗАПИСЬ НА ТРЕНЕРОВКУ
+    function getEquipment(getData) {
+        const container = document.getElementById('equipment-info')
+        container.innerHTML = '';
+        if (getData.length === 0) {
+            container.innerHTML = '<p>No equipment available</p>';
+            return;
+        }
+        getData.forEach(item => {
+            const newElement = document.createElement("div");
+            newElement.classList.add("equipment-item");
 
-    addActivity.addEventListener('click', () => {
+            const name = document.createElement("h3");
+            name.textContent = item.name;
+            newElement.appendChild(name);
+
+            const type = document.createElement("p");
+            type.textContent = item.type;
+            newElement.appendChild(type);
+
+            const price = document.createElement("p");
+            price.textContent = item.price;
+            newElement.appendChild(price);
+
+            const size = document.createElement("p");
+            size.textContent = item.size;
+            newElement.appendChild(size);
+
+            container.appendChild(newElement);
+
+        })
+    }
+
+    // document.getElementById('info').addEventListener('click', () => {
+    //     showScreen(infoScreen);
+    //
+    //     const profileInfo = document.getElementById('profile-info').querySelector('span');
+    //     const trainerInfo = document.getElementById('trainer-info').querySelector('span');
+    //     const equipmentContainer = document.getElementById('equipment-info');
+    //
+    //     // Получаем данные профиля пользователя
+    //     fetch('/api/user/')
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             profileInfo.textContent = `${data.name} ${data.surname}, ${data.height} cm, ${data.weight} kg`;
+    //         })
+    //         .catch(error => console.error('Error fetching user data:', error));
+    //
+    //     // Получаем данные тренера
+    //     fetch('/api/user/couch/', {
+    //         method: 'GET',
+    //         headers: {'Content-Type': 'application/json'},
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             trainerInfo.textContent = data.length > 0 ? `Trainer: ${data[0].name}, Experience: ${data[0].couchInfo.experience || 'No experience'}`
+    //                 : 'No trainer assigned.';
+    //         })
+    //         .catch(error => console.error('Error fetching trainer data:', error));
+    //
+    //     // Получаем данные инвентаря
+    //     fetch('/api/inventory/userInventory/', {
+    //         method: 'GET',
+    //         headers: {'Content-Type': 'application/json'},
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             getEquipment(data);
+    //         })
+    //         .catch(error => console.error('Error fetching equipment data:', error));
+    // });
+    //
+    // function getEquipment(getData) {
+    //     const container = document.getElementById('equipment-info');
+    //     container.innerHTML = '';
+    //
+    //     if (getData.length === 0) {
+    //         container.innerHTML = '<p>No equipment available</p>';
+    //         return;
+    //     }
+    //
+    //     getData.forEach(item => {
+    //         const equipmentItem = document.createElement('div');
+    //         equipmentItem.classList.add('equipment-item');
+    //
+    //         const name = document.createElement('h3');
+    //         name.textContent = item.name;
+    //         equipmentItem.appendChild(name);
+    //
+    //         const type = document.createElement('p');
+    //         type.innerHTML = `<strong>Type:</strong> ${item.type}`;
+    //         equipmentItem.appendChild(type);
+    //
+    //         const price = document.createElement('p');
+    //         price.innerHTML = `<strong>Price:</strong> $${item.price}`;
+    //         equipmentItem.appendChild(price);
+    //
+    //         const size = document.createElement('p');
+    //         size.innerHTML = `<strong>Size:</strong> ${item.size}`;
+    //         equipmentItem.appendChild(size);
+    //
+    //         container.appendChild(equipmentItem);
+    //     });
+    // }
+
+    //Записаться на тренеровку(выбор спортсекций и тренера)
+
+    function openRecordScreenWithData(couchName) {
         showScreen(recordForSection);
 
         const url = "/api/user/"
@@ -124,9 +377,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             }).then(data => {
             const allSportSectionDB = data.selectedSportSections;
-            allSportSection.innerHTML = "<option value=\"SportSection\"  disabled selected hidden>Спортиваная секция</option>";
+            allSportSection.innerHTML = "<option value=\"\"  disabled selected hidden>Спортиваная секция</option>";
             if (allSportSectionDB === []) {
-                alert("not sportSection");
+                alert("Нет спортсекций");
             }
             allSportSectionDB.forEach(item => {
                 const option = document.createElement("option");
@@ -138,21 +391,30 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(data => {
                 const allCouchForSportSectionDB = data.selectedCouches;
-                allCouchForSportSection.innerHTML = "<option value=\"couch\"  disabled selected hidden>Тренер</option>";
+                allCouchForSportSection.innerHTML = "<option value=\"\"  disabled selected hidden>Тренер</option>";
                 if (allCouchForSportSectionDB === []) {
-                    alert("notCouches");
+                    alert("Нету тренеров");
                 }
                 allCouchForSportSectionDB.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.id;
                     option.textContent = item.name;
+                    if (item.name === couchName){
+                        option.selected = true;
+                    }
                     allCouchForSportSection.appendChild(option);
                 })
             })
+
+
+    }
+
+    // ЗАПИСЬ НА ТРЕНЕРОВКУ
+    addActivity.addEventListener('click', () => {
+        openRecordScreenWithData();
     })
 
     // Добавление инвентаря для пользователя
-
 
     addEquipment.addEventListener('click', () => {
         showScreen(recordForEquipment)
@@ -412,7 +674,12 @@ document.addEventListener('DOMContentLoaded', () => {
     generateCalendar(currentMonth);
 });
 
+// Замена тренера
+function change(){
+    window.location.href = "/account/user/changeCoach";
 
+}
+// Выход
 function exit() {
 
     fetch("/api/login/user/exit")
@@ -422,6 +689,7 @@ function exit() {
             }
         }).catch(error => console.error('Error:', error))
 }
+
 
 document.getElementById("month").addEventListener('change', function () {
     generateCalendar(this.value);
@@ -444,12 +712,14 @@ function generateCalendar(month) {
     if (firstDay < 0) {
         firstDay = 6;
     }
+
     const year = date.getFullYear();
     const currentMonth = date.getMonth();
     const firstDayOfNextMonth = new Date(year, currentMonth + 1, 1);
     const daysInMonth = new Date(firstDayOfNextMonth - 1).getDate();
 
-
+    // let occupiedDays = [];
+    // let days;
     //const  = new Date(date.getFullYear(), month + 1, 0).getDate();
     console.log(firstDay)
     console.log(daysInMonth)
@@ -459,20 +729,139 @@ function generateCalendar(month) {
         calendar.appendChild(emptySlot);
     }
 
+
     // Create buttons for each day of the month
     for (let day = 1; day <= daysInMonth; day++) {
         const dayButton = document.createElement('button');
+        dayButton.id='button_'+ day;
         dayButton.textContent = day;
+        days = dayButton.id;
+
+
+        // if (occupiedDays.includes(day)) {
+        //     dayButton.style.backgroundColor = "red"; // Подкрашиваем занятый день в красный
+        // }
+
+
+
         dayButton.addEventListener('click', function () {
-            // Deselect previously selected day
+            // Снимаем выделение с предыдущего выбранного дня
             const previouslySelected = document.querySelector('.calendar button.selected');
             if (previouslySelected) {
                 previouslySelected.classList.remove('selected');
             }
-            // Select the clicked day
+
+            // // Проверяем, занят ли выбранный день
+            // if (occupiedDays.includes(day)) {
+            //     alert("Этот день занят!"); // Или подкрашиваем и выводим сообщение
+            //     dayButton.style.backgroundColor = "red"; // Можно также визуально выделить
+            // } else {
+            //     dayButton.style.backgroundColor = ""; // Сброс цвета для свободных дней
+            // }
+            // Выделяем выбранный день
             dayButton.classList.add('selected');
+
         });
         calendar.appendChild(dayButton);
+
     }
+
+}
+
+function getSchedule(){
+    const coach = document.getElementById("coach").value
+    const sportSection = document.getElementById("sports-section").value
+    const month = parseInt(document.getElementById('month').value)
+
+    if (coach !== "" && sportSection !== "" && !isNaN(month) ){
+
+
+        fetch("/api/schedule/couch/sport-section/"+coach+"/"+sportSection)
+            .then(response =>{
+                if (!response.ok){
+                    throw new Error(response.message);
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data);
+            data.forEach(scheduleDay =>{
+                let scheduleDate  = new Date(scheduleDay.date);
+                if (scheduleDate.getMonth() === month){
+                    const day = scheduleDate.getDate();
+                    console.log(day)
+                    const dayButton = calendar.querySelector(`#button_${day}`)
+                    if (dayButton){
+                        dayButton.style.backgroundColor ="#00FFCC";
+
+                        dayButton.addEventListener('click', function () {
+                            showDetailsBooking(scheduleDay, dayButton);
+                        });
+                    }
+
+                }
+            })
+        })
+    }
+}
+function showDetailsBooking(scheduleDay, dayButton) {
+    // Создаем или показываем окно с информацией
+    let infoBox = document.createElement('div');
+    infoBox.classList.add('info-box');
+    infoBox.display= 'flex';
+
+
+
+    const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
+    const description = scheduleDay.description || "Комментарий отсутствует";
+    const place = scheduleDay.place || "Место не указано";
+    const scheduleId = scheduleDay.id;
+
+    infoBox.innerHTML = `
+        <p><strong>Время:</strong> ${time}</p>
+        <p><strong>Место:</strong> ${place}</p>
+        <p><strong>Комментарий:</strong> ${description}</p>
+        <button id="bookButton" style="width: 95%">Забронировать</button>
+        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
+    `;
+
+    document.body.appendChild(infoBox);
+
+    // Позиционируем окно рядом с кнопкой дня
+    const rect = dayButton.getBoundingClientRect();
+    infoBox.style.top = `${rect.bottom + window.scrollY}px`;
+    infoBox.style.left = `${rect.left + window.scrollX}px`;
+
+    // Обработчик на кнопку "Забронировать"
+    document.getElementById('bookButton').addEventListener('click', function() {
+        bookTraining(scheduleId); // Функция бронирования
+    });
+
+    // Обработчик на кнопку "Закрыть"
+    document.getElementById('closeInfoBox').addEventListener('click', function() {
+        document.body.removeChild(infoBox); // Удаляем окно
+    });
+}
+
+
+function bookTraining(scheduleId) {
+    fetch("/api/booking/", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ schedule_id: scheduleId })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Ошибка при бронировании");
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert("Бронь успешно добавлена!");
+        })
+        .catch(error => {
+            console.error("Ошибка при бронировании:", error);
+        });
 }
 

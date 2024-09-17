@@ -29,7 +29,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     document.getElementById('addTraining').addEventListener('click', function () {
-        showScreen(trainingScreen);
+        fetch("/api/couch/sport-section/")
+            .then(response =>{
+                if (!response.ok){
+                    throw new Error(response.message);
+                }
+                return response.json();
+            }).then(data => {
+                data.forEach(sportSection =>{
+                const sportSectionSelect = document.getElementById("sportSections");
+                const option = document.createElement("option");
+                option.value = sportSection.id;
+                option.textContent = sportSection.name;
+                sportSectionSelect.appendChild(option);
+                })
+            showScreen(trainingScreen);
+        })
+
     });
 
 // add training
@@ -42,12 +58,19 @@ document.addEventListener('DOMContentLoaded', () => {
             date: formData.get('date'),
 
         };
-        fetch('/api/schedule/', {
+        const sportSectionSelect = document.getElementById("sportSections");
+        const sportSectionId = parseInt(sportSectionSelect.value);
+
+        fetch('/api/schedule/'+sportSectionId, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(profileData)
         }).then(response => response.json())
-            .then(data => alert('Тренировка добавлена: ' + JSON.stringify(data)))
+            .then(data => {
+                alert('Тренировка добавлена: ' + JSON.stringify(data))
+                const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
+                modal.hide();
+            })
             .catch(error => console.error('Ошибка:', error));
 
     });

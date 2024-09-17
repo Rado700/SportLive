@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.sportlive.mvp.dto.input.ScheduleDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
+import ru.sportlive.mvp.models.SportSection;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.ScheduleRepository;
 
@@ -24,8 +25,8 @@ public class ScheduleService {
     public Schedule getSchedule(Integer schedule_id) {
         return scheduleRepository.findById(schedule_id).orElse(null);
     }
-    public Schedule addSchedule(String place, String description, Timestamp date, Couch couch_id){
-        Schedule schedule = new Schedule(place,description,date,couch_id);
+    public Schedule addSchedule(String place, String description, Timestamp date, Couch couch_id, SportSection section_id){
+        Schedule schedule = new Schedule(place,description,date,couch_id,section_id);
         scheduleRepository.save(schedule);
         return schedule;
     }

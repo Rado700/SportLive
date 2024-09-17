@@ -71,21 +71,37 @@ function next() {
     const organisationId = getAllOrganisation.value;
 
     const couchName = document.getElementById("name").value;
+    const couchExperience = document.getElementById("experience").value;
+    const couchPhoto = document.getElementById("photo").files[0];
 
+    const formData = new FormData();
+    formData.append('name', couchName);
+    formData.append('experience', couchExperience);
+    if (couchPhoto) {
+        formData.append('photo', couchPhoto)
+    }
 
     const urlCouch = "/api/couch/";
+
+
     fetch(urlCouch, {
         method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify({name: couchName})
+        // headers: {
+        //     'Content-type': 'application/json'
+        // },
+        body: formData
     }).then(response => {
         if (!response.ok) {
             throw new Error("Нужно зарегестрировать тренера")
         }
         return response;
     })
+        .then(data => {
+            console.log("Успех:", data);
+            window.location.href = '/couches';
+        }).catch(error => {
+        console.error("Ошибка:", error);
+    });
 
     const url = `/api/sport-section/sport/organisation/${sportId}/${organisationId}`;
     fetch(url)

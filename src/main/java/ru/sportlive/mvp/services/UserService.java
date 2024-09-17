@@ -79,6 +79,11 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void deleteCouchForUser(Couch couch,User user){
+        user.deleteCouchForUser(couch);
+        userRepository.save(user);
+    }
+
 
 
 
@@ -92,7 +97,10 @@ public class UserService {
 //        userRepository.save(user);
 //        return user;
 //    }
-    public User addUserToCouch(User user, Couch couch){
+    public User addUserToCouch(User user, Couch couch) throws Exception {
+        if (user.getCouchEquals(couch)){
+            throw new Exception("Такой тренер уже есть");
+        }
         user.addCouch(couch);
         userRepository.save(user);
         return user;

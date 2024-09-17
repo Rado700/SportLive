@@ -59,6 +59,14 @@ public class PagesController {
         }
         return "enterCouchForOrganisation";
     }
+    @GetMapping("/account/user/changeCoach")
+    public String coachChangeForUser(HttpSession httpSession){
+        Integer userId = (Integer) httpSession.getAttribute("userId");
+        if (userId == null){
+            return "redirect:/";
+        }
+        return "changeCoach";
+    }
 
 //    @GetMapping("/account/user/select")
 //    public String organisationUser(HttpSession httpSession){

@@ -35,11 +35,11 @@ public class SportSectionController {
     CouchService couchService;
     @Operation(summary = "Добавить спортсекцию")
     @PostMapping("/")
-    public ResponseEntity<SportSection> addSportSection(@RequestBody SportSectionDTO sportSectionDTO){
+    public ResponseEntity<SportSectionGetAllDTO> addSportSection(@RequestBody SportSectionDTO sportSectionDTO){
         Organisation organisation = organisationService.getOrganisation(sportSectionDTO.getOrganisation_id());
         Sport sport = sportService.getSport(sportSectionDTO.getSport_id());
         SportSection section = sportSectionService.addSportSection(sportSectionDTO.getName(),sport,organisation);
-        return new ResponseEntity<>(section, HttpStatus.OK);
+        return new ResponseEntity<>(section.getSportSectionAllDTO(), HttpStatus.OK);
     }
 
     @Operation(summary = "Обновить спортсекцию")

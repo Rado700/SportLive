@@ -1,7 +1,7 @@
 package ru.sportlive.mvp.dto.input;
 
 import java.sql.Timestamp;
-import java.util.Date;
+
 
 public class ScheduleDTO {
     private String place;

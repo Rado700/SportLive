@@ -68,7 +68,7 @@ public class LoginController {
         if (loginOccupied){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Couch couch = couchService.addCouchs();
+        Couch couch = couchService.addCouches();
         httpSession.setAttribute("couchId",couch.getId());
         Login login = loginService.addLoginCouch(loginDTO.getName(),loginDTO.getPassword(),couch);
         httpSession.setAttribute("loginCouchId",login.getId());

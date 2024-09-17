@@ -56,6 +56,7 @@ public class Organisation {
     }
 
     public OrganisationInfoDTO getOrganisationInfoDTO() {
+
         return new OrganisationInfoDTO(id,name,description);
     }
 
