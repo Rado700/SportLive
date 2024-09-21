@@ -78,9 +78,9 @@
         </div>
 
         <p>Выбрите тип тренировки</p>
-            <input type="radio" id="allTraining" name="training_type" value="general">
+            <input type="radio" id="allTraining" name="training_type" value="general" onchange="getSchedule()">
             <label for="allTraining">Общие тренировки</label><br>
-            <input type="radio" id="oneTraining" name="training_type" value="individual">
+            <input type="radio" id="oneTraining" name="training_type" value="individual" onchange ="getSchedule()">
             <label for="oneTraining">Индивидуальные тренировки</label><br>
 
 
@@ -102,6 +102,11 @@
             </select>
         </div>
         <div class="calendar" id="calendar"></div>
+
+        <div id="allTime" class = "hidden">
+            <div id="times-record"></div>
+        </div>
+
         <button id="back-to-main-record">Назад</button>
     </div>
 

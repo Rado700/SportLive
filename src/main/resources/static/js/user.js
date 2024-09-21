@@ -59,21 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
-    if(urlParams.get("page") === 'recordScreen'){
+    if (urlParams.get("page") === 'recordScreen') {
         openRecordScreenWithData(urlParams.get('couch'));
     }
 
 
     //Заменить тренера у пользователя
-    chooseTrainer.addEventListener('click',() => {
+    chooseTrainer.addEventListener('click', () => {
         showScreen(changeToCoach);
 
-        fetch("/api/user/couch/",{
-            method:"GET",
-            headers:{'Content-Type':'application/json'},
-        }).
-        then(response=>{
-            if(!response.ok){
+        fetch("/api/user/couch/", {
+            method: "GET",
+            headers: {'Content-Type': 'application/json'},
+        }).then(response => {
+            if (!response.ok) {
                 throw new Error(response.message);
             }
             return response.json();
@@ -160,7 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Кнопка "Выбрать"
                 const selectButton = document.createElement("button");
                 selectButton.textContent = "Выбрать";
-                selectButton.onclick = () => {window.location.href = 'account?page=recordScreen&couch='+item.name}
+                selectButton.onclick = () => {
+                    window.location.href = 'account?page=recordScreen&couch=' + item.name
+                }
                 selectButton.classList.add("select-button");
                 buttonsContainer.appendChild(selectButton);
 
@@ -257,8 +258,11 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {'Content-type': 'application/json'},
         })
             .then(response => response.json())
-            .then(data => {getEquipment(data)});
+            .then(data => {
+                getEquipment(data)
+            });
     });
+
     function getEquipment(getData) {
         const container = document.getElementById('equipment-info')
         container.innerHTML = '';
@@ -399,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const option = document.createElement('option');
                     option.value = item.id;
                     option.textContent = item.name;
-                    if (item.name === couchName){
+                    if (item.name === couchName) {
                         option.selected = true;
                     }
                     allCouchForSportSection.appendChild(option);
@@ -675,10 +679,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Замена тренера
-function change(){
+function change() {
     window.location.href = "/account/user/changeCoach";
 
 }
+
 // Выход
 function exit() {
 
@@ -693,6 +698,7 @@ function exit() {
 
 document.getElementById("month").addEventListener('change', function () {
     generateCalendar(this.value);
+
 })
 
 function generateCalendar(month) {
@@ -733,7 +739,8 @@ function generateCalendar(month) {
     // Create buttons for each day of the month
     for (let day = 1; day <= daysInMonth; day++) {
         const dayButton = document.createElement('button');
-        dayButton.id='button_'+ day;
+        dayButton.id = 'button_' + day;
+        dayButton.name = 'dayButton';
         dayButton.textContent = day;
         days = dayButton.id;
 
@@ -741,7 +748,6 @@ function generateCalendar(month) {
         // if (occupiedDays.includes(day)) {
         //     dayButton.style.backgroundColor = "red"; // Подкрашиваем занятый день в красный
         // }
-
 
 
         dayButton.addEventListener('click', function () {
@@ -768,34 +774,89 @@ function generateCalendar(month) {
 
 }
 
-function getSchedule(){
+let buttonEvents = {};
+
+function getSchedule() {
     const coach = document.getElementById("coach").value
     const sportSection = document.getElementById("sports-section").value
     const month = parseInt(document.getElementById('month').value)
 
-    if (coach !== "" && sportSection !== "" && !isNaN(month) ){
+    const infoBoxes = document.querySelectorAll("div.info-box");
+    infoBoxes.forEach(box => box.remove());
 
 
-        fetch("/api/schedule/couch/sport-section/"+coach+"/"+sportSection)
-            .then(response =>{
-                if (!response.ok){
+    let type = "";
+    const radios = document.getElementsByName("training_type");
+
+    for (const radio of radios) {
+        if (radio.checked) {
+            type = radio.value;
+            break;
+        }
+    }
+    const dayButtons = document.getElementsByName("dayButton");
+
+    for (const dayButton of dayButtons) {
+        dayButton.style.backgroundColor = "";
+        if (buttonEvents.hasOwnProperty(dayButton.id)) {
+            dayButton.removeEventListener('click', buttonEvents[dayButton.id]);
+        }
+    }
+
+    const bookingTime = document.getElementById('allTime');
+    bookingTime.classList.add('hidden');
+
+    buttonEvents = {}
+
+    if (coach !== "" && sportSection !== "" && !isNaN(month) && type !== "") {
+
+        fetch("/api/schedule/couch/sport-section/" + coach + "/" + sportSection)
+            .then(response => {
+                if (!response.ok) {
                     throw new Error(response.message);
                 }
                 return response.json();
             }).then(data => {
-                console.log(data);
-            data.forEach(scheduleDay =>{
-                let scheduleDate  = new Date(scheduleDay.date);
-                if (scheduleDate.getMonth() === month){
+            console.log(data);
+            const countTrainingsDay = {};
+            data.forEach(scheduleDay => {
+                let scheduleDate = new Date(scheduleDay.date);
+                if (scheduleDate.getMonth() === month) {
+                    const day = scheduleDate.getDate();
+                    console.log(day);
+                    if (type === scheduleDay.typeWorkout) {
+                        if (!countTrainingsDay.hasOwnProperty(day)) {
+                            countTrainingsDay[day] = 1
+                        } else {
+                            countTrainingsDay[day] += 1
+                        }
+                    }
+                }
+            })
+            console.log(countTrainingsDay);
+            data.forEach(scheduleDay => {
+                let scheduleDate = new Date(scheduleDay.date);
+                if (scheduleDate.getMonth() === month) {
                     const day = scheduleDate.getDate();
                     console.log(day)
                     const dayButton = calendar.querySelector(`#button_${day}`)
-                    if (dayButton){
-                        dayButton.style.backgroundColor ="#00FFCC";
-
-                        dayButton.addEventListener('click', function () {
+                    if (dayButton && type === scheduleDay.typeWorkout) {
+                        dayButton.style.backgroundColor = "#00FFCC";
+                        const listener = function () {
                             showDetailsBooking(scheduleDay, dayButton);
-                        });
+
+                        }
+                        const showTime = function () {
+                            showDetailsBookingTime(dayButton);
+                        }
+                        if (countTrainingsDay[day] === 1) {
+                            dayButton.addEventListener('click', listener);
+                            buttonEvents[dayButton.id] = listener;
+                        } else if (countTrainingsDay[day] > 1) {
+                            dayButton.addEventListener('click', showTime);
+                            buttonEvents[dayButton.id] = showTime;
+                            countTrainingsDay[day] = 0;
+                        }
                     }
 
                 }
@@ -803,12 +864,63 @@ function getSchedule(){
         })
     }
 }
+
+function showDetailsBookingTime(dayButton) {
+    const coach = document.getElementById("coach").value
+    const sportSection = document.getElementById("sports-section").value
+    const month = parseInt(document.getElementById('month').value)
+    const bookingTime = document.getElementById('allTime');
+    const timeSlots = document.getElementById("times-record");
+    timeSlots.innerHTML = '';
+
+
+    let type = "";
+    const radios = document.getElementsByName("training_type");
+
+    for (const radio of radios) {
+        if (radio.checked) {
+            type = radio.value;
+            break;
+        }
+    }
+
+    fetch("/api/schedule/couch/sport-section/" + coach + "/" + sportSection)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.message);
+            }
+            return response.json();
+        }).then(data => {
+        data.forEach(scheduleDay => {
+            let scheduleDate = new Date(scheduleDay.date);
+            if (scheduleDate.getMonth() === month) {
+                let day = scheduleDate.getDate();
+                if (parseInt(dayButton.textContent) === day && type === scheduleDay.typeWorkout) {
+
+                    const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
+                    const timeButton = document.createElement('button');
+                    timeButton.textContent = time;
+                    const listener = function () {
+                        showDetailsBooking(scheduleDay, timeButton);
+                    }
+                    timeButton.addEventListener("click",listener);
+                    timeSlots.appendChild(timeButton);
+                }
+            }
+        })
+    });
+    bookingTime.classList.remove('hidden');
+
+}
+
 function showDetailsBooking(scheduleDay, dayButton) {
     // Создаем или показываем окно с информацией
+    const infoBoxes = document.querySelectorAll("div.info-box");
+    infoBoxes.forEach(box => box.remove());
+
     let infoBox = document.createElement('div');
     infoBox.classList.add('info-box');
-    infoBox.display= 'flex';
-
+    infoBox.display = 'flex';
 
 
     const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
@@ -824,6 +936,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
     `;
 
+
     document.body.appendChild(infoBox);
 
     // Позиционируем окно рядом с кнопкой дня
@@ -832,12 +945,12 @@ function showDetailsBooking(scheduleDay, dayButton) {
     infoBox.style.left = `${rect.left + window.scrollX}px`;
 
     // Обработчик на кнопку "Забронировать"
-    document.getElementById('bookButton').addEventListener('click', function() {
+    document.getElementById('bookButton').addEventListener('click', function () {
         bookTraining(scheduleId); // Функция бронирования
     });
 
     // Обработчик на кнопку "Закрыть"
-    document.getElementById('closeInfoBox').addEventListener('click', function() {
+    document.getElementById('closeInfoBox').addEventListener('click', function () {
         document.body.removeChild(infoBox); // Удаляем окно
     });
 }
@@ -849,7 +962,7 @@ function bookTraining(scheduleId) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ schedule_id: scheduleId })
+        body: JSON.stringify({schedule_id: scheduleId})
     })
         .then(response => {
             if (!response.ok) {

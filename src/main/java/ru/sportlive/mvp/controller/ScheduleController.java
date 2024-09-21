@@ -13,10 +13,10 @@ import ru.sportlive.mvp.models.SportSection;
 import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.ScheduleService;
 import ru.sportlive.mvp.services.SportSectionService;
-import ru.sportlive.mvp.services.SportService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/schedule")
@@ -37,6 +37,14 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
+    @Operation(summary = "Вывести расписание по типу")
+    @GetMapping("/type/{type}")
+    public ResponseEntity<List<Schedule>> getSchedules(@PathVariable String type) {
+        List<Schedule> schedule = scheduleService.getScheduleTypeWorkout(type);
+        return new ResponseEntity<>(schedule, HttpStatus.OK);
+    }
+
+
     @Operation(summary = "Добавить расписание", description = "Добавить расписание по спортсекций id")
     @PostMapping("/{sportSectionId}")
     public ResponseEntity<Schedule> addSchedule(@PathVariable Integer sportSectionId, @RequestBody ScheduleDTO scheduleDTO, HttpSession httpSession) {
@@ -46,9 +54,10 @@ public class ScheduleController {
         if (couch == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        Schedule schedule = scheduleService.addSchedule(scheduleDTO.getPlace(), scheduleDTO.getDescription(), scheduleDTO.getDate(), couch,section);
+        Schedule schedule = scheduleService.addSchedule(scheduleDTO.getPlace(), scheduleDTO.getDescription(), scheduleDTO.getTypeWorkout(), scheduleDTO.getDate(), couch,section);
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
+
 
     @Operation(summary = "Вывести все расписание")
     @GetMapping("/")

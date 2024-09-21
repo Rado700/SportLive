@@ -29,11 +29,7 @@ public class Schedule implements Comparable<Schedule> {
 
     @Getter
     @Setter
-    private String oneWorkout;
-
-    @Getter
-    @Setter
-    private String generalWorkout;
+    private String typeWorkout;
 
     @Getter
     @Setter
@@ -55,16 +51,22 @@ public class Schedule implements Comparable<Schedule> {
     @JoinColumn(name = "sport_section_id")
     private SportSection sportSection;
 
+
     public Schedule() {
     }
 
-    public Schedule(String place, String description, Timestamp date, Couch couch, SportSection sportSection) {
+
+    public Schedule(String place, String description, Timestamp date, Couch couch, SportSection sportSection, String typeWorkout) {
         this.place = place;
         this.description = description;
         this.date = date;
         this.couch = couch;
         this.sportSection = sportSection;
+        this.typeWorkout = typeWorkout;
     }
+
+
+
 
     @Override
     public int compareTo(Schedule o) {

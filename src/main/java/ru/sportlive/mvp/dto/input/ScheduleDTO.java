@@ -8,10 +8,13 @@ public class ScheduleDTO {
     private String description;
     private Timestamp date;
 
-    public ScheduleDTO(String place, String description, Timestamp date) {
+    private String typeWorkout;
+
+    public ScheduleDTO(String place, String description, Timestamp date, String typeWorkout) {
         this.place = place;
         this.description = description;
         this.date = date;
+        this.typeWorkout = typeWorkout;
     }
 
     public String getPlace() {
@@ -38,5 +41,11 @@ public class ScheduleDTO {
         this.date = date;
     }
 
+    public String getTypeWorkout() {
+        return typeWorkout;
+    }
 
+    public void setTypeWorkout(String typeWorkout) {
+        this.typeWorkout = typeWorkout;
+    }
 }
