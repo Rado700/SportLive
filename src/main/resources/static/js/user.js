@@ -671,6 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('back-to-main-record').addEventListener('click', () => {
         showScreen(mainScreen);
+        document.body.removeChild(infoBox);
     });
 
     const currentMonth = new Date().getMonth();
@@ -811,13 +812,14 @@ function getSchedule() {
     if (coach !== "" && sportSection !== "" && !isNaN(month) && type !== "") {
 
         fetch("/api/schedule/couch/sport-section/" + coach + "/" + sportSection)
+
             .then(response => {
                 if (!response.ok) {
                     throw new Error(response.message);
                 }
                 return response.json();
             }).then(data => {
-            console.log(data);
+        console.log(data);
             const countTrainingsDay = {};
             data.forEach(scheduleDay => {
                 let scheduleDate = new Date(scheduleDay.date);
@@ -844,7 +846,6 @@ function getSchedule() {
                         dayButton.style.backgroundColor = "#00FFCC";
                         const listener = function () {
                             showDetailsBooking(scheduleDay, dayButton);
-
                         }
                         const showTime = function () {
                             showDetailsBookingTime(dayButton);
@@ -858,7 +859,6 @@ function getSchedule() {
                             countTrainingsDay[day] = 0;
                         }
                     }
-
                 }
             })
         })
@@ -896,10 +896,33 @@ function showDetailsBookingTime(dayButton) {
             if (scheduleDate.getMonth() === month) {
                 let day = scheduleDate.getDate();
                 if (parseInt(dayButton.textContent) === day && type === scheduleDay.typeWorkout) {
-
                     const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
-                    const timeButton = document.createElement('button');
+                    const timeButton = document.createElement('buttonTime');
+                    timeButton.classList.add('buttonTime');
                     timeButton.textContent = time;
+                    timeButton.style.backgroundColor = 'greenYellow';
+
+                    // timeButton.setAttribute('buttonTimeId',scheduleDay.value);
+
+                    fetch("/api/booking/getAllBookingUser/")
+                        .then(response => {
+                            if (!response.ok){
+                                throw new Error(response.message);
+                            }
+                            return response.json()
+
+                        }).then(data=>{
+                        console.log(data);
+                        console.log(scheduleDay);
+                        data.forEach(bookingTimes => {
+                                const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
+                                console.log(scheduleId);
+                                if (scheduleDay.id === scheduleId) {
+                                    timeButton.style.backgroundColor = 'red';
+                                }
+                            })
+
+                    })
                     const listener = function () {
                         showDetailsBooking(scheduleDay, timeButton);
                     }
@@ -928,31 +951,65 @@ function showDetailsBooking(scheduleDay, dayButton) {
     const place = scheduleDay.place || "Место не указано";
     const scheduleId = scheduleDay.id;
 
+    console.log(dayButton.style.backgroundColor)
     infoBox.innerHTML = `
         <p><strong>Время:</strong> ${time}</p>
         <p><strong>Место:</strong> ${place}</p>
-        <p><strong>Комментарий:</strong> ${description}</p>
+        <p><strong>Комментарий:</strong> ${description}</p>`;
+
+
+    if (dayButton.style.backgroundColor === "red"){
+        infoBox.innerHTML += `
+        <button id="bookButtonCancel" style="width: 95%">Отменить</button>
+        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
+        `
+        document.body.appendChild(infoBox);
+
+        // Отменить бронирование
+        document.getElementById('bookButtonCancel').addEventListener('click', function () {
+            bookButtonCancel(scheduleId); // Отменить бронирования
+        });
+
+    } else {
+        infoBox.innerHTML += `
         <button id="bookButton" style="width: 95%">Забронировать</button>
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
-    `;
+        `
 
+        document.body.appendChild(infoBox);
 
-    document.body.appendChild(infoBox);
+        // Обработчик на кнопку "Забронировать"
+        document.getElementById('bookButton').addEventListener('click', function () {
+            bookTraining(scheduleId);// Функция бронирования
+            document.body.removeChild(infoBox);
+        });
+    }
 
     // Позиционируем окно рядом с кнопкой дня
     const rect = dayButton.getBoundingClientRect();
     infoBox.style.top = `${rect.bottom + window.scrollY}px`;
     infoBox.style.left = `${rect.left + window.scrollX}px`;
 
-    // Обработчик на кнопку "Забронировать"
-    document.getElementById('bookButton').addEventListener('click', function () {
-        bookTraining(scheduleId); // Функция бронирования
-    });
 
     // Обработчик на кнопку "Закрыть"
     document.getElementById('closeInfoBox').addEventListener('click', function () {
         document.body.removeChild(infoBox); // Удаляем окно
+
     });
+}
+
+function bookButtonCancel(scheduleId){
+    fetch("/api/booking/schedule/"+scheduleId, {
+        method: "DELETE",
+        headers: {'Content-Type' : 'application/json'},
+
+    }).then(response =>{
+        if(!response.ok){
+            throw new Error(response.message);
+        }
+        return response.json();
+    })
+
 }
 
 
@@ -960,7 +1017,7 @@ function bookTraining(scheduleId) {
     fetch("/api/booking/", {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({schedule_id: scheduleId})
     })
@@ -977,4 +1034,5 @@ function bookTraining(scheduleId) {
             console.error("Ошибка при бронировании:", error);
         });
 }
+
 

@@ -131,6 +131,14 @@ button {
     background-color: #add8e6;
     /*background-color: #4CAF50;*/
 }
+.buttonTime{
+    padding: 10px 15px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
 /* Overall container styling */
 .equipment-container {
     margin: 20px;
@@ -202,14 +210,10 @@ button {
 
 /* Button styling */
 .equipment-item button {
-    margin-top: 10px;
-    padding: 8px;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    align-self: flex-start;
+    padding: 7px 15px;
+    border-radius: 5px;
+    background-color: lightgreen;
+    font-size: 14px;
 }
 
 .equipment-item button:hover {

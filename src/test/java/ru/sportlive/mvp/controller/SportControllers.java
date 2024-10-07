@@ -34,10 +34,12 @@ public class SportControllers {
 
         Sport sport = new Sport("Box", "1-to-1", "fighting", "Перчатки,шлем,кеды,шорты");
         Sport sport2 = new Sport("Tennis", "1-to-1", "pool-game", "Ракетка,шорты,футболка,кеды");
+        Sport sport3 = new Sport("Bodybuilding", "1 person", "bodybuilding", "Шорты,футболка,кеды");
 
         List<Sport> sportsList = new ArrayList<>();
         sportsList.add(sport);
         sportsList.add(sport2);
+        sportsList.add(sport3);
 
         for (Sport sports : sportsList) {
             mockMvc.perform(post("/api/sport/")

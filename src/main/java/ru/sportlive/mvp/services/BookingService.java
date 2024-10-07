@@ -40,6 +40,12 @@ public class BookingService {
         bookingRepository.delete(booking);
         return booking;
     }
+    public Booking deleteBookingSchedule (Integer schedule_id){
+        Booking booking = bookingRepository.findByScheduleId(schedule_id);
+        bookingRepository.delete(booking);
+        return booking;
+    }
+
     public List<Booking> getAllBookings(){
         return bookingRepository.findAll();
     }

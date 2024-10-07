@@ -46,7 +46,7 @@ public class Booking {
     }
 
     public BookingUserCouchDTO getBookingUserCouch(){
-        return new BookingUserCouchDTO(id,schedule.getCouch().getCouchInfo(),user.getUserInfo());
+        return new BookingUserCouchDTO(id,schedule.getCouch().getCouchInfo(),user.getUserInfo(),schedule);
     }
 
 

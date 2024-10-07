@@ -16,6 +16,7 @@
                 <button class="btn btn-primary mb-3" id="addTraining" data-bs-toggle="modal" data-bs-target="#trainingModal">Добавить тренировку</button>
                 <button class="btn btn-primary mb-3" id="addInventory" data-bs-toggle="modal" data-bs-target="#inventoryModal">Добавить инвентарь</button>
                 <button class="btn btn-primary mb-3" id="addExercises">Добавить упражнения</button>
+                <button class="btn btn-primary mb-3" id="MyTrainings" data-bs-toggle="modal" data-bs-target="#scheduleForCouch">Мой тренировки</button>
             </div>
         </div>
     </div>
@@ -41,11 +42,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="trainingModalLabel">Добавить тренировку</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="false"></button>
             </div>
             <div class="modal-body">
                 <form id="profile-training">
-                    <div class = "mb-3">
+                    <div class="mb-3">
                         <label for="sportSections">Выберите спортсекцию:</label>
                         <select id="sportSections" class="form-select"></select>
                     </div>
@@ -57,9 +58,65 @@
                         <label for="description" class="form-label">Комментарий:</label>
                         <input type="text" id="description" name="description" class="form-control" required>
                     </div>
+
                     <div class="mb-3">
-                        <label for="date" class="form-label">Дата:</label>
-                        <input type="datetime-local" id="date" name="date" class="form-control" required>
+                        <label for="training_type">Выберите тип тренировки:</label>
+                        <select id="training_type" class="form-select">
+                            <option id="oneTraining" value="individual">Индивидуальные</option>
+                            <option id="allTraining" value="general">Общие</option>
+                        </select>
+                    </div>
+
+
+                    <!-- Блок с выбором дней недели -->
+                    <div class="mb-3" id="addDaysForGeneral">
+                        <label for="daysOfWeek" class="form-label">Выберите дни недели:</label>
+                        <div id="daysOfWeek" class="d-flex flex-wrap">
+                            <button type="button" class="day-button btn btn-outline-primary" data-day="1">Понедельник
+                            </button>
+                            <button type="button" class="day-button btn btn-outline-primary" data-day="2">Вторник
+                            </button>
+                            <button type="button" class="day-button btn btn-outline-primary" data-day="3">Среда
+                            </button>
+                            <button type="button" class="day-button btn btn-outline-primary" data-day="4">Четверг
+                            </button>
+                            <button type="button" class="day-button btn btn-outline-primary" data-day="5">Пятница
+                            </button>
+                            <button type="button" class="day-button btn btn-outline-primary" data-day="6">Суббота
+                            </button>
+                            <button type="button" class="day-button btn btn-outline-primary" data-day="0">Воскресенье
+                            </button>
+                        </div>
+
+
+                        <!-- Блок для выбора общего временного интервала -->
+                        <div class="mb-3">
+                            <label for="intervalDates" class="form-label">Выберите общий временной интервал (от - до):</label>
+                            <div id="intervalDates" class="d-flex flex-wrap">
+                                <input type="date" id="startDate" name="startDate" class="form-control" placeholder="От"
+                                       required>
+                                <input type="date" id="endDate" name="endDate" class="form-control" placeholder="До"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Блок для добавления времени -->
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Добавьте время для выбранных дней:</label>
+                            <div id="allTimes">
+                                <!-- Здесь будет динамически добавляться время -->
+                            </div>
+                            <input type="button" id="nextTimes" value="Добавить время" class="btn btn-outline-secondary">
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="addDaysForIndividual">
+                        <div id="allTime">
+                            <label for="date" class="form-label">Дата:</label>
+                            <input type="datetime-local" id="date" name="date" class="form-control" required>
+                        </div>
+                        <input type="button" id="nextTime" value="Добавить время" class="btn btn-outline-secondary">
+
                     </div>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Сохранить</button>
@@ -105,6 +162,27 @@
     </div>
 </div>
 
+
+
+<div class="modal fade" id="scheduleForCouch" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scheduleModalLabel">Расписание тренировок</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label for="scheduleDate">Выберите дату:</label>
+                <input type="date" id="scheduleDate" class="form-control mb-3">
+                <div id="couchesTraining">
+                    <!-- Здесь будет динамически отображаться расписание -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="modal fade" id="exerciseModal" tabindex="-1" aria-labelledby="exerciseModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -124,7 +202,8 @@
 
 
 <!-- Modal for Stopwatch and Timer -->
-<div class="modal fade" id="stopwatchTimerModal" tabindex="-1" aria-labelledby="stopwatchTimerModalLabel" aria-hidden="true">
+<div class="modal fade" id="stopwatchTimerModal" tabindex="-1" aria-labelledby="stopwatchTimerModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -152,7 +231,6 @@
         </div>
     </div>
 </div>
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

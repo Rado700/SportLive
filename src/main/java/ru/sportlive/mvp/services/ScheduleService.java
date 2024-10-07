@@ -9,6 +9,7 @@ import ru.sportlive.mvp.models.SportSection;
 import ru.sportlive.mvp.repository.ScheduleRepository;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,7 +49,7 @@ public class ScheduleService {
 
     public List<Schedule> getScheduleCouch(Couch couch){
         Set<Schedule>schedules = couch.getSchedules();
-        return schedules.stream().sorted().collect(Collectors.toList());
+        return schedules.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
 
     }
     public Schedule updateToSchedule(Schedule schedule , ScheduleDTO scheduleDTO){

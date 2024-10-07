@@ -47,6 +47,7 @@ public class BookingController {
         User user = userService.getUser(id);
         Schedule schedule = scheduleService.getSchedule(bookingDTO.getSchedule_id());
         Booking booking = bookingService.addBooking(schedule,user);
+
         return new ResponseEntity<>(booking,HttpStatus.OK);
     }
 
@@ -54,6 +55,13 @@ public class BookingController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Booking>deleteBooking(@PathVariable Integer id){
         Booking booking = bookingService.deleteBooking(id);
+        return new ResponseEntity<>(booking,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Удаление брони из расписания по id")
+    @DeleteMapping("/schedule/{scheduleId}")
+    public ResponseEntity<Booking>deleteBookingSchedule(@PathVariable Integer scheduleId){
+        Booking booking = bookingService.deleteBookingSchedule(scheduleId);
         return new ResponseEntity<>(booking,HttpStatus.OK);
     }
 
@@ -87,6 +95,7 @@ public class BookingController {
         return new ResponseEntity<>(bookings.stream().map(Booking::getBookingUserCouch).collect(Collectors.toList()), HttpStatus.OK);
     }
 
+
     @Operation(summary = "Все брони тренера")
     @GetMapping("/couchBooking/")
     public ResponseEntity<List<BookingUserCouchDTO>>getCouchBookingBySchedule(HttpSession httpSession){
@@ -106,6 +115,7 @@ public class BookingController {
         List<Schedule>scheduleList = bookingService.getAllSchedulesCouchByUser(bookingUser,couch);
         return new ResponseEntity<>(scheduleList.stream().map(Schedule::getScheduleDateUser).collect(Collectors.toList()),HttpStatus.OK);
     }
+
 }
 
 //GET /booking/couch/user/{couchId}/{userId} - выводить список всех броней, которые были проведены тренером с couchId для юзера userId

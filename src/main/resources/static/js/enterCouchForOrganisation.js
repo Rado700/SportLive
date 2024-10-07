@@ -130,7 +130,8 @@ function next() {
 
                     return response;
 
-                })
+            })
+
         })
         .catch(error => console.error(error));
 

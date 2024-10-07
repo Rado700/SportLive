@@ -1,4 +1,5 @@
 package ru.sportlive.mvp.controller;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,10 +28,10 @@ import java.util.List;
 public class UserControllerTest {
 
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
 //
 //    @BeforeEach
@@ -39,25 +40,28 @@ public class UserControllerTest {
 //    }
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Test
-    public void userTest ()throws Exception{
+    public void userTest() throws Exception {
 
-//        User user1 = new User("Galimov","Radik",175,73);
-//        User user2 = new User("Rafail","Venediktov",173,74);
+        User user1 = new User("Galimov", "Radik", 175, 73);
+        User user2 = new User("Rafail", "Venediktov", 173, 74);
 
-        User user3 = new User("Anton","Antonov",177,79);
-        User user4 = new User("Sergei","Sergeev",185,85);
+        User user3 = new User("Anton", "Antonov", 177, 79);
+        User user4 = new User("Sergei", "Sergeev", 185, 85);
 
-        List<User>twoPerson = new ArrayList<>();
+        List<User> twoPerson = new ArrayList<>();
+
+        twoPerson.add(user1);
+        twoPerson.add(user2);
         twoPerson.add(user3);
         twoPerson.add(user4);
 
-        for (User users:twoPerson) {
+        for (User users : twoPerson) {
             mockMvc.perform(post("/api/user/")
-                    .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(users)))
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(users)))
                     .andExpect(status().isOk());
         }
 

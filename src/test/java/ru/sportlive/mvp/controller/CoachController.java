@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.models.Sport;
 import ru.sportlive.mvp.repository.CouchRepository;
 
 import java.util.ArrayList;
@@ -32,12 +32,14 @@ public class CoachController {
     @Test
     public void coachTest() throws Exception {
 
-        Couch couch1 = new Couch("Tayson222");
-        Couch couch2 = new Couch("Nadal111");
+        Couch couch1 = new Couch("Tayson");
+        Couch couch2 = new Couch("Nadal");
+        Couch couch3 = new Couch("Marat");
 
         List<Couch> twoCouch = new ArrayList<>();
         twoCouch.add(couch1);
         twoCouch.add(couch2);
+        twoCouch.add(couch3);
 
         for (Couch couches : twoCouch) {
             mockMvc.perform(post("/api/couch/")

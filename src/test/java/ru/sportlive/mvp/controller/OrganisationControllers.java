@@ -34,10 +34,12 @@ public class OrganisationControllers {
 
         Organisation organisation = new Organisation("FitnessLand", "Fitness");
         Organisation organisation2 = new Organisation("TennisCorporation", "Tennis");
+        Organisation organisation3 = new Organisation("BoxingCorporation", "Boxing");
 
         List<Organisation> organisationList = new ArrayList<>();
         organisationList.add(organisation);
         organisationList.add(organisation2);
+        organisationList.add(organisation3);
 
         for (Organisation organisations : organisationList) {
             mockMvc.perform(post("/api/organisation/")

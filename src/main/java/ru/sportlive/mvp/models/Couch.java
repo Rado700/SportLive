@@ -15,11 +15,13 @@ import java.util.Set;
 @Entity
 @Table(name="couch")
 public class Couch {
+
     @Getter
     @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Getter
     @Setter
     private String name;
@@ -48,7 +50,6 @@ public class Couch {
     @OneToMany(mappedBy = "couch", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Inventory> inventory = new ArrayList<>();
 
-
     @Getter
     @Setter
     @JsonManagedReference
@@ -58,7 +59,6 @@ public class Couch {
             joinColumns = @JoinColumn(name = "couch_id"),
             inverseJoinColumns = @JoinColumn(name = "sport_section_id"))
     private List<SportSection> selectedSportSections = new ArrayList<>();
-
 
     @Getter
     @Setter

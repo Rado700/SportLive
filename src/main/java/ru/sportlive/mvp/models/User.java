@@ -113,5 +113,4 @@ public class User {
         return this.selectedCouches.contains(couch);
     }
 
-
 }
