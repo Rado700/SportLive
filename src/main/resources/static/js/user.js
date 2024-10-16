@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const addEquipment = document.getElementById('add-equipment');
     const addActivity = document.getElementById('add-activity');
-    const addBalance = document.getElementById('add-balance');
 
 
     const firstName = document.getElementById('firstName');
@@ -61,6 +60,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (urlParams.get("page") === 'recordScreen') {
         openRecordScreenWithData(urlParams.get('couch'));
+    }
+
+    // Получаем элементы
+    let modal = document.getElementById("balance-modal");
+    let addBalance = document.getElementById("add-balance");
+    let span = document.getElementsByClassName("close")[0];
+    let confirmButton = document.getElementById("confirm-add-balance");
+
+// Открытие модального окна при клике на кнопку "Пополнить баланс"
+    addBalance.onclick = function() {
+        modal.style.display = "block";
+    }
+
+// Закрытие модального окна при клике на крестик
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+// Закрытие модального окна при клике вне его области
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+
+// Действие при нажатии на кнопку "Пополнить"
+    confirmButton.onclick = function() {
+        let amount = document.getElementById("amount").value;
+        fetch("/api/balance/user/deposit/",{
+            method:"POST",
+            headers:{"Content-type":"application/json"},
+            body: JSON.stringify({sum:amount})
+        }).then(response =>{
+            if (!response.ok){
+                throw new Error("Не получается добавить на счет")
+            }
+            return response.json();
+        }).then(data =>{
+            alert("Баланс пополнен на сумму: "+amount);
+            modal.style.display = "none";
+        })
+
     }
 
 

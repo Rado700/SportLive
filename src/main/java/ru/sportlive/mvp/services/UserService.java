@@ -25,7 +25,7 @@ public class UserService {
       return userRepository.findAll();
     }
 
-    public User deposit(Integer amount, User user){
+    public User deposit(Double amount, User user){
         int dep =user.getBalance();
         dep += amount;
         user.setBalance(dep);

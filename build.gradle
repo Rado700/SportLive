@@ -51,6 +51,10 @@ dependencies {
 	implementation 'org.json:json:20230227'
 
 
+	implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+
+
+
 }
 
 tasks.named('test') {

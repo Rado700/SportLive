@@ -37,6 +37,7 @@ public class LoginService {
         Optional<User> user = userRepository.findById(id);
         return user.map(User::getLogin).orElse(null);
     }
+
     public Login getCouchLogin(Integer id){
         Optional<Couch> couch = couchRepository.findById(id);
         return couch.map(Couch::getLogin).orElse(null);

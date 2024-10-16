@@ -9,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.UserPayDTO;
 import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.models.Transaction;
 import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.services.CouchService;
+import ru.sportlive.mvp.services.LoginService;
 import ru.sportlive.mvp.services.TransactionService;
 import ru.sportlive.mvp.services.UserService;
 
@@ -28,6 +30,8 @@ public class BalanceController {
     TransactionService transactionService;
     @Autowired
     CouchService couchService;
+    @Autowired
+    LoginService loginService;
 
     @Operation(summary = "Добавить депозит на счет для пользователя",description = "Ввести сумму пополнения")
     @PostMapping("/user/deposit/")
@@ -36,11 +40,16 @@ public class BalanceController {
         if (user_id == null){
             return new ResponseEntity<>("Пользователь не авторизован",HttpStatus.UNAUTHORIZED);
         }
+
+
         User user = userService.getUser(user_id);
-        user = userService.deposit(userPayDTO.getSum(), user);
-        transactionService.addTransaction(user.getLogin(),userPayDTO.getSum(),"deposit");
+        user = userService.deposit(userPayDTO.getSum().doubleValue(), user);
+        Integer login_id = (Integer) httpSession.getAttribute("loginUserId");
+        Login login = loginService.getLogin(login_id);
+        transactionService.addTransaction(login,userPayDTO.getSum(),"deposit");
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
+
     @Operation(summary = "Снять со счета",description = "Снять со счета у пользователя, ввести сумму снятия")
     @PostMapping("/user/withdraw/")
     public ResponseEntity<Object> withdrawBalanceUser (@RequestBody UserPayDTO userPayDTO,HttpSession httpSession) {
@@ -162,7 +171,7 @@ public class BalanceController {
         if (user == null){
             return new ResponseEntity<>("Выберите пользователя",HttpStatus.NOT_FOUND);
         }
-        user = userService.deposit(userPayDTO.getSum(),user);
+        user = userService.deposit(userPayDTO.getSum().doubleValue(),user);
         Transaction transaction1 = transactionService.addTransaction(couch.getLogin(),userPayDTO.getSum(),"Пополнения средств от "+couch.getName());
         Transaction transaction2 = transactionService.addTransaction(user.getLogin(),userPayDTO.getSum(),"Перевод средств пользователю"+user.getName());
         List<Transaction>getTransaction = new ArrayList<>();
