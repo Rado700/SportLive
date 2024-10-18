@@ -54,7 +54,7 @@ public class MoneyPaymentController {
         return moneyPaymentService.getNotification();
     }
 
-    @PostMapping("/getPaymentConformation/")
+    @PostMapping(value = "/getPaymentConformation/", consumes = "application/x-www-form-urlencoded")
     public ResponseEntity<Object> getConformationDTO(@RequestBody PaymentConformationDTO paymentConformationDTO) {
         Integer user_id = Integer.valueOf(paymentConformationDTO.getLabel());
 
