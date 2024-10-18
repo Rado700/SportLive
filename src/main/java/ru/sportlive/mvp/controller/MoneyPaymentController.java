@@ -1,6 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,9 @@ public class MoneyPaymentController {
     }
 
     @GetMapping("/getInvoicePay/{amount}")
-    public String getInvoicePay(@PathVariable String amount) throws Exception {
-        return moneyPaymentService.createPaymentLink("4100115951516729", amount, "test", "https://sportliveapp.ru");
+    public String getInvoicePay(@PathVariable String amount,HttpSession httpSession) throws Exception { //TODO:вместо тест сделать id пользователя получить из сессий
+        Integer user_id = (Integer) httpSession.getAttribute("userId");
+        return moneyPaymentService.createPaymentLink("4100115951516729", amount, user_id, "https://sportliveapp.ru");
     }
 
     @PostMapping("/getNotificationForPay/")

@@ -68,12 +68,12 @@ public class PagesController {
         return "changeCoach";
     }
 
-//    @GetMapping("/account/user/select")
-//    public String organisationUser(HttpSession httpSession){
+//    @GetMapping("/pay")
+//    public String getPay(HttpSession httpSession) {
 //        Integer userId = (Integer) httpSession.getAttribute("userId");
-//        if (userId == null){
-//            return "redirect:/";
+//        if (userId != null) {
+//            return "redirect:/http://localhost:8080/yoomoney/getInvoicePay/";
 //        }
-//        return "enterUserForOrganisation";
+//        return null;
 //    }
 }

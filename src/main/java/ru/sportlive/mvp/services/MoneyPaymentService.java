@@ -69,14 +69,35 @@ public class MoneyPaymentService {
         // Возвращаем полученные данные в виде строки
         return content.toString();
     }
-    public String createPaymentLink(String receiver, String amount, String label, String successURL) throws IOException {
+    public String createPaymentLink(String receiver, String amount, Integer label, String successURL) throws Exception {
         String payUrl = "https://yoomoney.ru/quickpay/confirm?receiver=" + receiver
                 + "&quickpay-form=shop"  // Используй shop, если хочешь форму для покупок, либо 'button', как в примере
                 + "&paymentType=AC"  // Платеж с карты, можно заменить на другие значения: PC, MC и т.д.
-                + "&amount_due=" + amount
+                + "&sum=" + amount
                 + "&label=" + label
                 + "&successURL=" + successURL;  // URL, куда перенаправят после успешной оплаты
-        return "{\"url\" : "+ payUrl +" }";
+
+        return payUrl;
+//        URL url = new URL(payUrl);
+//
+//        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//
+//        connection.setRequestMethod("GET");
+//        connection.setRequestProperty("Authorization","Bearer "+ACCESS_TOKEN);
+//        connection.setRequestProperty("Content-type","application/x-www-form-urlencoded");
+//
+//
+//
+//        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//        String inline ;
+//        StringBuilder content = new StringBuilder();
+//
+//        while((inline = in.readLine()) != null){
+//            content.append(inline);
+//        }
+//        in.close();
+//
+//        return  content.toString();
     }
 
 

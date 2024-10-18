@@ -88,19 +88,21 @@ document.addEventListener('DOMContentLoaded', () => {
 // Действие при нажатии на кнопку "Пополнить"
     confirmButton.onclick = function() {
         let amount = document.getElementById("amount").value;
-        fetch("/api/balance/user/deposit/",{
-            method:"POST",
-            headers:{"Content-type":"application/json"},
-            body: JSON.stringify({sum:amount})
-        }).then(response =>{
-            if (!response.ok){
-                throw new Error("Не получается добавить на счет")
-            }
-            return response.json();
-        }).then(data =>{
-            alert("Баланс пополнен на сумму: "+amount);
-            modal.style.display = "none";
+
+        fetch("/yoomoney/getInvoicePay/"+amount,{
+            method: "GET",
+            headers: {'Content-type':'application/json'}
         })
+            .then(response => {
+                console.log(response);
+                if (!response.ok){
+                    throw new Error("Не получается оплатить")
+                }
+                return response.text()
+                    .then(data => {
+                        window.location.href = data;
+                    })
+            })
 
     }
 
