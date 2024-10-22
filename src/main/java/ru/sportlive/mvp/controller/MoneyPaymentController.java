@@ -18,6 +18,8 @@ import ru.sportlive.mvp.services.TransactionService;
 import ru.sportlive.mvp.services.UserService;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/yoomoney")
@@ -74,9 +76,17 @@ public class MoneyPaymentController {
         }catch (Exception e){
             user_id = 1;
         }
+
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+
+        ZonedDateTime parsedDateTime = ZonedDateTime.parse(datetime, inputFormatter);
+        String formattedDatetime = parsedDateTime.format(outputFormatter);
+
+
         // Ваш код для хеширования и обработки
         String notification_secret = SHA1;  // Ваш секретный ключ
-        String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, datetime, sender, codepro ? "true" : "false", notification_secret, label);
+        String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, formattedDatetime, sender, codepro ? "true" : "false", notification_secret, label);
         System.out.println(dataForHash);
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
 
