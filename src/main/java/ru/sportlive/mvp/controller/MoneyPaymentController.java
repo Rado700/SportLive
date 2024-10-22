@@ -79,6 +79,9 @@ public class MoneyPaymentController {
         String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, datetime, sender, codepro ? "true" : "false", notification_secret, label);
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
 
+        System.out.println(calculatedHash);
+        System.out.println(sha1_hash);
+
         if (!calculatedHash.equals(sha1_hash)) {
             return new ResponseEntity<>("Invalid sha1_hash", HttpStatus.BAD_REQUEST);
         }
