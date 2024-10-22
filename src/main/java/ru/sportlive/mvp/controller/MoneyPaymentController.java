@@ -68,8 +68,12 @@ public class MoneyPaymentController {
             @RequestParam String label,
             @RequestParam String sha1_hash
     ) {
-        Integer user_id = Integer.valueOf(label);
-
+        Integer user_id;
+        try {
+            user_id = Integer.valueOf(label);
+        }catch (Exception e){
+            user_id = 1;
+        }
         // Ваш код для хеширования и обработки
         String notification_secret = SHA1;  // Ваш секретный ключ
         String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, datetime, sender, codepro ? "true" : "false", notification_secret, label);
