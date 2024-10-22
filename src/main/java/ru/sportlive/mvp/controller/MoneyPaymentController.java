@@ -38,7 +38,7 @@ public class MoneyPaymentController {
 
     @GetMapping("/info")
     public String getInfo() throws Exception {
-        String ACCESS_TOKEN = System.getenv("ACCESS_TOKEN");
+        String ACCESS_TOKEN = System.getProperty("ACCESS_TOKEN");
         System.out.println(ACCESS_TOKEN);
         return moneyPaymentService.getPaymentHistory();
     }
