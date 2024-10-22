@@ -20,8 +20,8 @@ import java.util.Date;
 @Service
 public class MoneyPaymentService {
 
-    private static final String ACCESS_TOKEN = System.getenv("ACCESS_TOKEN");
-    private static final String SHA1 = System.getenv("SHA1");
+    private static final String ACCESS_TOKEN = System.getProperty("ACCESS_TOKEN");
+    private static final String SHA1 = System.getProperty("SHA1");
 
     public String getPaymentHistory() throws Exception {
 
