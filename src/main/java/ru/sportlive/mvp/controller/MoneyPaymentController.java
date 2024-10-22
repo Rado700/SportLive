@@ -64,7 +64,7 @@ public class MoneyPaymentController {
             @RequestParam String operation_id,
             @RequestParam Double amount,
             @RequestParam String currency,
-            @RequestParam String datetime,
+            @RequestParam ZonedDateTime datetime,
             @RequestParam String sender,
             @RequestParam boolean codepro,
             @RequestParam String label,
@@ -77,11 +77,9 @@ public class MoneyPaymentController {
             user_id = 1;
         }
 
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
-        ZonedDateTime parsedDateTime = ZonedDateTime.parse(datetime, inputFormatter);
-        String formattedDatetime = parsedDateTime.format(outputFormatter);
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        String formattedDatetime = datetime.format(outputFormatter);
 
 
         // Ваш код для хеширования и обработки
