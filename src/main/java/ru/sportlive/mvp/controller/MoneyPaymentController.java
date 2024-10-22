@@ -35,10 +35,11 @@ public class MoneyPaymentController {
     @Autowired
     TransactionService transactionService;
 
-    private static final String SHA1 = System.getenv("SHA1");
 
     @GetMapping("/info")
     public String getInfo() throws Exception {
+        String ACCESS_TOKEN = System.getenv("ACCESS_TOKEN");
+        System.out.println(ACCESS_TOKEN);
         return moneyPaymentService.getPaymentHistory();
     }
 
@@ -83,7 +84,7 @@ public class MoneyPaymentController {
 
 
         // Ваш код для хеширования и обработки
-        String notification_secret = SHA1;  // Ваш секретный ключ
+        String notification_secret = System.getenv("SHA1");  // Ваш секретный ключ
         String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, formattedDatetime, sender, codepro ? "true" : "false", notification_secret, label);
         System.out.println(dataForHash);
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
