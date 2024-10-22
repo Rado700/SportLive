@@ -77,6 +77,7 @@ public class MoneyPaymentController {
         // Ваш код для хеширования и обработки
         String notification_secret = SHA1;  // Ваш секретный ключ
         String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, datetime, sender, codepro ? "true" : "false", notification_secret, label);
+        System.out.println(dataForHash);
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
 
         System.out.println(calculatedHash);
