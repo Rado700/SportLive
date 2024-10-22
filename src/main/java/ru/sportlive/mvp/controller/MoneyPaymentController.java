@@ -17,6 +17,8 @@ import ru.sportlive.mvp.services.MoneyPaymentService;
 import ru.sportlive.mvp.services.TransactionService;
 import ru.sportlive.mvp.services.UserService;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/yoomoney")
 public class MoneyPaymentController {
@@ -54,39 +56,34 @@ public class MoneyPaymentController {
         return moneyPaymentService.getNotification();
     }
 
-    @PostMapping(value = "/getPaymentConformation/", consumes = "application/x-www-form-urlencoded")
-    public ResponseEntity<Object> getConformationDTO(@RequestBody PaymentConformationDTO paymentConformationDTO) {
-        Integer user_id = Integer.valueOf(paymentConformationDTO.getLabel());
+    @PostMapping("/getPaymentConformation/")
+    public ResponseEntity<Object> getConformationDTO(
+            @RequestParam String notification_type,
+            @RequestParam String operation_id,
+            @RequestParam Double amount,
+            @RequestParam String currency,
+            @RequestParam String datetime,
+            @RequestParam String sender,
+            @RequestParam boolean codepro,
+            @RequestParam String label,
+            @RequestParam String sha1_hash
+    ) {
+        Integer user_id = Integer.valueOf(label);
 
-        // Получаем параметры для хеширования
-        String notification_type = paymentConformationDTO.getNotification_type();
-        String operation_id = paymentConformationDTO.getOperation_id();
-        String amount = paymentConformationDTO.getAmount().toString();
-        String currency = paymentConformationDTO.getCurrency();
-        String datetime = paymentConformationDTO.getData().toString();
-        String sender = paymentConformationDTO.getSender();
-        String codepro = paymentConformationDTO.getCodepro() ? "true" : "false";
-        String notification_secret = SHA1;  // Здесь ваш секретный ключ
-        String label = paymentConformationDTO.getLabel() != null ? paymentConformationDTO.getLabel() : "";
-
-        // Формируем строку для хеширования
-        String dataForHash = String.join("&", notification_type, operation_id, amount, currency, datetime, sender, codepro, notification_secret, label);
-
-        // Вычисляем SHA-1 хэш
+        // Ваш код для хеширования и обработки
+        String notification_secret = SHA1;  // Ваш секретный ключ
+        String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, datetime, sender, codepro ? "true" : "false", notification_secret, label);
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
 
-        // Проверяем хэш
-        if (!calculatedHash.equals(paymentConformationDTO.getSha1_hash())) {
+        if (!calculatedHash.equals(sha1_hash)) {
             return new ResponseEntity<>("Invalid sha1_hash", HttpStatus.BAD_REQUEST);
         }
 
         // Если хэш совпал, продолжаем обработку
         User user = userService.getUser(user_id);
-        user = userService.deposit(paymentConformationDTO.getAmount(), user);
+        user = userService.deposit(amount, user);
         Login login = loginService.getUserLogin(user_id);
-
-        transactionService.addTransaction(login, paymentConformationDTO.getAmount().intValue(), "deposit");
-
+        transactionService.addTransaction(login, amount.intValue(), "deposit");
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
