@@ -17,13 +17,13 @@ public class Booking {
     @Getter
     @Setter
     @JsonBackReference
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
     private Schedule schedule;
 
     @Getter
     @Setter
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id",unique = false)
     private User user;
 

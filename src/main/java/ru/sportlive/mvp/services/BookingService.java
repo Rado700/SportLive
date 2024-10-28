@@ -11,7 +11,9 @@ import ru.sportlive.mvp.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -40,8 +42,10 @@ public class BookingService {
         bookingRepository.delete(booking);
         return booking;
     }
-    public Booking deleteBookingSchedule (Integer schedule_id){
-        Booking booking = bookingRepository.findByScheduleId(schedule_id);
+    public Booking deleteBookingSchedule (Integer schedule_id,Integer userId){
+        List<Booking>bookings = bookingRepository.findByScheduleId(schedule_id);
+        bookings = bookings.stream().filter(booking1 -> Objects.equals(booking1.getUser().getId(), userId)).collect(Collectors.toList());
+        Booking booking = bookings.get(0);
         bookingRepository.delete(booking);
         return booking;
     }
