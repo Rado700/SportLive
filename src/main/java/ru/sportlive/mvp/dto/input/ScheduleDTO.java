@@ -7,14 +7,15 @@ public class ScheduleDTO {
     private String place;
     private String description;
     private Timestamp date;
-
     private String typeWorkout;
+    private Integer sum;
 
-    public ScheduleDTO(String place, String description, Timestamp date, String typeWorkout) {
+    public ScheduleDTO(String place, String description, Timestamp date, String typeWorkout, Integer sum) {
         this.place = place;
         this.description = description;
         this.date = date;
         this.typeWorkout = typeWorkout;
+        this.sum = sum;
     }
 
     public String getPlace() {
@@ -47,5 +48,13 @@ public class ScheduleDTO {
 
     public void setTypeWorkout(String typeWorkout) {
         this.typeWorkout = typeWorkout;
+    }
+
+    public Integer getSum() {
+        return sum;
+    }
+
+    public void setSum(Integer sum) {
+        this.sum = sum;
     }
 }

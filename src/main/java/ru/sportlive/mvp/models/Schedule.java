@@ -33,6 +33,10 @@ public class Schedule implements Comparable<Schedule> {
 
     @Getter
     @Setter
+    private Integer sum;
+
+    @Getter
+    @Setter
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "couch_id")
@@ -56,13 +60,14 @@ public class Schedule implements Comparable<Schedule> {
     }
 
 
-    public Schedule(String place, String description, Timestamp date, Couch couch, SportSection sportSection, String typeWorkout) {
+    public Schedule(String place, String description, Timestamp date, Couch couch, SportSection sportSection, String typeWorkout, Integer sum) {
         this.place = place;
         this.description = description;
         this.date = date;
         this.couch = couch;
         this.sportSection = sportSection;
         this.typeWorkout = typeWorkout;
+        this.sum = sum;
     }
 
 

@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayEquipment(equipmentList) {
         const container = document.getElementById("equipmentList");
-        container.innerHTML = ''; // Clear previous content
+        container.innerHTML = '';
 
         if (equipmentList.length === 0) {
             container.innerHTML = '<p>No equipment available.</p>';
@@ -596,7 +596,6 @@ document.addEventListener('DOMContentLoaded', () => {
             height: formData.get('height'),
             weight: formData.get('weight')
         };
-        console.log(profileData);
         // Send data to backend
         fetch('/api/user/', {
             method: 'PUT',
@@ -612,7 +611,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: formData.get('login'),
                     password: formData.get('password')
                 };
-                console.log(profileData2);
                 fetch("/api/login/user/", {
                     method: 'PUT',
                     headers: {
@@ -862,13 +860,11 @@ function getSchedule() {
                 }
                 return response.json();
             }).then(data => {
-        console.log(data);
             const countTrainingsDay = {};
             data.forEach(scheduleDay => {
                 let scheduleDate = new Date(scheduleDay.date);
                 if (scheduleDate.getMonth() === month) {
                     const day = scheduleDate.getDate();
-                    console.log(day);
                     if (type === scheduleDay.typeWorkout) {
                         if (!countTrainingsDay.hasOwnProperty(day)) {
                             countTrainingsDay[day] = 1
@@ -878,15 +874,33 @@ function getSchedule() {
                     }
                 }
             })
-            console.log(countTrainingsDay);
+
             data.forEach(scheduleDay => {
                 let scheduleDate = new Date(scheduleDay.date);
                 if (scheduleDate.getMonth() === month) {
                     const day = scheduleDate.getDate();
-                    console.log(day)
+
+
                     const dayButton = calendar.querySelector(`#button_${day}`)
                     if (dayButton && type === scheduleDay.typeWorkout) {
                         dayButton.style.backgroundColor = "#00FFCC";
+
+                        fetch("/api/booking/getAllBookingUser/")
+                            .then(response => {
+                                if (!response.ok){
+                                    throw new Error(response.message);
+                                }
+                                return response.json()
+
+                            }).then(data=>{
+                            data.forEach(bookingTimes => {
+                                const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
+                                if (scheduleDay.id === scheduleId) {
+                                    dayButton.style.backgroundColor = 'red';
+                                }
+                            })
+                        })
+
                         const listener = function () {
                             showDetailsBooking(scheduleDay, dayButton);
                         }
@@ -955,19 +969,17 @@ function showDetailsBookingTime(dayButton) {
                             return response.json()
 
                         }).then(data=>{
-                        console.log(data);
-                        console.log(scheduleDay);
                         data.forEach(bookingTimes => {
                                 const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
-                                console.log(scheduleId);
                                 if (scheduleDay.id === scheduleId) {
                                     timeButton.style.backgroundColor = 'red';
+                                    dayButton.style.backgroundColor = 'red';
                                 }
                             })
-
                     })
                     const listener = function () {
                         showDetailsBooking(scheduleDay, timeButton);
+
                     }
                     timeButton.addEventListener("click",listener);
                     timeSlots.appendChild(timeButton);
@@ -980,6 +992,8 @@ function showDetailsBookingTime(dayButton) {
 }
 
 function showDetailsBooking(scheduleDay, dayButton) {
+    const coach = document.getElementById("coach").value
+
     // Создаем или показываем окно с информацией
     const infoBoxes = document.querySelectorAll("div.info-box");
     infoBoxes.forEach(box => box.remove());
@@ -992,13 +1006,17 @@ function showDetailsBooking(scheduleDay, dayButton) {
     const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
     const description = scheduleDay.description || "Комментарий отсутствует";
     const place = scheduleDay.place || "Место не указано";
+    const sum = scheduleDay.sum || "Сумма не указана";
     const scheduleId = scheduleDay.id;
 
-    console.log(dayButton.style.backgroundColor)
+
+
     infoBox.innerHTML = `
         <p><strong>Время:</strong> ${time}</p>
         <p><strong>Место:</strong> ${place}</p>
+        <p><strong>Сумма:</strong> ${sum}</p>
         <p><strong>Комментарий:</strong> ${description}</p>`;
+
 
 
     if (dayButton.style.backgroundColor === "red"){
@@ -1024,7 +1042,9 @@ function showDetailsBooking(scheduleDay, dayButton) {
         // Обработчик на кнопку "Забронировать"
         document.getElementById('bookButton').addEventListener('click', function () {
             bookTraining(scheduleId);// Функция бронирования
+            transactionForCouch(coach,sum);
             document.body.removeChild(infoBox);
+
         });
     }
 
@@ -1055,6 +1075,20 @@ function bookButtonCancel(scheduleId){
 
 }
 
+function transactionForCouch(couchId,sum){
+    fetch("api/balance/transfer/user/couch/"+couchId,{
+        method:"POST",
+        headers:{'Content-Type' : 'application/json'},
+        body:JSON.stringify({sum:sum})
+    }).then(response => {
+        if(!response.ok){
+            throw new Error(response.message);
+        }
+        return response.json();
+    }).then(date =>{
+        alert("Деньги успешно переведены")
+    })
+}
 
 function bookTraining(scheduleId) {
     fetch("/api/booking/", {

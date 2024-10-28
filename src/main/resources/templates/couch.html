@@ -58,6 +58,10 @@
                         <label for="description" class="form-label">Комментарий:</label>
                         <input type="text" id="description" name="description" class="form-control" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="sum" class="form-label">Цена:</label>
+                        <input type="number" id="sum" name="sum" class="form-control" required>
+                    </div>
 
                     <div class="mb-3">
                         <label for="training_type">Выберите тип тренировки:</label>
@@ -88,21 +92,18 @@
                             </button>
                         </div>
 
-
                         <!-- Блок для выбора общего временного интервала -->
                         <div class="mb-3">
-                            <label for="intervalDates" class="form-label">Выберите общий временной интервал (от - до):</label>
-                            <div id="intervalDates" class="d-flex flex-wrap">
-                                <input type="date" id="startDate" name="startDate" class="form-control" placeholder="От"
-                                       required>
-                                <input type="date" id="endDate" name="endDate" class="form-control" placeholder="До"
-                                       required>
+                            <label for="intervalDate" class="form-label">Выберите общий временной интервал (от - до):</label>
+                            <div id="intervalDate" class="d-flex flex-wrap">
+                                <input type="date" id="startDate" name="startDate" class="form-control" placeholder="От">
+                                <input type="date" id="endDate" name="endDate" class="form-control" placeholder="До">
                             </div>
                         </div>
 
                         <!-- Блок для добавления времени -->
                         <div class="mb-3">
-                            <label for="date" class="form-label">Добавьте время для выбранных дней:</label>
+                            <label class="form-label">Добавьте время для выбранных дней:</label>
                             <div id="allTimes">
                                 <!-- Здесь будет динамически добавляться время -->
                             </div>

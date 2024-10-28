@@ -30,8 +30,8 @@ public class ScheduleService {
         return schedule.stream().filter(s -> s.getTypeWorkout().equals(type)).collect(Collectors.toList());
     }
 
-    public Schedule addSchedule(String place, String description, String typeWorkout, Timestamp date, Couch couch_id, SportSection section_id){
-        Schedule schedule = new Schedule(place,description,date,couch_id,section_id,typeWorkout);
+    public Schedule addSchedule(String place, String description, String typeWorkout, Timestamp date, Couch couch_id, SportSection section_id,Integer sum){
+        Schedule schedule = new Schedule(place,description,date,couch_id,section_id,typeWorkout,sum);
         scheduleRepository.save(schedule);
         return schedule;
     }

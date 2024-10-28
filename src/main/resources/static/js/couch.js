@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const profileData = {
                             place: formData.get('place'),
                             description: formData.get('description'),
+                            sum: formData.get('sum'),
                             typeWorkout: type,
                             date: date,
 
@@ -263,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     place: formData.get('place'),
                     description: formData.get('description'),
                     typeWorkout: type,
+                    sum: formData.get('sum'),
                     date: date.value,
 
                 };

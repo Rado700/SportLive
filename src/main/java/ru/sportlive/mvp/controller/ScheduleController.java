@@ -54,7 +54,7 @@ public class ScheduleController {
         if (couch == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        Schedule schedule = scheduleService.addSchedule(scheduleDTO.getPlace(), scheduleDTO.getDescription(), scheduleDTO.getTypeWorkout(), scheduleDTO.getDate(), couch,section);
+        Schedule schedule = scheduleService.addSchedule(scheduleDTO.getPlace(), scheduleDTO.getDescription(), scheduleDTO.getTypeWorkout(), scheduleDTO.getDate(), couch,section,scheduleDTO.getSum());
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
