@@ -1,5 +1,6 @@
 package ru.sportlive.mvp.controller;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
@@ -38,7 +39,8 @@ public class MoneyPaymentController {
 
     @GetMapping("/info")
     public String getInfo() throws Exception {
-        String ACCESS_TOKEN = System.getenv("ACCESS_TOKEN");
+        Dotenv dotenv = Dotenv.load();
+        String ACCESS_TOKEN = dotenv.get("ACCESS_TOKEN");
         System.out.println(ACCESS_TOKEN);
         return moneyPaymentService.getPaymentHistory();
     }
@@ -82,9 +84,9 @@ public class MoneyPaymentController {
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         String formattedDatetime = datetime.format(outputFormatter);
 
-
+        Dotenv dotenv = Dotenv.load();
         // Ваш код для хеширования и обработки
-        String notification_secret = System.getProperty("SHA1");  // Ваш секретный ключ
+        String notification_secret = dotenv.get("SHA1");  // Ваш секретный ключ
         String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, formattedDatetime, sender, codepro ? "true" : "false", notification_secret, label);
         System.out.println(dataForHash);
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
