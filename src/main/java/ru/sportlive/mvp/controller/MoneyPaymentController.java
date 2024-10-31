@@ -82,7 +82,7 @@ public class MoneyPaymentController {
             user_id = 1;
         }
 
-        datetime = datetime.withOffsetSameInstant(ZoneOffset.ofHours(4));
+        datetime = datetime.withOffsetSameInstant(ZoneOffset.ofHours(3));
         String formattedDatetime = datetime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 
         Dotenv dotenv = Dotenv.load();
