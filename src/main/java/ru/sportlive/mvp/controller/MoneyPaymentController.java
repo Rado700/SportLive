@@ -88,6 +88,7 @@ public class MoneyPaymentController {
         Dotenv dotenv = Dotenv.load();
         // Ваш код для хеширования и обработки
         String notification_secret = dotenv.get("SHA1");  // Ваш секретный ключ
+        System.out.println(notification_secret);
         String dataForHash = String.join("&", notification_type, operation_id, amount.toString(), currency, formattedDatetime, sender, codepro ? "true" : "false", notification_secret, label);
         System.out.println(dataForHash);
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
