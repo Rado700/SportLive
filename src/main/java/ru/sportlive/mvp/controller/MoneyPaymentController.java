@@ -69,7 +69,7 @@ public class MoneyPaymentController {
             @RequestParam String operation_id,
             @RequestParam Double amount,
             @RequestParam String currency,
-            @RequestParam OffsetDateTime datetime,
+            @RequestParam String datetime,
             @RequestParam String sender,
             @RequestParam boolean codepro,
             @RequestParam String label,
@@ -83,7 +83,8 @@ public class MoneyPaymentController {
         }
 
 //        datetime = datetime.withOffsetSameInstant(ZoneOffset.ofHours(3));
-        String formattedDatetime = datetime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+//        String formattedDatetime = datetime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+
 
         Dotenv dotenv = Dotenv.configure()
                 .ignoreIfMalformed()
@@ -92,7 +93,7 @@ public class MoneyPaymentController {
         // Ваш код для хеширования и обработки
         String notification_secret = dotenv.get("SHA1_KEY");  // Ваш секретный ключ
         System.out.println(notification_secret);
-        String dataForHash = String.join("&", notification_type, operation_id, String.format("%.2f", amount), currency, formattedDatetime, sender, codepro ? "true" : "false", notification_secret, label);
+        String dataForHash = String.join("&", notification_type, operation_id, String.format("%.2f", amount), currency, datetime, sender, codepro ? "true" : "false", notification_secret, label);
         System.out.println(dataForHash);
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
 
