@@ -24,7 +24,6 @@ public class MoneyPaymentService {
     private static final String SHA1 = System.getProperty("SHA1");
 
     public String getPaymentHistory() throws Exception {
-
         String API_URL = "https://yoomoney.ru/api/operation-history";
         URL url = new URL(API_URL + "?records=10");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

@@ -20,6 +20,7 @@ import ru.sportlive.mvp.services.UserService;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -81,7 +82,8 @@ public class MoneyPaymentController {
             user_id = 1;
         }
 
-        String formattedDatetime = datetime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        datetime = datetime.withOffsetSameInstant(ZoneOffset.ofHours(4));
+        String formattedDatetime = datetime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 
         Dotenv dotenv = Dotenv.load();
         // Ваш код для хеширования и обработки
