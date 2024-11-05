@@ -53,9 +53,13 @@ public class MoneyPaymentController {
     }
 
     @GetMapping("/getInvoicePay/{amount}")
-    public String getInvoicePay(@PathVariable String amount,HttpSession httpSession) throws Exception { //TODO:вместо тест сделать id пользователя получить из сессий
+    public String getInvoicePay(@PathVariable Double amount,HttpSession httpSession) throws Exception { //TODO:вместо тест сделать id пользователя получить из сессий
         Integer user_id = (Integer) httpSession.getAttribute("userId");
-        return moneyPaymentService.createPaymentLink("4100115951516729", amount, user_id, "https://sportliveapp.ru");
+            if (amount <= 2) {
+                System.out.println("Сумма не должна быть менее 2");
+            }
+
+        return moneyPaymentService.createPaymentLink("4100115951516729", amount/0.92, user_id, "https://sportliveapp.ru");
     }
 
     @PostMapping("/getNotificationForPay/")
@@ -107,6 +111,7 @@ public class MoneyPaymentController {
         // Если хэш совпал, продолжаем обработку
         User user = userService.getUser(user_id);
         user = userService.deposit(amount, user);
+        System.out.println(user.getBalance());
         Login login = loginService.getUserLogin(user_id);
         transactionService.addTransaction(login, amount.intValue(), "deposit");
         return new ResponseEntity<>(user, HttpStatus.OK);

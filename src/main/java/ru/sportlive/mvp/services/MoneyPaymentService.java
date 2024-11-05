@@ -68,7 +68,7 @@ public class MoneyPaymentService {
         // Возвращаем полученные данные в виде строки
         return content.toString();
     }
-    public String createPaymentLink(String receiver, String amount, Integer label, String successURL) throws Exception {
+    public String createPaymentLink(String receiver, Double amount, Integer label, String successURL) throws Exception {
         String payUrl = "https://yoomoney.ru/quickpay/confirm?receiver=" + receiver
                 + "&quickpay-form=shop"  // Используй shop, если хочешь форму для покупок, либо 'button', как в примере
                 + "&paymentType=AC"  // Платеж с карты, можно заменить на другие значения: PC, MC и т.д.

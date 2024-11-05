@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 const getAllOrganisation = document.getElementById("organisationType");
 
+document.getElementById('back-to-main-user').addEventListener('click', function () {
+    window.location.href = '/account'; // Удаляем окно
+});
 
 getAllOrganisation.addEventListener('change', function () {
     const url = "/api/organisation/sport/" + getAllOrganisation.value // пишем url адрес ручки и добавляем id организаций
