@@ -53,7 +53,7 @@ public class MoneyPaymentController {
     }
 
     @GetMapping("/getInvoicePay/{amount}")
-    public String getInvoicePay(@PathVariable Double amount,HttpSession httpSession) throws Exception { //TODO:вместо тест сделать id пользователя получить из сессий
+    public String getInvoicePay(@PathVariable Double amount,HttpSession httpSession) throws Exception {
         Integer user_id = (Integer) httpSession.getAttribute("userId");
             if (amount <= 2) {
                 System.out.println("Сумма не должна быть менее 2");

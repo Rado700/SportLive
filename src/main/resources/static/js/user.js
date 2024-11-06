@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let timerInterval;
 
+
+
     const showScreen = (screen) => {
         mainScreen.classList.add('hidden');
         profileScreen.classList.add('hidden');
@@ -61,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (urlParams.get("page") === 'recordScreen') {
         openRecordScreenWithData(urlParams.get('couch'));
     }
+
+    //Добавить баланс для пользователя:
 
     // Получаем элементы
     let modal = document.getElementById("balance-modal");
@@ -110,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //Заменить тренера у пользователя
     chooseTrainer.addEventListener('click', () => {
         showScreen(changeToCoach);
-
         fetch("/api/user/couch/", {
             method: "GET",
             headers: {'Content-Type': 'application/json'},
@@ -586,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Обновление данных у пользователя
 
-    profileForm.addEventListener('submit', (e) => {
+    profileScreen.addEventListener('submit', (e) => {
         e.preventDefault();
         newLoginMessage.style.display = 'none';
         const formData = new FormData(profileForm);
@@ -636,6 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('stopwatch').addEventListener('click', () => {
         showScreen(stopwatchScreen);
+
     });
 
     // Stopwatch functionality
@@ -713,6 +717,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('back-to-main-record').addEventListener('click', () => {
         showScreen(mainScreen);
         document.body.removeChild(infoBox);
+    });
+
+    document.getElementById('back-to-main-coach').addEventListener('click', () => {
+        showScreen(mainScreen);
+    });
+    document.getElementById('back-to-main-balance').addEventListener('click', () => {
+        modal.style.display = "none"
+    });
+    document.getElementById('back-to-main-equipment').addEventListener('click', () => {
+        showScreen(mainScreen);
     });
 
     const currentMonth = new Date().getMonth();
