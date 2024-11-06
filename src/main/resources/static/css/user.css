@@ -33,7 +33,7 @@ body {
 
 
 #bottom-nav {
-    position: relative;
+    /*position: relative;*/
     /*inset-block-end: 350px;*/
     inline-size: 159%;
     display: flex;
@@ -41,9 +41,11 @@ body {
     color: white;
     /*width: 919px;*/
     /*top: 640px;*/
-    left: -216px;
-    top:485px;
+    /*left: -216px;*/
+    /*top:485px;*/
+    padding-top:555px;
     padding-inline-start: 40px;
+    padding-inline-end: 40px;
 }
 
 #bottom-nav button {
