@@ -35,7 +35,7 @@ body {
 #bottom-nav {
     /*position: relative;*/
     /*inset-block-end: 350px;*/
-    inline-size: 125%;
+    inline-size: 155%;
     display: flex;
     /*background-color: #333;*/
     color: white;
@@ -43,7 +43,7 @@ body {
     /*top: 640px;*/
     /*left: -216px;*/
     /*top:485px;*/
-    padding-top:175px;
+    padding-top:200px;
     /*padding-inline-start: 10px;*/
     /*padding-inline-end: 20px;*/
 }
