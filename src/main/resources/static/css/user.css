@@ -35,7 +35,7 @@ body {
 #bottom-nav {
     /*position: relative;*/
     /*inset-block-end: 350px;*/
-    /*inline-size: 100%;*/
+    inline-size: 107%;
     display: flex;
     /*background-color: #333;*/
     color: white;
