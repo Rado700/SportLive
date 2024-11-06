@@ -1,14 +1,14 @@
 body {
-    /*font-family: Arial, sans-serif;*/
+    font-family: Arial, sans-serif;
     background-image: url('../img/sport-image2.jpg');
     margin: 0;
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
         background-size: cover;
-        /*background-repeat: no-repeat;*/
-        /*background-attachment: fixed;*/
+        background-repeat: no-repeat;
+        background-attachment: fixed;
 
 }
 
@@ -35,7 +35,7 @@ body {
 #bottom-nav {
     /*position: relative;*/
     /*inset-block-end: 350px;*/
-    inline-size: 95%;
+    inline-size: 100%;
     display: flex;
     /*background-color: #333;*/
     color: white;
@@ -43,8 +43,8 @@ body {
     /*top: 640px;*/
     /*left: -216px;*/
     /*top:485px;*/
-    padding-top:555px;
-    padding-inline-start: 10px;
+    padding-top:345px;
+    /*padding-inline-start: 10px;*/
     padding-inline-end: 20px;
 }
 
