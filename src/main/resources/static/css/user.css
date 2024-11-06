@@ -35,14 +35,15 @@ body {
 #bottom-nav {
     position: relative;
     /*inset-block-end: 350px;*/
-    /*inline-size: 159%;*/
+    inline-size: 159%;
     display: flex;
     /*background-color: #333;*/
     color: white;
-    width: 919px;
+    /*width: 919px;*/
     /*top: 640px;*/
-    left: -160px;
+    left: -216px;
     top:360px;
+    padding-inline-start: 40px;
 }
 
 #bottom-nav button {
