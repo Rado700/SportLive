@@ -1,16 +1,15 @@
+
 body {
     font-family: Arial, sans-serif;
-    background-image: url('../img/sport-image2.jpg');
-    margin: 0;
+    background-image: url(../img/sport-image2.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     display: flex;
     justify-content: center;
     align-items: center;
-
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    margin-top: 20px;
-
+    height: 100vh;
+    /*margin: 0;*/
 }
 
 .container {
