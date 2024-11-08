@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const recordForEquipment = document.getElementById('recordForEquipment');
     const chooseTrainer = document.getElementById('choose-trainer');
     const changeToCoach = document.getElementById('changeToCoach');
+    const addBalance = document.getElementById("add-balance");
 
 
     const profileForm = document.getElementById('profile-form');
@@ -14,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const trainerInfo = document.getElementById('trainer-info');
     const trainerRest = document.getElementById('trainer-rest');
     const equipmentInfo = document.getElementById('equipment-info');
+    const modal = document.getElementById("balance-modal");
+    let confirmButton = document.getElementById("confirm-add-balance");
+
 
     const addEquipment = document.getElementById('add-equipment');
     const addActivity = document.getElementById('add-activity');
@@ -47,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     const showScreen = (screen) => {
+        modal.classList.add('hidden')
         mainScreen.classList.add('hidden');
         profileScreen.classList.add('hidden');
         infoScreen.classList.add('hidden');
@@ -64,29 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         openRecordScreenWithData(urlParams.get('couch'));
     }
 
-    //Добавить баланс для пользователя:
-
-    // Получаем элементы
-    let modal = document.getElementById("balance-modal");
-    let addBalance = document.getElementById("add-balance");
-    let span = document.getElementsByClassName("close")[0];
-    let confirmButton = document.getElementById("confirm-add-balance");
-
-// Открытие модального окна при клике на кнопку "Пополнить баланс"
+   //Пополнение баланса
     addBalance.onclick = function() {
-        modal.style.display = "block";
-    }
-
-// Закрытие модального окна при клике на крестик
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-// Закрытие модального окна при клике вне его области
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
+        showScreen(modal);
     }
 
 // Действие при нажатии на кнопку "Пополнить"
@@ -723,7 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showScreen(mainScreen);
     });
     document.getElementById('back-to-main-balance').addEventListener('click', () => {
-        modal.style.display = "none"
+        showScreen(mainScreen)
     });
     document.getElementById('back-to-main-equipment').addEventListener('click', () => {
         showScreen(mainScreen);
