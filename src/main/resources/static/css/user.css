@@ -17,7 +17,7 @@
     }
 
     .container {
-        max-inline-size: 600px;
+        /*max-inline-size: 600px;*/
         inline-size: 100%;
         padding: 20px;
         /*background-color: #fff;*/
@@ -46,7 +46,7 @@
         /*top: 640px;*/
         /*left: -216px;*/
         /*top:485px;*/
-        padding-top: 290px;
+        padding-top: 330px;
         /*padding-inline-start: 10px;*/
         /*padding-inline-end: 20px;*/
 
@@ -65,6 +65,10 @@
         border-width: thick;
         padding-left: 3px;
     }
+    #main-screen{
+        display: inline-block;
+    }
+
 
     #bottom-nav button:hover {
         background-color: #555;
