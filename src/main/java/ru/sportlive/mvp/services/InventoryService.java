@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.InventoryDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Inventory;
@@ -13,7 +14,7 @@ import ru.sportlive.mvp.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
+@Transactional
 @Service
 public class InventoryService {
 

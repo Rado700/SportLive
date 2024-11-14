@@ -2,13 +2,14 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.models.Transaction;
 import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.repository.TransactionRepository;
 
 import java.sql.Timestamp;
-
+@Transactional
 @Service
 public class TransactionService {
     @Autowired

@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.models.Booking;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Transactional
 @Service
 public class BookingService {
 

@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.SportSection;
@@ -11,7 +12,7 @@ import ru.sportlive.mvp.models.User;
 
 import java.util.List;
 import java.util.Optional;
-
+@Transactional
 @Service
 public class UserService {
     @Autowired

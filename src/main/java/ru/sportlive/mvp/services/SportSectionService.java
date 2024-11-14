@@ -4,6 +4,7 @@ package ru.sportlive.mvp.services;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.SportSectionDTO;
 import ru.sportlive.mvp.dto.output.SportSectionGetAllDTO;
 import ru.sportlive.mvp.models.*;
@@ -13,7 +14,7 @@ import ru.sportlive.mvp.repository.SportSectionRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Transactional
 @Service
 public class SportSectionService {
 

@@ -2,6 +2,7 @@ package ru.sportlive.mvp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.SportDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.SportRepository;
@@ -10,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+@Transactional
 @Service
 public class SportService {
 

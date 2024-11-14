@@ -13,7 +13,7 @@
         /*height: 100%;*/
         /*margin-top: 20px;*/
         /*background-position: inherit;*/
-
+        color: white;
     }
 
     .container {
@@ -67,7 +67,7 @@
         padding-left: 3px;
     }
     #main-screen{
-        margin-bottom: 31%;
+        margin-bottom: 25%;
         /*display: inline-block;*/
     }
 

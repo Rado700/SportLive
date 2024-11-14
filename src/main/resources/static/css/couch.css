@@ -1,60 +1,80 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    background-image: url(../img/sport-image.jpg);
-    align-items: center;
-    margin: 0;
-    display: flex;
+    background-color: #f7f9fc;
+    background-image: url("../img/sport-image.jpg");
+    background-repeat:no-repeat;
     background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
 }
 
-.container {
-    margin-top: 50px;
+/* Шапка */
+.header {
 
-}
-.form-control {
-    margin-bottom: 5px;
-}
-#info-screen{
-    background-color: #e7e7e7;
-    color: blue;
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-.footer {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 40px;
-    padding: 10px;
+/* Карточка */
+.card-container {
     background-color: #ffffff;
-    border-top: 1px solid #e7e7e7;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
-.icon {
-    cursor: pointer;
-    font-size: 16px;
+/* Кнопки */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: bold;
+}
+
+.btn-outline-secondary {
+    font-size: 14px;
+}
+
+/* Футер */
+.footer {
+    background-color: #007bff;
     padding: 10px;
-
-}
-.hidden {
-    display:none;
+    color: white;
 }
 
-.screen {
+/* Информационный блок */
+#info-screen {
+    display: none;
+    margin-top: 20px;
+}
+
+/* Модальные окна */
+.modal-content {
+    border-radius: 8px;
+    padding: 20px;
+}
+.hidden{
     display: none;
 }
 
-.screen.active {
-    display: block;
+/* Стиль для модального окна infoScreenModal */
+#infoScreenModal .modal-content {
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #f8f9fa;
 }
 
-.icon:hover {
-    color: #007bff;
+#infoScreenModal .modal-title {
+    color: #0d6efd;
 }
 
-#stopwatchDisplay, #timerDisplay {
-    font-size: 2em;
-    margin: 10px 0;
-    text-align: center;
+#infoScreenModal .modal-body p {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+#infoScreenModal .btn {
+    width: 100%;
 }

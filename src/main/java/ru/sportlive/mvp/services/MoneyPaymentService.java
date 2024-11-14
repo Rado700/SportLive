@@ -3,6 +3,7 @@ package ru.sportlive.mvp.services;
 import okhttp3.*;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.xml.crypto.Data;
@@ -17,6 +18,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 
+@Transactional
 @Service
 public class MoneyPaymentService {
 

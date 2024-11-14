@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showScreen = (screen) => {
         // trainingScreen.classList.add('hidden');
         // inventoryScreen.classList.add('hidden');
+        // container.classList.add('hidden');
         infoScreen.classList.add('hidden');
         screen.classList.remove('hidden');
     };
@@ -454,9 +455,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     //Статистика
+    document.getElementById("statistics").addEventListener("click", function () {
+        const infoScreenModal = new bootstrap.Modal(document.getElementById("infoScreenModal"));
+        infoScreenModal.show();
 
-    document.getElementById('statistics').addEventListener('click', () => {
-        showScreen(infoScreen);
+
+
+    // document.getElementById('statistics').addEventListener('click', () => {
+    //     showScreen(infoScreen);
 
         const fetchData = () => {
             fetch('/api/inventory/couchInventory/')
@@ -490,10 +496,17 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshButton.addEventListener('click', fetchData);
 
         fetchData();
-    })
 
+});
     document.getElementById('back-to-main-info').addEventListener('click', () => {
         window.location.href = "/";
+    });
+    document.getElementById('back-to-main-inventory').addEventListener('click', () => {
+        window.location.display.style.label = "close";
+    });
+    document.getElementById('back-to-main-timer').addEventListener('click', () => {
+        window.location.display.style.label = "none";
+
     });
 
 

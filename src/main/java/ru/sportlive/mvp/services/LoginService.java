@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.commons.codec.digest.Crypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.LoginDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Login;
@@ -22,6 +23,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class LoginService {
 

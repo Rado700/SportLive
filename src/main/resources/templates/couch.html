@@ -13,28 +13,50 @@
         <h1 class="text-center my-5">Меню тренера</h1>
         <div class="d-flex justify-content-center mb-5">
             <div class="btn-group-vertical">
-                <button class="btn btn-primary mb-3" id="addTraining" data-bs-toggle="modal" data-bs-target="#trainingModal">Добавить тренировку</button>
-                <button class="btn btn-primary mb-3" id="addInventory" data-bs-toggle="modal" data-bs-target="#inventoryModal">Добавить инвентарь</button>
+                <button class="btn btn-primary mb-3" id="addTraining" data-bs-toggle="modal"
+                        data-bs-target="#trainingModal">Добавить тренировку
+                </button>
+                <button class="btn btn-primary mb-3" id="addInventory" data-bs-toggle="modal"
+                        data-bs-target="#inventoryModal">Добавить инвентарь
+                </button>
                 <button class="btn btn-primary mb-3" id="addExercises">Добавить упражнения</button>
-                <button class="btn btn-primary mb-3" id="MyTrainings" data-bs-toggle="modal" data-bs-target="#scheduleForCouch">Мой тренировки</button>
+                <button class="btn btn-primary mb-3" id="MyTrainings" data-bs-toggle="modal"
+                        data-bs-target="#scheduleForCouch">Мой тренировки
+                </button>
             </div>
         </div>
     </div>
-    <div id="info-screen" class="hidden">
-        <h1>Информация</h1>
-        <p id="trainer-info">Осталось тренировоки тренера: <span>0</span></p>
-        <p id="profile-info">Ваши данные: <span></span></p>
-        <p id="equipment-info">Общее количество инвентаря: <span>0</span></p>
-        <button class="btn btn-primary mt-3" id="refresh-data">Обновить данные</button>
-        <button type="submit" class="btn btn-primary mt-3" id="exit" onclick="exit()">Выход</button>
-        <button class="btn btn-primary mt-3" id="back-to-main-info">Назад</button>
-    </div>
 
     <div class="footer d-flex justify-content-around">
-        <button class="icon btn" id="stopwatchTimer" data-bs-toggle="modal" data-bs-target="#stopwatchTimerModal">⏱⏲ Секундомер и Таймер</button>
+        <button class="icon btn" id="stopwatchTimer" data-bs-toggle="modal" data-bs-target="#stopwatchTimerModal">⏱⏲
+            Секундомер и Таймер
+        </button>
         <button class="icon btn" id="statistics">📊 Общая статистика</button>
     </div>
 </div>
+
+
+<!-- Info Screen Modal -->
+<div class="modal fade" id="infoScreenModal" tabindex="-1" aria-labelledby="infoScreenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-primary">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoScreenLabel">Информация</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="trainer-info">Осталось тренировок тренера: <span>0</span></p>
+                <p id="profile-info">Ваши данные: <span></span></p>
+                <p id="equipment-info">Общее количество инвентаря: <span>0</span></p>
+                <button class="btn btn-primary mt-3" id="refresh-data">Обновить данные</button>
+                <button type="submit" class="btn btn-danger mt-3" id="exit" onclick="exit()">Выход</button>
+                <button class="btn btn-secondary mt-3" data-bs-dismiss="modal">Назад</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- Modal for Training -->
 <div class="modal fade" id="trainingModal" tabindex="-1" aria-labelledby="trainingModalLabel" aria-hidden="true">
@@ -94,9 +116,11 @@
 
                         <!-- Блок для выбора общего временного интервала -->
                         <div class="mb-3">
-                            <label for="intervalDate" class="form-label">Выберите общий временной интервал (от - до):</label>
+                            <label for="intervalDate" class="form-label">Выберите общий временной интервал (от -
+                                до):</label>
                             <div id="intervalDate" class="d-flex flex-wrap">
-                                <input type="date" id="startDate" name="startDate" class="form-control" placeholder="От">
+                                <input type="date" id="startDate" name="startDate" class="form-control"
+                                       placeholder="От">
                                 <input type="date" id="endDate" name="endDate" class="form-control" placeholder="До">
                             </div>
                         </div>
@@ -107,7 +131,8 @@
                             <div id="allTimes">
                                 <!-- Здесь будет динамически добавляться время -->
                             </div>
-                            <input type="button" id="nextTimes" value="Добавить время" class="btn btn-outline-secondary">
+                            <input type="button" id="nextTimes" value="Добавить время"
+                                   class="btn btn-outline-secondary">
                         </div>
                     </div>
 
@@ -157,12 +182,14 @@
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Сохранить</button>
                     </div>
+                    <div>
+                        <button class="btn btn-primary mt-3" id="back-to-main-inventory">Назад</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 
 
 <div class="modal fade" id="scheduleForCouch" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
@@ -211,23 +238,27 @@
                 <h5 class="modal-title" id="stopwatchTimerModalLabel">Секундомер и Таймер</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div id="stopwatch">
-                    <h6>Секундомер</h6>
-                    <div id="stopwatchDisplay">00:00:00</div>
-                    <button class="btn btn-secondary" id="startStopwatch">Старт</button>
-                    <button class="btn btn-secondary" id="stopStopwatch">Стоп</button>
-                    <button class="btn btn-secondary" id="resetStopwatch">Сброс</button>
-                </div>
-                <hr>
-                <div id="timer">
-                    <h6>Таймер</h6>
-                    <div id="timerDisplay">00:00:00</div>
-                    <input type="number" id="timerMinutes" placeholder="Минуты">
-                    <button class="btn btn-secondary" id="startTimer">Старт</button>
-                    <button class="btn btn-secondary" id="stopTimer">Стоп</button>
-                    <button class="btn btn-secondary" id="resetTimer">Сброс</button>
-                </div>
+            <div>
+            <div id="stopwatch">
+                <h6>Секундомер</h6>
+                <div id="stopwatchDisplay">00:00:00</div>
+                <button class="btn btn-secondary" id="startStopwatch">Старт</button>
+                <button class="btn btn-secondary" id="stopStopwatch">Стоп</button>
+                <button class="btn btn-secondary" id="resetStopwatch">Сброс</button>
+            </div>
+            <hr>
+            <hr>
+            <div id="timer">
+                <h6>Таймер</h6>
+                <div id="timerDisplay">00:00:00</div>
+                <input type="number" id="timerMinutes" placeholder="Минуты">
+                <button class="btn btn-secondary" id="startTimer">Старт</button>
+                <button class="btn btn-secondary" id="stopTimer">Стоп</button>
+                <button class="btn btn-secondary" id="resetTimer">Сброс</button>
+            </div>
+            </div>
+            <div>
+                <button class="btn btn-primary mt-3" id="back-to-main-timer">Назад</button>
             </div>
         </div>
     </div>
