@@ -4,7 +4,6 @@ let sports = false;
 document.addEventListener('DOMContentLoaded', function () {
 
     const url = "/api/organisation/";
-
     function setOrganisation(data) {
         const getAllOrganisation = document.getElementById("organisationType");
         data.forEach(item => {
@@ -26,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => console.error(error));
 });
 
+
 const getAllOrganisation = document.getElementById("organisationType");
 
 
@@ -43,6 +43,7 @@ getAllOrganisation.addEventListener('change', function () {
         )
     }
 
+
     fetch(url) //открываем url
         .then(response => {
             if (!response.ok) {
@@ -52,7 +53,42 @@ getAllOrganisation.addEventListener('change', function () {
         })
         .then(data => setSport(data)) //выводим всю информацию
         .catch(error => console.error());
+
 })
+
+// function skipping(){
+//     const couchName = document.getElementById("name").value;
+//     const couchExperience = document.getElementById("experience").value;
+//     const couchPhoto = document.getElementById("photo").files[0];
+//
+//
+//     const formData = new FormData();
+//     formData.append('name', couchName);
+//     formData.append('experience', couchExperience);
+//     if (couchPhoto) {
+//         formData.append('photo', couchPhoto)
+//     }
+//
+//     const urlCouch = "/api/couch/skip/";
+//
+//     fetch(urlCouch, {
+//         method: 'POST',
+//         // headers: {'Content-type': 'application/json'},
+//         body: formData
+//     }).then(response => {
+//         if (!response.ok) {
+//             throw new Error("Нужно зарегестрировать тренера")
+//         }
+//         return response.json();
+//     })
+//         .then(data => {
+//             console.log("Успех:", data);
+//             window.location.href = '/couches';
+//         }).catch(error => {
+//         console.error("Ошибка:", error);
+//     });
+//
+// }
 
 
 function skip() {
@@ -74,69 +110,68 @@ function next() {
     const couchExperience = document.getElementById("experience").value;
     const couchPhoto = document.getElementById("photo").files[0];
 
-    const formData = new FormData();
-    formData.append('name', couchName);
-    formData.append('experience', couchExperience);
-    if (couchPhoto) {
-        formData.append('photo', couchPhoto)
-    }
-
-    const urlCouch = "/api/couch/";
-
-
-    fetch(urlCouch, {
-        method: 'POST',
-        // headers: {
-        //     'Content-type': 'application/json'
-        // },
-        body: formData
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error("Нужно зарегестрировать тренера")
+    console.log("22222222")
+        const formData = new FormData();
+        formData.append('name', couchName);
+        formData.append('experience', couchExperience);
+        if (couchPhoto !== null) {
+            console.log("2123412421")
+            formData.append('photo', couchPhoto)
         }
-        return response;
-    })
-        .then(data => {
-            console.log("Успех:", data);
-            window.location.href = '/couches';
-        }).catch(error => {
-        console.error("Ошибка:", error);
-    });
 
-    const url = `/api/sport-section/sport/organisation/${sportId}/${organisationId}`;
-    fetch(url)
-        .then(response => {
+        const urlCouch = "/api/couch/";
+
+        fetch(urlCouch, {
+            method: 'POST',
+            // headers: {'Content-type': 'application/json'},
+            body: formData
+        }).then(response => {
             if (!response.ok) {
-                throw new Error("Неверная организация")
+                throw new Error("Нужно зарегестрировать тренера")
             }
             return response.json();
         })
-
-        .then(data => {
-            console.log(data)
-            const sportSectionId = data.id;
-            fetch("/api/sport-section/couch/" + sportSectionId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Нет такого тренера")
-                    }
-                    organisations = true;
-                    window.location.href = '/couches';
-
-                    return response;
-
-            })
-
-        })
-        .catch(error => console.error(error));
-
+            .then(data => {
+                console.log("Успех:", data);
+                window.location.href = '/couches';
+            }).catch(error => {
+            console.error("Ошибка:", error);
+        });
 
     if (organisationId !== "organisation" && organisations === false) {
+
+        const url = `/api/sport-section/sport/organisation/${sportId}/${organisationId}`;
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Неверная организация")
+                }
+                return response.json();
+            })
+
+            .then(data => {
+                console.log(data)
+                const sportSectionId = data.id;
+                fetch("/api/sport-section/couch/" + sportSectionId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Нет такого тренера")
+                        }
+                        organisations = true;
+                        window.location.href = '/couches';
+
+                        return response;
+
+                    })
+
+            })
+            .catch(error => console.error(error));
+
         const url2 = `/api/couch/organisation/${organisationId}`;
         fetch(url2, {
             method: 'POST',
@@ -154,7 +189,6 @@ function next() {
             .catch(error => console.error(error));
     } else {
         $("#confirmationModal").modal('show');
-        return;
     }
 
 }

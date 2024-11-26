@@ -19,9 +19,6 @@ import ru.sportlive.mvp.services.SportSectionService;
 import ru.sportlive.mvp.services.SportService;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +53,22 @@ public class CouchController {
         return new ResponseEntity<>(couch, HttpStatus.OK);
 
     }
+
+//    @PostMapping("/skip/")
+//    public ResponseEntity<Couch> addCouchSkip(
+//            @RequestParam("name") String name,
+//            @RequestParam("experience") String experience,
+////            @RequestParam("photo") MultipartFile photo,
+//            HttpSession httpSession) throws IOException {
+//
+//
+//        Couch couch = couchService.addCouchSkip(name, experience);
+////        couch = couchService.addCouchPhoto(couch, photo);
+//        httpSession.setAttribute("couchId", couch.getId());
+//        return new ResponseEntity<>(couch, HttpStatus.OK);
+//
+//    }
+
 
 //    @Operation(summary = "Добавить тренера", description = "Добавть тренера и зарегестировать на организацию")
 //    @PostMapping("/")

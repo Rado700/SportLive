@@ -38,6 +38,7 @@ public class Couch {
     @Setter
     private String photo;
 
+
     @Getter
     @Setter
     @JsonManagedReference
@@ -47,7 +48,7 @@ public class Couch {
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToMany(mappedBy = "couch", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "couch",fetch = FetchType.EAGER)
     private List<Inventory> inventory = new ArrayList<>();
 
     @Getter
@@ -96,6 +97,11 @@ public class Couch {
 
     public Couch(String name) {
         this.name = name;
+    }
+
+    public Couch(String name, String experience) {
+        this.name = name;
+        this.experience = experience;
     }
 
     public Couch(String name, List<SportSection> selectedSportSections, String experience) {

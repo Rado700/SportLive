@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.sportlive.mvp.dto.input.ScheduleAddExerciseDTO;
 import ru.sportlive.mvp.dto.input.ScheduleDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
@@ -15,8 +16,8 @@ import ru.sportlive.mvp.services.ScheduleService;
 import ru.sportlive.mvp.services.SportSectionService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/schedule")
@@ -29,6 +30,21 @@ public class ScheduleController {
 
     @Autowired
     SportSectionService sportSectionService;
+
+
+    @GetMapping("/getExercises/")
+    public ResponseEntity<Object> getExercises(HttpSession httpSession) {
+        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+        List<String> exercise = Collections.singletonList(scheduleService.getExercise(couch_id));
+        return new ResponseEntity<>(exercise, HttpStatus.OK);
+    }
+
+    @PostMapping("/addExercise/")
+    public ResponseEntity<Object> addExercise(HttpSession httpSession, ScheduleAddExerciseDTO exercise) {
+        Integer schedule = (Integer) httpSession.getAttribute("scheduleId");
+        scheduleService.addExercise(schedule, exercise);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @Operation(summary = "Вывести расписание по id")
     @GetMapping("/{id}")
@@ -54,7 +70,8 @@ public class ScheduleController {
         if (couch == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        Schedule schedule = scheduleService.addSchedule(scheduleDTO.getPlace(), scheduleDTO.getDescription(), scheduleDTO.getTypeWorkout(), scheduleDTO.getDate(), couch,section,scheduleDTO.getSum());
+        Schedule schedule = scheduleService.addSchedule(scheduleDTO.getPlace(), scheduleDTO.getDescription(), scheduleDTO.getTypeWorkout(), scheduleDTO.getDate(), couch, section, scheduleDTO.getSum());
+        httpSession.setAttribute("scheduleId",schedule.getId());
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
@@ -107,10 +124,10 @@ public class ScheduleController {
         if (section == null) {
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        List<Schedule>newSchedule = new ArrayList<>();
+        List<Schedule> newSchedule = new ArrayList<>();
         List<Schedule> schedule = scheduleService.getScheduleCouch(couch);
         for (Schedule schedules : schedule) {
-            if (schedules.getSportSection() == section){
+            if (schedules.getSportSection() == section) {
                 newSchedule.add(schedules);
             }
         }

@@ -53,7 +53,7 @@ public class User {
     @Getter
     @Setter
     @JsonManagedReference
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_inventory",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const profileInventory = document.getElementById('profile-inventory');
     const inventoryScreen = document.getElementById('inventoryScreen');
 
-    const infoScreen = document.getElementById('info-screen');
+    // const infoScreen = document.getElementById('info-screen');
     // const statistics = document.getElementById('statistics');
     const refreshButton = document.getElementById('refresh-data');
 
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // trainingScreen.classList.add('hidden');
         // inventoryScreen.classList.add('hidden');
         // container.classList.add('hidden');
-        infoScreen.classList.add('hidden');
+        // infoScreen.classList.add('hidden');
         screen.classList.remove('hidden');
     };
 
@@ -428,19 +428,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-// Добавить Инвентарь
-    document.getElementById('addInventory').addEventListener('click', function () {
-        showScreen(inventoryScreen);
-    });
-
     profileInventory.addEventListener('submit', (ev) => {
         ev.preventDefault();
         const formData = new FormData(profileInventory);
         const profileDate = {
             name: formData.get('name'),
-            price: formData.get('price'),
             type: formData.get('type'),
             size: formData.get('size'),
+            price: formData.get('price'),
         }
 
         fetch('/api/inventory/couch/', {
@@ -453,61 +448,269 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
+    // Инвентарь
 
-    //Статистика
-    document.getElementById("statistics").addEventListener("click", function () {
-        const infoScreenModal = new bootstrap.Modal(document.getElementById("infoScreenModal"));
-        infoScreenModal.show();
+    document.getElementById("inventory").addEventListener("click", function () {
+        const inventoryModalScreen = new bootstrap.Modal(document.getElementById("inventoryModalScreen"));
+        inventoryModalScreen.show();
 
+        // Элемент, куда будет добавляться информация
+        const equipmentInfo = document.getElementById('equipment-info');
+        const equipmentInfoSpan = equipmentInfo.querySelector('span');
 
+        // Функция обработки данных инвентаря
+        const processInventoryData = (data) => {
+            console.log("Обработка инвентаря...");
+            let infoBox2 = document.createElement('div');
+            infoBox2.classList.add('info-box2');
+            infoBox2.style.display = 'flex';
+            infoBox2.style.flexWrap = 'wrap';
 
-    // document.getElementById('statistics').addEventListener('click', () => {
-    //     showScreen(infoScreen);
+            data.forEach(profile => {
+                console.log("Обработка профиля:", profile);
 
-        const fetchData = () => {
-            fetch('/api/inventory/couchInventory/')
-                .then(response => response.json())
-                .then(data => {
-                    equipmentInfo.innerHTML = JSON.stringify(data, null, 2);
-                })
-                .catch(error => {
-                    equipmentInfo.innerHTML = 'Ошибка загрузки данных инвентаря: ' + error;
+                const profileDiv = document.createElement("div");
+                profileDiv.classList.add("profile-item");
+                profileDiv.style.border = "1px solid #ccc"; // Добавляем немного стилей
+                profileDiv.style.margin = "10px";
+                profileDiv.style.padding = "10px";
+
+                // Добавляем данные профиля
+                const name = document.createElement("p");
+                name.textContent = `Наименования: ${profile.name || "Не указано"}`;
+                profileDiv.appendChild(name);
+
+                const price = document.createElement("p");
+                price.textContent = `Цена: ${profile.price || 0}`;
+                profileDiv.appendChild(price);
+
+                const type = document.createElement("p");
+                type.textContent = `Тип: ${profile.type || "Не указано"}`;
+                profileDiv.appendChild(type);
+
+                const size = document.createElement("p");
+                size.textContent = `Размер: ${profile.size || "Не указано"}`;
+                profileDiv.appendChild(size);
+
+                // Кнопка "Удалить"
+                const deleteButton = document.createElement("button");
+                deleteButton.classList.add("delete-button");
+                deleteButton.textContent = "Удалить";
+                deleteButton.style.backgroundColor = "aqua";
+                deleteButton.style.fontSize = "15px";
+                deleteButton.style.cursor = "pointer";
+                deleteButton.style.borderRadius = "2px";
+
+                profileDiv.appendChild(deleteButton);
+
+                // Добавляем обработчик для удаления
+                deleteButton.addEventListener('click', function () {
+                    deleteInventory(profile.id, profileDiv);
                 });
 
+                // Добавляем профиль в infoBox
+                infoBox2.appendChild(profileDiv);
+            });
+
+            return infoBox2;
+        };
+
+        // Функция для загрузки данных с сервера
+        const fetchData = () => {
+            // Показываем, что данные загружаются
+            equipmentInfoSpan.textContent = "Загрузка...";
+
+            fetch('/api/inventory/couchInventory/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Ошибка HTTP: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Инвентарь загружен:", data);
+
+                    // Отображаем общее количество
+                    equipmentInfoSpan.textContent = data.length;
+
+                    // Удаляем старое содержимое и добавляем новое
+                    const inventoryResult = processInventoryData(data);
+                    if (equipmentInfo.nextElementSibling) {
+                        equipmentInfo.nextElementSibling.remove();
+                    }
+                    equipmentInfo.after(inventoryResult);
+                })
+                .catch(error => {
+                    console.error("Ошибка загрузки данных:", error);
+                    equipmentInfoSpan.textContent = `Ошибка: ${error.message}`;
+                });
+        };
+
+        fetchData();
+    });
+
+// Функция для удаления элемента инвентаря
+    function deleteInventory(id, profileDiv) {
+        fetch(`/api/inventory/${id}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log(`Удален инвентарь с ID: ${id}`);
+                    profileDiv.remove(); // Удаляем элемент из DOM
+                } else {
+                    return response.json().then(err => {
+                        throw new Error(err.message || "Ошибка при удалении");
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка удаления:", error);
+                alert(`Не удалось удалить элемент: ${error.message}`);
+            });
+    }
+
+    //Статистика
+
+    document.getElementById("statistics").addEventListener("click", function () {
+        const infoScreenModal = new bootstrap.Modal(document.getElementById("inventoryScreenModal"));
+        infoScreenModal.show();
+
+        // Функция обработки данных профиля
+        const processProfileData = (data) => {
+            let infoBox3 = document.createElement('div');
+            infoBox3.classList.add('info-box3');
+            infoBox3.display = 'flex';
+
+
+            const name = data.name || "Имя отсутствует";
+            const balance = data.balance || "Баланс 0";
+            const experience = data.experience || "Стаж не указано"
+            const login = data.login?.login || "Login не найден";
+
+            infoBox3.innerHTML = `
+            <h4>Профиль:</h4>
+            <p><strong>Имя:</strong> ${name}</p>
+            <p><strong>Баланс:</strong> ${balance}</p>
+            <p><strong>Стаж:</strong> ${experience}</p>
+            <p><strong>Логин:</strong> ${login}</p>`;
+
+            return infoBox3;
+
+
+            // console.log("profile")
+            // const infoBox = document.createElement('div');
+            // infoBox.classList.add('info-box');
+            // infoBox.style.display = 'flex';
+            // infoBox.style.flexDirection = 'column';
+            //
+            // if (!data || Object.keys(data).length === 0) {
+            //     infoBox.innerHTML = '<p>Нет данных профиля</p>';
+            //     return infoBox;
+            // }
+            //
+            // const profileDiv = document.createElement("div");
+            // profileDiv.classList.add("profile-item");
+            //
+            // // Добавляем данные профиля
+            // const name = document.createElement("p");
+            // name.textContent = `Имя: ${data.name || "Не указано"}`;
+            // profileDiv.appendChild(name);
+            //
+            // const balance = document.createElement("p");
+            // balance.textContent = `Баланс: ${data.balance || 0}`;
+            // profileDiv.appendChild(balance);
+            //
+            // const experience = document.createElement("p");
+            // experience.textContent = `Опыт: ${data.experience || "Не указано"}`;
+            // profileDiv.appendChild(experience);
+            //
+            // const login = document.createElement("p");
+            // login.textContent = `Логин: ${data.login?.login || "Не указано"}`;
+            // profileDiv.appendChild(login);
+            //
+            // infoBox.appendChild(profileDiv);
+            //
+            // return infoBox;
+        };
+
+        // Функция обработки данных расписания
+        const processBookingData = (data) => {
+            console.log("booking")
+            let infoBox3 = document.createElement('div');
+            infoBox3.classList.add('info-box3');
+            infoBox3.display = 'flex';
+
+
+            const place = data.place || "Место положения отсутствует";
+            const description = data.description || "Коментарий нету";
+            const date = data.date || "Время не указано"
+            const typeWorkout = data.typeWorkout || "Тип тренировки не указан";
+            const price = data.sum || "Цена не указана";
+
+            infoBox3.innerHTML = `
+            <h4>Расписание тренировок:</h4>
+            <p><strong>Место проведения:</strong> ${place}</p>
+            <p><strong>Комментарий:</strong> ${description}</p>
+            <p><strong>Дата:</strong> ${date}</p>
+            <p><strong>Тип тренировки:</strong> ${typeWorkout}</p>
+            <p><strong>Цена:</strong> ${price}</p>`;
+
+            return infoBox3;
+
+        };
+
+        // Обратобка
+        const fetchData = () => {
+
+            // Обработка расписания
             fetch('/api/booking/couchBooking/')
                 .then(response => response.json())
                 .then(data => {
-                    trainerInfo.innerHTML = JSON.stringify(data, null, 2);
+                    console.log("BOOKING")
+                    const bookingResult = processBookingData(data);
+                    trainerInfo.innerHTML = bookingResult.innerHTML;
                 })
                 .catch(error => {
                     trainerInfo.innerHTML = 'Ошибка загрузки данных расписания: ' + error;
                 });
 
+            // Обработка профиля
             fetch('/api/couch/getCouch/')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    profileInfo.innerHTML = JSON.stringify(data, null, 2);
+                    console.log("PROFILE")
+                    const profileResult = processProfileData(data);
+                    // Очищаем контейнер перед вставкой
+                    profileInfo.innerHTML = '';
+                    profileInfo.appendChild(profileResult);
                 })
                 .catch(error => {
-                    profileInfo.innerHTML = 'Ошибка загрузки данных авторизации: ' + error;
+                    profileInfo.innerHTML = `<p>Ошибка загрузки данных профиля: ${error.message}</p>`;
                 });
         };
 
+        // Обновление данных при нажатии кнопки
         refreshButton.addEventListener('click', fetchData);
 
+        // Первоначальная загрузка
         fetchData();
 
-});
-    document.getElementById('back-to-main-info').addEventListener('click', () => {
-        window.location.href = "/";
-    });
-    document.getElementById('back-to-main-inventory').addEventListener('click', () => {
-        window.location.display.style.label = "close";
-    });
-    document.getElementById('back-to-main-timer').addEventListener('click', () => {
-        window.location.display.style.label = "none";
 
     });
+
+    // document.getElementById('back-to-main-inventory').addEventListener('click', () => {
+    //     window.location.display.style.label = "close";
+    // });
+    // document.getElementById('back-to-main-timer').addEventListener('click', () => {
+    //     window.location.display.style.label = "none";
+    //
+    // });
 
 
     // // Select Organization
@@ -545,18 +748,96 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Add Exercises
+    // document.getElementById('addExercises').addEventListener('click', function () {
+
+    // document.getElementById('addExercises').addEventListener('click', function() {
+    //     const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
+    //     let exerciseInputs = '';
+    //     for (let i = 1; i <= 10; i++) {
+    //         exerciseInputs += `
+    //         <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
+    //         <input type="text" class="form-control mb-3" id="exercise${i}" required>
+    //     `;
+    //     }
+    //     document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
+    //     modal.show();
+    // });
+
+    //     const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
+    //     modal.show();
+    //
+    //     let exerciseInputs = '';
+    //     for (let i = 1; i <= 5; i++) {
+    //         exerciseInputs += `
+    //     <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
+    //     <input type="text" class="form-control mb-3" id="exercise${i}">
+    // `;
+    //     }
+    //     document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
+    //
+    // });
+
     document.getElementById('addExercises').addEventListener('click', function () {
-        const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
+
         let exerciseInputs = '';
         for (let i = 1; i <= 5; i++) {
             exerciseInputs += `
-            <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
-            <input type="text" class="form-control mb-3" id="exercise${i}" required>
-        `;
+                <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
+                <input type="text" class="form-control mb-3" id="exercise${i}" name="exercise${i}" placeholder="Введите название упражнения">
+            `;
         }
         document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
-        modal.show();
     });
+
+    // // Обработка формы
+    // document.getElementById('exerciseModal').addEventListener('submit', function (event) {
+    //     event.preventDefault();
+    //
+    //     const formData = new FormData(event.target);
+    //     const exercises = [];
+    //
+    //     for (let [key, value] of formData.entries()) {
+    //         if (value.trim()) {
+    //             exercises.push(value.trim());
+    //         }
+    //     }
+    //
+    //     console.log("Добавленные упражнения:", exercises);
+    //
+    //     // Закрытие модального окна через Bootstrap API
+    //     const modal = bootstrap.Modal.getInstance(document.getElementById('exerciseModal'));
+    //     modal.hide();
+    //
+    //     // Очистка формы
+    //     event.target.reset();
+    // });
+    //
+    //
+    // // Обработка формы
+    // const exerciseForm = document.getElementById("exerciseForm");
+    // exerciseForm.addEventListener("submit", (event) => {
+    //     event.preventDefault();
+    //
+    //     const formData = new FormData(exerciseForm);
+    //     const exercises = [];
+    //
+    //     for (let [key, value] of formData.entries()) {
+    //         if (value.trim()) {
+    //             exercises.push(value.trim());
+    //         }
+    //     }
+    //
+    //     console.log("Добавленные упражнения:", exercises);
+    //
+    //     // Закрытие модального окна
+    //     const modal = bootstrap.Modal.getInstance(document.getElementById('exerciseModal'));
+    //     modal.hide();
+    //
+    //     // Очистка формы
+    //     exerciseForm.reset();
+    // });
+    // });
+    // });
 
     //добавить exercises
     document.getElementById('exerciseForm').addEventListener('submit', function (event) {
@@ -565,7 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= 5; i++) {
             exercises.push(document.getElementById('exercise' + i).value);
         }
-        fetch(`$https://sportliveapp.ru/exercises-controller`, {
+        fetch("/api/couch/addExercise/", {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({exercises: exercises})
@@ -646,6 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('timerMinutes').value = '';
     });
 
+
 });
 
 function exit() {
@@ -657,3 +939,5 @@ function exit() {
             }
         }).catch(error => console.error('Error:', error))
 }
+
+

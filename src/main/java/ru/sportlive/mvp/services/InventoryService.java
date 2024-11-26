@@ -18,6 +18,7 @@ import java.util.Set;
 @Service
 public class InventoryService {
 
+
     @Autowired
     InventoryRepository inventoryRepository;
     @Autowired
@@ -35,11 +36,32 @@ public class InventoryService {
         return inventory;
     }
 
-    public Inventory deleteInventory(Integer id){
+    @Transactional
+    public Inventory deleteInventory(Integer id) {
         Inventory inventory = getInventory(id);
+
+        // Remove Inventory from Users
+        for (User user : inventory.getUser()) {
+            user.getSelectedInventory().remove(inventory);
+        }
+        inventory.getUser().clear();
+
+        // Remove Inventory from Couch
+        Couch couch = inventory.getCouch();
+        if (couch != null) {
+            couch.getInventory().remove(inventory);
+            inventory.setCouch(null);
+        }
+
+        // Save changes to detach relationships
+        inventoryRepository.save(inventory);
+
+        // Now delete the Inventory
         inventoryRepository.delete(inventory);
+
         return inventory;
     }
+
     public List<Inventory> getAllInventory(){
         return inventoryRepository.findAll();
     }

@@ -10,7 +10,7 @@
 <body>
 <div class="container">
     <div id="my-container">
-        <h1 class="text-center my-5">Меню тренера</h1>
+        <h1 class="text-menu"></h1>
         <div class="d-flex justify-content-center mb-5">
             <div class="btn-group-vertical">
                 <button class="btn btn-primary mb-3" id="addTraining" data-bs-toggle="modal"
@@ -19,7 +19,9 @@
                 <button class="btn btn-primary mb-3" id="addInventory" data-bs-toggle="modal"
                         data-bs-target="#inventoryModal">Добавить инвентарь
                 </button>
-                <button class="btn btn-primary mb-3" id="addExercises">Добавить упражнения</button>
+                <button class="btn btn-primary mb-3" id="addExercises" data-bs-toggle="modal"
+                        data-bs-target="#exerciseModal">Добавить упражнения
+                </button>
                 <button class="btn btn-primary mb-3" id="MyTrainings" data-bs-toggle="modal"
                         data-bs-target="#scheduleForCouch">Мой тренировки
                 </button>
@@ -28,16 +30,16 @@
     </div>
 
     <div class="footer d-flex justify-content-around">
-        <button class="icon btn" id="stopwatchTimer" data-bs-toggle="modal" data-bs-target="#stopwatchTimerModal">⏱⏲
-            Секундомер и Таймер
-        </button>
-        <button class="icon btn" id="statistics">📊 Общая статистика</button>
+        <button class="icon btn" id="stopwatchTimer" data-bs-toggle="modal" data-bs-target="#stopwatchTimerModal">⏱</button>
+        <button class="icon btn" id="statistics">📊</button>
+        <button class="icon btn" id="inventory">🦾</button>
     </div>
 </div>
 
 
-<!-- Info Screen Modal -->
-<div class="modal fade" id="infoScreenModal" tabindex="-1" aria-labelledby="infoScreenLabel" aria-hidden="true">
+<!--Информация-->
+
+<div class="modal fade" id="inventoryScreenModal" tabindex="-1" aria-labelledby="infoScreenLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content border-primary">
             <div class="modal-header">
@@ -45,9 +47,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="trainer-info">Осталось тренировок тренера: <span>0</span></p>
+                <p id="trainer-info">Осталось тренировок тренера: <span></span></p>
                 <p id="profile-info">Ваши данные: <span></span></p>
-                <p id="equipment-info">Общее количество инвентаря: <span>0</span></p>
+<!--                <p id="equipment-info">Общее количество инвентаря: <span></span></p>-->
                 <button class="btn btn-primary mt-3" id="refresh-data">Обновить данные</button>
                 <button type="submit" class="btn btn-danger mt-3" id="exit" onclick="exit()">Выход</button>
                 <button class="btn btn-secondary mt-3" data-bs-dismiss="modal">Назад</button>
@@ -56,15 +58,33 @@
     </div>
 </div>
 
+<!--Инвентори-->
 
 
-<!-- Modal for Training -->
+<div class="modal fade" id="inventoryModalScreen" tabindex="-1" aria-labelledby="inventoryScreenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-primary">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inventoryScreenLabel">Инвентарь</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="margin: 20px">
+                <p id="equipment-info">Общее количество инвентаря: <span></span></p>
+            </div>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Назад</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Добавить тренировку-->
+
 <div class="modal fade" id="trainingModal" tabindex="-1" aria-labelledby="trainingModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="trainingModalLabel">Добавить тренировку</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="false"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="profile-training">
@@ -119,8 +139,7 @@
                             <label for="intervalDate" class="form-label">Выберите общий временной интервал (от -
                                 до):</label>
                             <div id="intervalDate" class="d-flex flex-wrap">
-                                <input type="date" id="startDate" name="startDate" class="form-control"
-                                       placeholder="От">
+                                <input type="date" id="startDate" name="startDate" class="form-control" placeholder="От">
                                 <input type="date" id="endDate" name="endDate" class="form-control" placeholder="До">
                             </div>
                         </div>
@@ -131,8 +150,7 @@
                             <div id="allTimes">
                                 <!-- Здесь будет динамически добавляться время -->
                             </div>
-                            <input type="button" id="nextTimes" value="Добавить время"
-                                   class="btn btn-outline-secondary">
+                            <input type="button" id="nextTimes" value="Добавить время" class="btn btn-outline-secondary">
                         </div>
                     </div>
 
@@ -146,6 +164,7 @@
                     </div>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Назад</button>
                     </div>
                 </form>
             </div>
@@ -153,7 +172,8 @@
     </div>
 </div>
 
-<!-- Modal for Inventory -->
+<!--Добавить инвентарь-->
+
 <div class="modal fade" id="inventoryModal" tabindex="-1" aria-labelledby="inventoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -181,9 +201,7 @@
                     </div>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Сохранить</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-primary mt-3" id="back-to-main-inventory">Назад</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Назад</button>
                     </div>
                 </form>
             </div>
@@ -205,13 +223,16 @@
                 <div id="couchesTraining">
                     <!-- Здесь будет динамически отображаться расписание -->
                 </div>
+                <div class="d-grid gap-2">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Назад</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 
-<div class="modal fade" id="exerciseModal" tabindex="-1" aria-labelledby="exerciseModalLabel" aria-hidden="true">
+<div class="modal fade" id="exerciseModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -221,8 +242,11 @@
             <div class="modal-body">
                 <form id="exerciseForm">
                     <div class="mb-3" id="exerciseInputs"></div>
-                    <button type="submit" class="btn btn-primary">Добавить</button>
                 </form>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Назад</button>
+                </div>
             </div>
         </div>
     </div>
@@ -230,39 +254,62 @@
 
 
 <!-- Modal for Stopwatch and Timer -->
-<div class="modal fade" id="stopwatchTimerModal" tabindex="-1" aria-labelledby="stopwatchTimerModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="stopwatchTimerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="stopwatchTimerModalLabel">Секундомер и Таймер</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div>
-            <div id="stopwatch">
-                <h6>Секундомер</h6>
-                <div id="stopwatchDisplay">00:00:00</div>
-                <button class="btn btn-secondary" id="startStopwatch">Старт</button>
-                <button class="btn btn-secondary" id="stopStopwatch">Стоп</button>
-                <button class="btn btn-secondary" id="resetStopwatch">Сброс</button>
+            <div class="modal-body">
+                <!-- Секундомер -->
+                <div class="card mb-3">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0">Секундомер</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <div id="stopwatchDisplay" class="display-5 mb-3">00:00:00</div>
+                        <div class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-success" id="startStopwatch">Старт</button>
+                            <button class="btn btn-danger" id="stopStopwatch">Стоп</button>
+                            <button class="btn btn-warning" id="resetStopwatch">Сброс</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Таймер -->
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0">Таймер</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <div id="timerDisplay" class="display-5 mb-3">00:00:00</div>
+                        <div class="mb-3">
+                            <input type="number" id="timerMinutes" class="form-control text-center" placeholder="Минуты" min="1">
+                        </div>
+                        <div class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-success" id="startTimer">Старт</button>
+                            <button class="btn btn-danger" id="stopTimer">Стоп</button>
+                            <button class="btn btn-warning" id="resetTimer">Сброс</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <hr>
-            <hr>
-            <div id="timer">
-                <h6>Таймер</h6>
-                <div id="timerDisplay">00:00:00</div>
-                <input type="number" id="timerMinutes" placeholder="Минуты">
-                <button class="btn btn-secondary" id="startTimer">Старт</button>
-                <button class="btn btn-secondary" id="stopTimer">Стоп</button>
-                <button class="btn btn-secondary" id="resetTimer">Сброс</button>
-            </div>
-            </div>
-            <div>
-                <button class="btn btn-primary mt-3" id="back-to-main-timer">Назад</button>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
             </div>
         </div>
     </div>
 </div>
+
+
+<!--&lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
+<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">-->
+
+<!--&lt;!&ndash; Popper.js (для работы некоторых компонентов, например, модальных окон) &ndash;&gt;-->
+<!--<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>-->
+
+<!--&lt;!&ndash; Bootstrap JS &ndash;&gt;-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>-->
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

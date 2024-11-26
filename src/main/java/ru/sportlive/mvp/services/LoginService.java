@@ -74,17 +74,43 @@ public class LoginService {
         Optional<User> user = userRepository.findById(id);
         return user.map(User::getLogin).orElse(null);
     }
-
     public Login getCouchLogin(Integer id){
         Optional<Couch> couch = couchRepository.findById(id);
         return couch.map(Couch::getLogin).orElse(null);
     }
-    public Login addLoginUser (String name, String password,User user) {
 
+    public Login addLoginUser (String name, String password,User user) {
         Login login = new Login(name,hashCoder(password));
         login.setUser(user);
         return loginRepository.save(login);
     }
+    public Login addLoginCouch (String name, String password,Couch couch){
+        Login login = new Login(name,hashCoder(password));
+        login.setCouch(couch);
+        return loginRepository.save(login);
+
+    }
+    public Login enterUser (String name, String password) {
+        List<Login> logins = loginRepository.findByLogin(name);
+        String pass = hashCoder(password);
+        for (Login login : logins) {
+            if (login.getPassword().equals(pass) && login.getUser() != null) {
+                return login;
+            }
+        }
+        return null;
+    }
+    public Login enterCouch (String name, String password) {
+        List<Login> logins = loginRepository.findByLogin(name);
+        String pass = hashCoder(password);
+        for (Login login : logins) {
+            if (login.getPassword().equals(pass) && login.getCouch() != null) {
+                return login;
+            }
+        }
+        return null;
+    }
+
     public Boolean isLoginOccupiedCouch(String login){
         List<Login> byLogin = loginRepository.findByLogin(login);
         for (Login logins:byLogin) {
@@ -105,31 +131,6 @@ public class LoginService {
         return false;
     }
 
-    public Login addLoginCouch (String name, String password,Couch couch){
-        Login login = new Login(name,password);
-        login.setCouch(couch);
-        return loginRepository.save(login);
-
-    }
-    public Login enterUser (String name, String password) {
-        List<Login> logins = loginRepository.findByLogin(name);
-        String pass = hashCoder(password);
-        for (Login login : logins) {
-            if (login.getPassword().equals(pass) && login.getUser() != null) {
-                return login;
-            }
-        }
-        return null;
-    }
-    public Login enterCouch (String name, String password) {
-        List<Login> logins = loginRepository.findByLogin(name);
-        for (Login login : logins) {
-            if (login.getPassword().equals(password) && login.getCouch() != null) {
-                return login;
-            }
-        }
-        return null;
-    }
 
     public Login updateLogin(Login login, LoginDTO loginDTO){
         login.setLogin(loginDTO.getName());

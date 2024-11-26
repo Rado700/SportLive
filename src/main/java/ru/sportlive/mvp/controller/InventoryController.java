@@ -54,6 +54,7 @@ public class InventoryController {
         Inventory inventory = inventoryService.getInventory(id);
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
+
     @Operation(summary = "удалить инвентарь по id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Inventory>deleteInventory(@PathVariable Integer id) {

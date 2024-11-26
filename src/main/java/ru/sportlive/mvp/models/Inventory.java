@@ -36,13 +36,14 @@ public class Inventory {
     @Getter
     @Setter
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "couch_id")
     private Couch couch;
 
 
+    @Getter
     @JsonBackReference
-    @ManyToMany(mappedBy = "selectedInventory",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "selectedInventory", fetch = FetchType.EAGER)
     private Set<User> user = new HashSet<>();
 
     public Inventory() {

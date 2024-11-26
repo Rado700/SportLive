@@ -3,6 +3,7 @@ package ru.sportlive.mvp.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.sportlive.mvp.dto.input.ScheduleAddExerciseDTO;
 import ru.sportlive.mvp.dto.input.ScheduleDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
@@ -21,6 +22,7 @@ public class ScheduleService {
 
     @Autowired
     ScheduleRepository scheduleRepository;
+
 
     public Schedule getSchedule(Integer schedule_id) {
         return scheduleRepository.findById(schedule_id).orElse(null);
@@ -59,6 +61,17 @@ public class ScheduleService {
         schedule.setDate(scheduleDTO.getDate());
         scheduleRepository.save(schedule);
         return schedule;
+    }
+
+        public String getExercise(Integer id){
+        Optional<Schedule> exercise = scheduleRepository.findById(id);
+        return exercise.map(Schedule::getExercise).orElse(null);
+    }
+
+    public void addExercise(Integer schedule_id, ScheduleAddExerciseDTO exercise){
+        Schedule schedule = scheduleRepository.findById(schedule_id).orElse(null);
+        schedule.setExercise(String.valueOf(exercise));
+        scheduleRepository.save(schedule);
     }
 
 }

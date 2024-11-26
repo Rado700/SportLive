@@ -32,6 +32,11 @@ public class CouchService {
         return couchRepository.findAll();
     }
 
+    public Couch addCouchSkip (String name, String experience){
+        Couch couch = new Couch(name, experience);
+        couchRepository.save(couch);
+        return couch;
+    }
     public Couch addCouch (String name, List<SportSection> sportSections_id, String experience){
         Couch couch = new Couch(name,sportSections_id, experience);
         couchRepository.save(couch);
@@ -101,4 +106,5 @@ public class CouchService {
         Optional<Couch> user = couchRepository.findById(id);
         return user.map(Couch::getBalance).orElse(null);
     }
+
 }

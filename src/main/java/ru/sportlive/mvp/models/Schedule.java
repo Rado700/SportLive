@@ -37,6 +37,11 @@ public class Schedule implements Comparable<Schedule> {
 
     @Getter
     @Setter
+    private String exercise;
+
+
+    @Getter
+    @Setter
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "couch_id")
