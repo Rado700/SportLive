@@ -40,7 +40,7 @@ public class ScheduleController {
     }
 
     @PostMapping("/addExercise/")
-    public ResponseEntity<Object> addExercise(HttpSession httpSession, ScheduleAddExerciseDTO exercise) {
+    public ResponseEntity<Object> addExercise(HttpSession httpSession,@RequestBody ScheduleAddExerciseDTO exercise) {
         Integer schedule = (Integer) httpSession.getAttribute("scheduleId");
         scheduleService.addExercise(schedule, exercise);
         return new ResponseEntity<>(HttpStatus.OK);

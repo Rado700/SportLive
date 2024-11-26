@@ -17,7 +17,7 @@ button{
     margin-bottom:190px;
 }
 .text-menu{
-    /*margin-left: 28px;*/
+    margin-left: 28px;
     padding: 60px;
     color: white;
 }
@@ -64,11 +64,11 @@ font-size: 14px;
     border-radius: 20px
 }
 
-.btn-group, .btn-group-vertical {
-position: relative;
-/* display: inline-flex; */
-    vertical-align: middle;
-}
+/*.btn-group, .btn-group-vertical {*/
+/*position: relative;*/
+/*!* display: inline-flex; *!*/
+/*    vertical-align: middle;*/
+/*}*/
 
 /* Футер */
 .footer {
@@ -89,13 +89,13 @@ position: relative;
     border-radius: 8px;
     padding: 20px;
 }
-.hidden{
-    display: none;
-}
+/*.hidden{*/
+/*    display: none;*/
+/*}*/
 
-#inventoryScreenModal{
-    background-image:url("../img/usain2.jpg");
-}
+/*#inventoryScreenModal{*/
+/*    background-image:url("../img/usain2.jpg");*/
+/*}*/
 /* Стиль для модального окна infoScreenModal */
 #inventoryScreenModal .modal-content {
     /*border: 2px solid #0d6efd;*/
@@ -209,11 +209,11 @@ position: relative;
     /*border-bottom: 2px solid #0056b3;*/
 }
 
-#equipment-info {
-    font-size: 16px;
-    margin-bottom: 1rem;
-    color: #6c757d;
-}
+/*#equipment-info {*/
+/*    font-size: 16px;*/
+/*    margin-bottom: 1rem;*/
+/*    color: #6c757d;*/
+/*}*/
 
 /* Контейнер для карточек инвентаря */
 .inventory-container {

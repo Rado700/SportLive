@@ -68,7 +68,7 @@ public class ScheduleService {
         return exercise.map(Schedule::getExercise).orElse(null);
     }
 
-    public void addExercise(Integer schedule_id, ScheduleAddExerciseDTO exercise){
+        public void addExercise(Integer schedule_id, ScheduleAddExerciseDTO exercise){
         Schedule schedule = scheduleRepository.findById(schedule_id).orElse(null);
         schedule.setExercise(String.valueOf(exercise));
         scheduleRepository.save(schedule);

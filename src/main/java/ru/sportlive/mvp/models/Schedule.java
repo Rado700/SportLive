@@ -64,6 +64,9 @@ public class Schedule implements Comparable<Schedule> {
     public Schedule() {
     }
 
+    public Schedule(String exercise) {
+        this.exercise = exercise;
+    }
 
     public Schedule(String place, String description, Timestamp date, Couch couch, SportSection sportSection, String typeWorkout, Integer sum) {
         this.place = place;

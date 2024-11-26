@@ -747,110 +747,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // });
 
 
-    // Add Exercises
-    // document.getElementById('addExercises').addEventListener('click', function () {
-
-    // document.getElementById('addExercises').addEventListener('click', function() {
-    //     const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
-    //     let exerciseInputs = '';
-    //     for (let i = 1; i <= 10; i++) {
-    //         exerciseInputs += `
-    //         <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
-    //         <input type="text" class="form-control mb-3" id="exercise${i}" required>
-    //     `;
-    //     }
-    //     document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
-    //     modal.show();
-    // });
-
-    //     const modal = new bootstrap.Modal(document.getElementById('exerciseModal'));
-    //     modal.show();
-    //
-    //     let exerciseInputs = '';
-    //     for (let i = 1; i <= 5; i++) {
-    //         exerciseInputs += `
-    //     <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
-    //     <input type="text" class="form-control mb-3" id="exercise${i}">
-    // `;
-    //     }
-    //     document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
-    //
-    // });
-
     document.getElementById('addExercises').addEventListener('click', function () {
-
         let exerciseInputs = '';
         for (let i = 1; i <= 5; i++) {
             exerciseInputs += `
-                <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
-                <input type="text" class="form-control mb-3" id="exercise${i}" name="exercise${i}" placeholder="Введите название упражнения">
-            `;
+            <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
+            <input type="text" class="form-control mb-3" id="exercise${i}" name="exercise${i}" placeholder="Введите название упражнения">
+        `;
         }
         document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
     });
 
-    // // Обработка формы
-    // document.getElementById('exerciseModal').addEventListener('submit', function (event) {
-    //     event.preventDefault();
-    //
-    //     const formData = new FormData(event.target);
-    //     const exercises = [];
-    //
-    //     for (let [key, value] of formData.entries()) {
-    //         if (value.trim()) {
-    //             exercises.push(value.trim());
-    //         }
-    //     }
-    //
-    //     console.log("Добавленные упражнения:", exercises);
-    //
-    //     // Закрытие модального окна через Bootstrap API
-    //     const modal = bootstrap.Modal.getInstance(document.getElementById('exerciseModal'));
-    //     modal.hide();
-    //
-    //     // Очистка формы
-    //     event.target.reset();
-    // });
-    //
-    //
-    // // Обработка формы
-    // const exerciseForm = document.getElementById("exerciseForm");
-    // exerciseForm.addEventListener("submit", (event) => {
-    //     event.preventDefault();
-    //
-    //     const formData = new FormData(exerciseForm);
-    //     const exercises = [];
-    //
-    //     for (let [key, value] of formData.entries()) {
-    //         if (value.trim()) {
-    //             exercises.push(value.trim());
-    //         }
-    //     }
-    //
-    //     console.log("Добавленные упражнения:", exercises);
-    //
-    //     // Закрытие модального окна
-    //     const modal = bootstrap.Modal.getInstance(document.getElementById('exerciseModal'));
-    //     modal.hide();
-    //
-    //     // Очистка формы
-    //     exerciseForm.reset();
-    // });
-    // });
-    // });
-
-    //добавить exercises
+// Добавление упражнений
     document.getElementById('exerciseForm').addEventListener('submit', function (event) {
-        event.preventDefault();
+        event.preventDefault(); // Останавливаем стандартное поведение формы
+
         const exercises = [];
         for (let i = 1; i <= 5; i++) {
             exercises.push(document.getElementById('exercise' + i).value);
         }
-        fetch("/api/couch/addExercise/", {
+
+        fetch('/api/schedule/addExercise/', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({exercises: exercises})
-        }).then(response => response.json())
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exercises: exercises })
+        })
+            .then(response => response.json())
             .then(data => {
                 alert('Упражнения добавлены: ' + JSON.stringify(data));
                 const modal = bootstrap.Modal.getInstance(document.getElementById('exerciseModal'));
