@@ -49,7 +49,4 @@ public class Booking {
         return new BookingUserCouchDTO(id,schedule.getCouch().getCouchInfo(),user.getUserInfo(),schedule);
     }
 
-
-
-
 }

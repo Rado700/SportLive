@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="/css/couch.css">
 </head>
 <body>
+
+<div id="popup" class="popup"></div>
+
+
 <div class="container">
     <div id="my-container">
         <h1 class="text-menu"></h1>
@@ -32,7 +36,7 @@
     <div class="footer d-flex justify-content-around">
         <button class="icon btn" id="stopwatchTimer" data-bs-toggle="modal" data-bs-target="#stopwatchTimerModal">⏱</button>
         <button class="icon btn" id="statistics">📊</button>
-        <button class="icon btn" id="inventory">🦾</button>
+        <button class="icon btn" id="inventory">💪</button>
     </div>
 </div>
 
@@ -118,19 +122,19 @@
                     <div class="mb-3" id="addDaysForGeneral">
                         <label for="daysOfWeek" class="form-label">Выберите дни недели:</label>
                         <div id="daysOfWeek" class="d-flex flex-wrap">
-                            <button type="button" class="day-button btn btn-outline-primary" data-day="1">Понедельник
+                            <button type="button" class="day-button btn-outline-primary" data-day="1">Понедельник
                             </button>
-                            <button type="button" class="day-button btn btn-outline-primary" data-day="2">Вторник
+                            <button type="button" class="day-button inactive-button" data-day="2">Вторник
                             </button>
-                            <button type="button" class="day-button btn btn-outline-primary" data-day="3">Среда
+                            <button type="button" class="day-button inactive-button" data-day="3">Среда
                             </button>
-                            <button type="button" class="day-button btn btn-outline-primary" data-day="4">Четверг
+                            <button type="button" class="day-button inactive-button" data-day="4">Четверг
                             </button>
-                            <button type="button" class="day-button btn btn-outline-primary" data-day="5">Пятница
+                            <button type="button" class="day-button inactive-button" data-day="5">Пятница
                             </button>
-                            <button type="button" class="day-button btn btn-outline-primary" data-day="6">Суббота
+                            <button type="button" class="day-button inactive-button" data-day="6">Суббота
                             </button>
-                            <button type="button" class="day-button btn btn-outline-primary" data-day="0">Воскресенье
+                            <button type="button" class="day-button inactive-button" data-day="0">Воскресенье
                             </button>
                         </div>
 
@@ -157,13 +161,13 @@
                     <div class="mb-3" id="addDaysForIndividual">
                         <div id="allTime">
                             <label for="date" class="form-label">Дата:</label>
-                            <input type="datetime-local" id="date" name="date" class="form-control" required>
+                            <input type="datetime-local" id="date" name="date" class="form-control">
                         </div>
                         <input type="button" id="nextTime" value="Добавить время" class="btn btn-outline-secondary">
 
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Сохранить</button>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Назад</button>
                     </div>
                 </form>
@@ -209,7 +213,7 @@
     </div>
 </div>
 
-<!--//Расписание тренировок-->
+<!--//Мой тренировки-->
 
 <div class="modal fade" id="scheduleForCouch" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">

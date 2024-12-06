@@ -31,6 +31,10 @@ public class CouchService {
     public List<Couch> getAllCouches(){
         return couchRepository.findAll();
     }
+    public List<User>getAllUsersForCouch(Integer couch_id){
+        Optional<Couch> couch = couchRepository.findById(couch_id);
+        return couch.map(Couch::getUsers).orElse(null);
+    }
 
     public Couch addCouchSkip (String name, String experience){
         Couch couch = new Couch(name, experience);
@@ -78,6 +82,7 @@ public class CouchService {
 
     public Couch updateToCouch(Couch couch, CouchDTO couchDTO){
         couch.setName(couchDTO.getName());
+        couch.setExperience(couchDTO.getExperience());
         return couch;
     }
 

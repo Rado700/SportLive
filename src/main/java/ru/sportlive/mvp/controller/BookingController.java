@@ -79,6 +79,7 @@ public class BookingController {
         List<Booking> booking = bookingService.getUserBookings(id);
         return new ResponseEntity<>(booking,HttpStatus.OK);
     }
+
     @Operation(summary = "Все брони пользователя")
     @GetMapping("/getAllBookingUser/")
     public ResponseEntity<List<Booking>>getUserBooking(HttpSession httpSession){
@@ -106,7 +107,6 @@ public class BookingController {
         List<Booking>bookings = bookingService.getCouchBookingBySchedules(schedules);
         return new ResponseEntity<>(bookings.stream().map(Booking::getBookingUserCouch).collect(Collectors.toList()), HttpStatus.OK);
     }
-
 
     @Operation(summary = "Вывод всех броней которые были проведены тренером для user")
     @GetMapping("/couch/user/{couchId}/{userId}")

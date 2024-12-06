@@ -4,6 +4,7 @@ let sports = false;
 document.addEventListener('DOMContentLoaded', function () {
 
     const url = "/api/organisation/";
+
     function setOrganisation(data) {
         const getAllOrganisation = document.getElementById("organisationType");
         data.forEach(item => {
@@ -110,36 +111,33 @@ function next() {
     const couchExperience = document.getElementById("experience").value;
     const couchPhoto = document.getElementById("photo").files[0];
 
-    console.log("22222222")
-        const formData = new FormData();
-        formData.append('name', couchName);
-        formData.append('experience', couchExperience);
-        if (couchPhoto !== null) {
-            console.log("2123412421")
-            formData.append('photo', couchPhoto)
+    // const formData = new FormData();
+    // formData.append('name', couchName);
+    // formData.append('experience', couchExperience);
+    // if (couchPhoto) {
+    //     formData.append('photo', couchPhoto)
+    // }
+
+    const urlCouch = "/api/couch/";
+    console.log({name:couchName,experience:couchExperience , photo: couchPhoto});
+    fetch(urlCouch, {
+        method: 'PUT',
+        headers: {'Content-type': 'application/json'},
+        body: JSON.stringify({name:couchName,experience:couchExperience , photo: couchPhoto})
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error("Нужно зарегестрировать тренера")
         }
-
-        const urlCouch = "/api/couch/";
-
-        fetch(urlCouch, {
-            method: 'POST',
-            // headers: {'Content-type': 'application/json'},
-            body: formData
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error("Нужно зарегестрировать тренера")
-            }
-            return response.json();
-        })
-            .then(data => {
-                console.log("Успех:", data);
-                window.location.href = '/couches';
-            }).catch(error => {
-            console.error("Ошибка:", error);
-        });
+        return response;
+    })
+        .then(data => {
+            console.log("Успех:", data);
+            window.location.href = '/couches';
+        }).catch(error => {
+        console.error("Ошибка:", error);
+    });
 
     if (organisationId !== "organisation" && organisations === false) {
-
         const url = `/api/sport-section/sport/organisation/${sportId}/${organisationId}`;
         fetch(url)
             .then(response => {
@@ -164,7 +162,6 @@ function next() {
                         }
                         organisations = true;
                         window.location.href = '/couches';
-
                         return response;
 
                     })

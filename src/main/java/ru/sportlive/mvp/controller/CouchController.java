@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.dto.input.CouchOrganisationDTO;
-import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.Organisation;
-import ru.sportlive.mvp.models.Sport;
-import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.OrganisationService;
 import ru.sportlive.mvp.services.SportSectionService;
@@ -36,7 +33,7 @@ public class CouchController {
     @Autowired
     SportSectionService sportSectionService;
 
-    private static String UPLOADED_FOLDER = "/static/coach/photo/";
+    private static final String UPLOADED_FOLDER = "/static/coach/photo/";
 
     //   consumes = "multipart/form-data"
     @PostMapping("/")
@@ -89,11 +86,17 @@ public class CouchController {
         return new ResponseEntity<>(getAll, HttpStatus.OK);
 
     }
-
+    @Operation(summary = "Вывести всех пользователей у тренера")
+    @GetMapping("/allUserForCouch")
+    public ResponseEntity<List<User>>getAllUserForCouch(HttpSession httpSession){
+        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+        List<User>getAllUser = couchService.getAllUsersForCouch(couch_id);
+        return new ResponseEntity<>(getAllUser,HttpStatus.OK);
+    }
 
     @Operation(summary = "Удалить тренера по id")
     @DeleteMapping("/{couchId}")
-    public ResponseEntity<Couch> deleteCouch(HttpSession httpSession, Integer couchId) {
+    public ResponseEntity<Couch> deleteCouch(Integer couchId) {
         if (couchId == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -184,7 +187,8 @@ public class CouchController {
     @Operation(summary = "Обновления данных у тренера")
     @PutMapping("/")
     public ResponseEntity<Couch>updateCouch(@RequestBody CouchDTO couchDTO,HttpSession httpSession){
-        Couch couch = couchService.getCouch((Integer) httpSession.getAttribute("couchId"));
+        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couch_id);
         couch = couchService.updateToCouch(couch,couchDTO);
         return new ResponseEntity<>(couch,HttpStatus.OK);
     }

@@ -30,28 +30,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Добавление расписания (Общие, индивидуальные)Создание кнопок добавления и удаление времени
-    const selectedDays = [];
+
     // Обработчик для кнопок выбора дня недели
     document.querySelectorAll('.day-button').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function (){
             const day = this.getAttribute('data-day');
-
-            if (selectedDays.includes(day)) {
-                selectedDays.splice(selectedDays.indexOf(day), 1);
-                this.classList.remove('btn-primary');
-                this.classList.add('btn-outline-primary');
+            console.log(this.classList.contains('active-button'));
+            if (this.classList.contains('active-button')) {
+                this.classList.remove('active-button');
+                this.classList.add('inactive-button');
             } else {
-                selectedDays.push(day);
-                this.classList.remove('btn-outline-primary');
-                this.classList.add('btn-primary');
+                this.classList.remove('inactive-button');
+                this.classList.add('active-button');
             }
+            console.log(this.classList.contains('active-button'));
         });
     });
 
     // Добавление времени
     document.getElementById('nextTimes').addEventListener('click', function () {
         const addTime = document.getElementById("allTimes");
-
+        const selectedDays = [];
+        const allWeekDays = document.querySelectorAll('.day-button');
+        allWeekDays.forEach(day => {
+            if (day.classList.contains("active-button")) {
+                selectedDays.push(parseInt(day.getAttribute("data-day")))
+            }
+        })
         // Проверяем, выбраны ли дни недели
         if (selectedDays.length === 0) {
             alert('Выберите хотя бы один день недели.');
@@ -116,6 +121,21 @@ document.addEventListener('DOMContentLoaded', () => {
     individual.style.display = "block";
 
 
+
+
+    function popupShow(text){
+        const popup = document.getElementById("popup");
+        popup.innerHTML = text;
+        // Показываем всплывающее окно
+        popup.classList.add("show");
+
+        // Скрываем его через 3 секунды
+        setTimeout(() => {
+            popup.classList.remove("show");
+        }, 3000);
+    };
+
+
     //Добавить тренировку
     document.getElementById('addTraining').addEventListener('click', function () {
         fetch("/api/couch/sport-section/")
@@ -143,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(currentDateTime)
         return currentDateTime.split("Z")[0].slice(0, -7);
     }
-
     document.getElementById("date").setAttribute("min", todayDay())
 
     // добавляет блок времени +1
@@ -159,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Создаем input для даты и времени
         const dateTimeInput = document.createElement("input");
-        dateTimeInput.setAttribute("min", todayDay())
         dateTimeInput.setAttribute("type", "datetime-local");
         dateTimeInput.setAttribute("name", "date");
         dateTimeInput.setAttribute("class", "form-control");
@@ -189,22 +207,39 @@ document.addEventListener('DOMContentLoaded', () => {
         addTime.appendChild(timeContainer);
     });
 
+    function newData(){
+        const placeId = document.getElementById("place");
+        const descriptionId = document.getElementById("description");
+        const sumId = document.getElementById("sum");
+        const startDateId = document.getElementById("startDate");
+        const endDateId = document.getElementById("endDate");
+        const dateId = document.getElementById("date");
+        const nextTimesId = document.getElementById("nextTimes");
+
+       placeId.value = "";
+       descriptionId.value = "";
+       sumId.value = "";
+       startDateId.value = "";
+       endDateId.value = "";
+       dateId.value = "";
+       nextTimesId.value = "";
+    }
+
     // Добавление общих и индивидуальных тренировок
     profileTraining.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const type = document.getElementById("training_type").value;
-        console.log(type);
+        const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
+        console.log(modal);
 
         // Добавить в общее расписание
         if (type === "general") {
-
             console.log(type);
-
             const currentSelectedDays = [];
             const allWeekDays = document.querySelectorAll('.day-button');
             allWeekDays.forEach(day => {
-                if (day.classList.contains("btn-primary")) {
+                if (day.classList.contains("active-button")) {
                     currentSelectedDays.push(parseInt(day.getAttribute("data-day")))
                 }
             })
@@ -214,14 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (let i = dayOfNow; i <= dayOfEnd; i.setDate(i.getDate() + 1)) {
                 console.log(i.getDay())
+
                 if (currentSelectedDays.includes(i.getDay())) {
-
                     const allTime = document.getElementsByName("time");
-
                     allTime.forEach(time => {
                         const [hours, minutes] = time.value.split(":") // ["11", "22"]
                         const formData = new FormData(profileTraining);
-                        let date = i;
+                        let date = new Date(i);
                         date.setHours(parseInt(hours));
                         date.setMinutes(parseInt(minutes))
                         const profileData = {
@@ -240,11 +274,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify(profileData)
-                        }).then(response => response.json())
+                        })
+                            .then(response => response.json())
                             .then(data => {
-                                alert('Тренировка добавлена: ' + JSON.stringify(data))
-                                const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
-                                modal.hide();
+                                popupShow("Общая тренировка добавлена!")
+                                newData();
                             })
                             .catch(error => console.error('Ошибка:', error));
                     })
@@ -255,10 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === "individual") {
 
             console.log(type);
-
             const allDate = document.getElementsByName("date");
             allDate.forEach(date => {
-
 
                 const formData = new FormData(profileTraining);
                 const profileData = {
@@ -279,13 +311,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(profileData)
                 }).then(response => response.json())
                     .then(data => {
-                        alert('Тренировка добавлена: ' + JSON.stringify(data))
-                        const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
-                        modal.hide();
+                        popupShow("Индивидуальная тренировка добавлена!")
+                        newData();
                     })
                     .catch(error => console.error('Ошибка:', error));
 
             })
+            // const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
+            // modal.hide();
         }
     });
 
@@ -443,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(profileDate)
         }).then(response => response.json())
-            .then(data => alert('Инвентарь добавлен: ' + JSON.stringify(data)))
+            .then(data => alert('Инвентарь добавлен: ' + JSON.stringify(data))            )
             .catch(error => console.error('Ошибка:', error));
 
     });
@@ -642,11 +675,12 @@ document.addEventListener('DOMContentLoaded', () => {
             infoBox3.display = 'flex';
 
 
-            const place = data.place || "Место положения отсутствует";
+            const place = data.schedule?.place || "Место положения отсутствует";
             const description = data.description || "Коментарий нету";
             const date = data.date || "Время не указано"
             const typeWorkout = data.typeWorkout || "Тип тренировки не указан";
             const price = data.sum || "Цена не указана";
+
 
             infoBox3.innerHTML = `
             <h4>Расписание тренировок:</h4>
@@ -782,11 +816,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-// Stopwatch and Timer
-    document.getElementById('stopwatchTimer').addEventListener('click', function () {
-        const modal = new bootstrap.Modal(document.getElementById('stopwatchTimerModal'));
-        modal.show();
-    });
+// Таймер
+
 
     let stopwatchInterval;
     let stopwatchTime = 0;
