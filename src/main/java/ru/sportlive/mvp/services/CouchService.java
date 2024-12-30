@@ -36,26 +36,24 @@ public class CouchService {
         return couch.map(Couch::getUsers).orElse(null);
     }
 
-    public Couch addCouchSkip (String name, String experience){
-        Couch couch = new Couch(name, experience);
-        couchRepository.save(couch);
-        return couch;
-    }
+//    public Couch addCouchSkip (String name, String experience){
+//        Couch couch = new Couch(name, experience);
+//        couchRepository.save(couch);
+//        return couch;
+//    }
     public Couch addCouch (String name, List<SportSection> sportSections_id, String experience){
         Couch couch = new Couch(name,sportSections_id, experience);
         couchRepository.save(couch);
         return couch;
     }
-    public Couch addCouchPhoto(Couch couch, MultipartFile photo) throws IOException {
 
+    public void addCouchPhoto(Couch couch, MultipartFile photo) throws IOException {
         if (photo != null) {
             String fileName = couch.getId() +"."+ photo.getContentType().split("/")[1];
             Path targetLocation = Paths.get("src/main/resources/static/coach/photo").resolve(fileName);
             Files.copy(photo.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             couch.setPhoto("/coach/photo/"+ fileName);
         }
-        couchRepository.save(couch);
-        return couch;
     }
 
     public Couch addCouches() {
@@ -80,9 +78,9 @@ public class CouchService {
         return organisation;
     }
 
-    public Couch updateToCouch(Couch couch, CouchDTO couchDTO){
-        couch.setName(couchDTO.getName());
-        couch.setExperience(couchDTO.getExperience());
+    public Couch updateToCouch(Couch couch, String name,String experience){
+        couch.setName(name);
+        couch.setExperience(experience);
         return couch;
     }
 

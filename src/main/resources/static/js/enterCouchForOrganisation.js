@@ -111,19 +111,25 @@ function next() {
     const couchExperience = document.getElementById("experience").value;
     const couchPhoto = document.getElementById("photo").files[0];
 
-    // const formData = new FormData();
-    // formData.append('name', couchName);
-    // formData.append('experience', couchExperience);
-    // if (couchPhoto) {
-    //     formData.append('photo', couchPhoto)
+    const formData = new FormData();
+    formData.append('name', couchName);
+    formData.append('experience', couchExperience);
+    if (couchPhoto) {
+        formData.append('photo', couchPhoto)
+    }
+    // let body;
+    // if (couchPhoto){
+    //     body = { name:couchName, experience:couchExperience, photo:couchPhoto}
+    // } else {
+    //     body = { name: couchName, experience: couchExperience}
     // }
 
-    const urlCouch = "/api/couch/";
-    console.log({name:couchName,experience:couchExperience , photo: couchPhoto});
+    const urlCouch = "/api/couch/update/";
+    console.log(formData);
     fetch(urlCouch, {
         method: 'PUT',
-        headers: {'Content-type': 'application/json'},
-        body: JSON.stringify({name:couchName,experience:couchExperience , photo: couchPhoto})
+        // headers: {'Content-type': 'application/json'},
+        body: formData
     }).then(response => {
         if (!response.ok) {
             throw new Error("Нужно зарегестрировать тренера")
@@ -132,7 +138,7 @@ function next() {
     })
         .then(data => {
             console.log("Успех:", data);
-            window.location.href = '/couches';
+            // window.location.href = '/couches';
         }).catch(error => {
         console.error("Ошибка:", error);
     });
@@ -161,7 +167,7 @@ function next() {
                             throw new Error("Нет такого тренера")
                         }
                         organisations = true;
-                        window.location.href = '/couches';
+                        // window.location.href = '/couches';
                         return response;
 
                     })
@@ -180,8 +186,8 @@ function next() {
                 throw new Error("Неверная организация")
             }
             organisations = true;
-            window.location.href = '/couches';
-            return response.json();
+            // window.location.href = '/couches';
+            return response;
         })
             .catch(error => console.error(error));
     } else {

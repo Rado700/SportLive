@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,7 @@ public class CouchController {
     private static final String UPLOADED_FOLDER = "/static/coach/photo/";
 
     //   consumes = "multipart/form-data"
+    @Operation(summary = "Добавить тренера")
     @PostMapping("/")
     public ResponseEntity<Couch> addCouch(
             @RequestParam("name") String name,
@@ -43,9 +45,8 @@ public class CouchController {
             @RequestParam("photo") MultipartFile photo,
             HttpSession httpSession) throws IOException {
 
-
         Couch couch = couchService.addCouch(name, new ArrayList<>(), experience);
-        couch = couchService.addCouchPhoto(couch, photo);
+        couchService.addCouchPhoto(couch, photo);
         httpSession.setAttribute("couchId", couch.getId());
         return new ResponseEntity<>(couch, HttpStatus.OK);
 
@@ -138,6 +139,7 @@ public class CouchController {
         return new ResponseEntity<>(sportSection,HttpStatus.OK);
     }
 
+
     @Operation(summary = "Добавить нового тренера в спортивную секцию")
     @PostMapping("/sport-section/")
     public ResponseEntity<Object> addCouchForOrganisation(@RequestBody CouchOrganisationDTO couchDTO,HttpSession httpSession) {
@@ -185,11 +187,17 @@ public class CouchController {
 
 
     @Operation(summary = "Обновления данных у тренера")
-    @PutMapping("/")
-    public ResponseEntity<Couch>updateCouch(@RequestBody CouchDTO couchDTO,HttpSession httpSession){
+    @PutMapping(value= "/update/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Couch>updateCouch(
+            @RequestPart("name") String name,
+            @RequestPart("experience") String experience,
+            @RequestPart(value = "photo", required = false) MultipartFile photo,
+            HttpSession httpSession) throws IOException {
+
         Integer couch_id = (Integer) httpSession.getAttribute("couchId");
         Couch couch = couchService.getCouch(couch_id);
-        couch = couchService.updateToCouch(couch,couchDTO);
+        couch = couchService.updateToCouch(couch,name,experience);
+        couchService.addCouchPhoto(couch, photo);
         return new ResponseEntity<>(couch,HttpStatus.OK);
     }
 //    @Operation(summary = "Вывести все виды спорта у тренера по id")

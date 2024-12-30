@@ -143,4 +143,27 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
+    @Operation(summary = "Вывести расписание у тренера по сессий и спортсекций")
+    @GetMapping("/couch/sport-section/{sportSection_id}")
+    public ResponseEntity<List<Schedule>> getScheduleByCouch(HttpSession httpSession, @PathVariable Integer sportSection_id) {
+        Integer couchId = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couchId);
+        SportSection section = sportSectionService.getSportSection(sportSection_id);
+        if (couch == null) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (section == null) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        List<Schedule> newSchedule = new ArrayList<>();
+        List<Schedule> schedule = scheduleService.getScheduleCouch(couch);
+        for (Schedule schedules : schedule) {
+            if (schedules.getSportSection() == section) {
+                newSchedule.add(schedules);
+            }
+        }
+
+        return new ResponseEntity<>(newSchedule, HttpStatus.OK);
+    }
+
 }

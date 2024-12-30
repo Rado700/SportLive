@@ -18,13 +18,6 @@
                         <h2 class="card-title">Авторизация</h2>
                     </div>
                     <div class="card-body">
-                            <div class="mb-3">
-                                <label for="userType" class="form-label">Выберите тип пользователя:</label>
-                                <select id="userType" class="form-select">
-                                    <option value="user">Пользователь</option>
-                                    <option value="couch">Тренер</option>
-                                </select>
-                            </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Имя</label>
                             <input type="text" id="name" class="form-control">
@@ -39,10 +32,16 @@
                         <div class="mb-3 text-danger" id="error-name" style="display: none;">
                             Логин уже занят
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Выберите тип пользователя:</label>
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-outline-primary user-type-btn" style="width: 48%" id="user-btn" data-type="user">Пользователь</button>
+                                <button class="btn btn-outline-primary user-type-btn" style="width: 48%" id="couch-btn" data-type="couch">Тренер</button>
+                            </div>
+                        </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-secondary" id="enter">Войти</button>
                             <button type="submit" class="btn btn-primary" id="register">Зарегистрироваться</button>
-
                         </div>
                     </div>
                 </div>

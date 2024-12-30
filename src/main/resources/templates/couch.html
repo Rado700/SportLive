@@ -54,6 +54,7 @@
                 <p id="trainer-info">Осталось тренировок тренера: <span></span></p>
                 <p id="profile-info">Ваши данные: <span></span></p>
 <!--                <p id="equipment-info">Общее количество инвентаря: <span></span></p>-->
+                <button class="btn btn-primary mt-3" id="cashBack">Вывод средств</button>
                 <button class="btn btn-primary mt-3" id="refresh-data">Обновить данные</button>
                 <button type="submit" class="btn btn-danger mt-3" id="exit" onclick="exit()">Выход</button>
                 <button class="btn btn-secondary mt-3" data-bs-dismiss="modal">Назад</button>
@@ -61,6 +62,25 @@
         </div>
     </div>
 </div>
+
+
+<!--Вывод средств-->
+<div class="modal fade" id="cashBack-modal" tabindex="-1" aria-labelledby="cashBackLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+<!--        <span class="close">&times</span>&ndash;&gt;-->
+            <div class="modal-header">
+                <h5 class="modal-title" id="cashBackLabel">Вывод средств</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        <label for="amount">Введите сумму:</label>
+        <input type="number" id="amount" placeholder="Сумма">
+        <button id="confirm-cashBack" class="btn btn-primary" data-bs-dismiss="modal">Вывод средств</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Назад</button>
+        </div>
+    </div>
+</div>
+
 
 <!--Инвентори-->
 
@@ -154,16 +174,16 @@
                             <div id="allTimes">
                                 <!-- Здесь будет динамически добавляться время -->
                             </div>
-                            <input type="button" id="nextTimes" value="Добавить время" class="btn btn-outline-secondary">
+                            <input type="button" id="nextTimes" style="margin-top: 3px" value="Добавить время" class="btn btn-outline-secondary">
                         </div>
                     </div>
 
                     <div class="mb-3" id="addDaysForIndividual">
                         <div id="allTime">
                             <label for="date" class="form-label">Дата:</label>
-                            <input type="datetime-local" id="date" name="date" class="form-control">
+                            <input type="datetime-local" style="margin-bottom: 5px" id="date" name="date" class="form-control">
                         </div>
-                        <input type="button" id="nextTime" value="Добавить время" class="btn btn-outline-secondary">
+                        <input type="button"  style="margin-top: 3px" id="nextTime" value="Добавить время" class="btn btn-outline-secondary">
 
                     </div>
                     <div class="d-grid gap-2">
@@ -223,11 +243,43 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <label for="scheduleDate">Выберите дату:</label>
-                <input type="date" id="scheduleDate" class="form-control mb-3">
-                <div id="couchesTraining">
-                    <!-- Здесь будет динамически отображаться расписание -->
+                <div class="dropdown">
+                    <label for="sports-section">Выберите секцию:</label>
+                    <select id="sports-section" class="form-select" onchange="getSchedule()">
+                        <option value="" disabled selected hidden>Спорт</option>
+                    </select>
                 </div>
+
+                <p>Выберите тип тренировки</p>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-primary schedule-type-btn" style="width: 48%" id="individual-btn" data-type="individual">Персональные</button>
+                    <button class="btn btn-outline-primary schedule-type-btn" style="width: 48%" id="general-btn" data-type="general">Общие</button>
+                </div>
+
+
+                <div id="calendar-container">
+                    <label for="month">Выберите месяц:</label>
+                    <select id="month" onchange="getSchedule()">
+                        <option value="0">Январь</option>
+                        <option value="1">Февраль</option>
+                        <option value="2">Март</option>
+                        <option value="3">Апрель</option>
+                        <option value="4">Май</option>
+                        <option value="5">Июнь</option>
+                        <option value="6">Июль</option>
+                        <option value="7">Август</option>
+                        <option value="8">Сентябрь</option>
+                        <option value="9">Октябрь</option>
+                        <option value="10">Ноябрь</option>
+                        <option value="11">Декабрь</option>
+                    </select>
+                </div>
+                <div class="calendar" id="calendar"></div>
+
+                <div id="allTimeForSchedule" class = "hidden">
+                    <div id="times-record"></div>
+                </div>
+
                 <div class="d-grid gap-2">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Назад</button>
                 </div>
