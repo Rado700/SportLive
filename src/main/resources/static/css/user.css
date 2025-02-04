@@ -410,31 +410,14 @@
 
     /* Элемент инвентаря */
     .equipment-item {
-        border-bottom: 1px solid #ddd;
         padding: 10px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
     }
 
-    .equipment-item:last-child {
-        border-bottom: none;
-    }
-
-    /* Название инвентаря */
-    .equipment-item h3 {
-        margin: 0;
-        font-size: 20px;
-        color: #333;
-    }
-
-    /* Детали инвентаря */
-    .equipment-item p {
-        margin: 5px 0;
-        font-size: 14px;
-        color: #555;
-    }
-
-    .equipment-item p strong {
-        color: #000;
-    }
 
     .info-box {
         position: absolute;
@@ -443,6 +426,32 @@
         padding: 25px;
         z-index: 15;
         background-color: white;
+    }
+
+    #trainer-info {
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .trainer-container {
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+    }
+    .trainer-container p {
+        font-size: 14px;
+        margin: 0;
+        color: #555;
+    }
+    .trainer-container h3 {
+        font-size: 16px;
+        margin: 0;
+        color: #333;
     }
 
 }

@@ -186,7 +186,7 @@ function next() {
                 throw new Error("Неверная организация")
             }
             organisations = true;
-            // window.location.href = '/couches';
+            window.location.href = '/couches';
             return response;
         })
             .catch(error => console.error(error));

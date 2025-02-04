@@ -142,7 +142,7 @@
                     <div class="mb-3" id="addDaysForGeneral">
                         <label for="daysOfWeek" class="form-label">Выберите дни недели:</label>
                         <div id="daysOfWeek" class="d-flex flex-wrap">
-                            <button type="button" class="day-button btn-outline-primary" data-day="1">Понедельник
+                            <button type="button" class="day-button inactive-button" data-day="1">Понедельник
                             </button>
                             <button type="button" class="day-button inactive-button" data-day="2">Вторник
                             </button>
@@ -249,7 +249,6 @@
                         <option value="" disabled selected hidden>Спорт</option>
                     </select>
                 </div>
-
                 <p>Выберите тип тренировки</p>
                 <div class="d-flex justify-content-between">
                     <button class="btn btn-outline-primary schedule-type-btn" style="width: 48%" id="individual-btn" data-type="individual">Персональные</button>
@@ -276,7 +275,7 @@
                 </div>
                 <div class="calendar" id="calendar"></div>
 
-                <div id="allTimeForSchedule" class = "hidden">
+                <div id="allTimeForSchedule">
                     <div id="times-record"></div>
                 </div>
 

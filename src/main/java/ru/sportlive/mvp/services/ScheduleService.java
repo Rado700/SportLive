@@ -1,20 +1,20 @@
 package ru.sportlive.mvp.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.ScheduleAddExerciseDTO;
 import ru.sportlive.mvp.dto.input.ScheduleDTO;
+import ru.sportlive.mvp.models.Booking;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.repository.BookingRepository;
 import ru.sportlive.mvp.repository.ScheduleRepository;
 
 import java.sql.Timestamp;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 @Transactional
 @Service
@@ -23,9 +23,12 @@ public class ScheduleService {
     @Autowired
     ScheduleRepository scheduleRepository;
 
+    @Autowired
+    BookingRepository bookingRepository;
+
 
     public Schedule getSchedule(Integer schedule_id) {
-        return scheduleRepository.findById(schedule_id).orElse(null);
+        return scheduleRepository.findById(schedule_id).orElseThrow(()->new EntityNotFoundException("Расписание с id " + schedule_id + " не найдено"));
     }
 
     public List<Schedule> getScheduleTypeWorkout(String type){
@@ -40,11 +43,20 @@ public class ScheduleService {
     }
 
 
-    public Schedule deleteSchedule(Integer id){
+    public void deleteSchedule(Integer id) {
         Schedule schedule = getSchedule(id);
+        List<Booking> getBookings = new ArrayList<>(schedule.getBookings()); // Копируем список, чтобы избежать ConcurrentModificationException
+
+        // Удаляем связанные бронирования
+        for (Booking booking : getBookings) {
+            bookingRepository.delete(booking);
+        }
+
+        // Теперь можно удалить сам Schedule
         scheduleRepository.delete(schedule);
-        return schedule;
     }
+
+
     public List<Schedule>getAllSchedule(){
         return scheduleRepository.findAll();
     }

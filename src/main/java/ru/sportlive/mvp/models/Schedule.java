@@ -9,6 +9,9 @@ import ru.sportlive.mvp.dto.output.GetScheduleDateUser;
 import ru.sportlive.mvp.dto.output.UserInfoDTO;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Schedule implements Comparable<Schedule> {
@@ -43,20 +46,21 @@ public class Schedule implements Comparable<Schedule> {
     @Getter
     @Setter
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "couch_id")
     private Couch couch;
 
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToOne(mappedBy = "schedule",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private Booking booking;
+    @OneToMany(mappedBy = "schedules", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Booking> bookings;
+
 
     @Getter
     @Setter
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "sport_section_id")
     private SportSection sportSection;
 
@@ -79,17 +83,16 @@ public class Schedule implements Comparable<Schedule> {
     }
 
 
-
-
     @Override
     public int compareTo(Schedule o) {
         return o.date.compareTo(date);
     }
 
     public GetScheduleDateUser getScheduleDateUser (){
-        UserInfoDTO userBooking = null;
-        if (this.booking != null){
-            userBooking = booking.getUser().getUserInfo();
+        List<UserInfoDTO> userBooking = null;
+        if (this.bookings != null){
+           userBooking = bookings.stream().map(booking -> booking.getUser().getUserInfo()).collect(Collectors.toList());
+
         }
         return new GetScheduleDateUser(id,place, date,couch.getCouchInfo(),userBooking);
     }

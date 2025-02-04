@@ -62,7 +62,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }
     });
+
+    function popupShow(text) {
+        const popup = document.getElementById("popup");
+        popup.innerHTML = text;
+        // Показываем всплывающее окно
+        popup.classList.add("show");
+
+        // Скрываем его через 3 секунды
+        setTimeout(() => {
+            popup.classList.remove("show");
+        }, 3000);
+    }
+
+
     // Добавление расписания (Общие, индивидуальные)Создание кнопок добавления и удаление времени
+
+    //Выбор тип тренировки
+    document.getElementById("training_type").addEventListener("change", function () {
+        const type = document.getElementById("training_type").value;
+        const general = document.getElementById("addDaysForGeneral");
+        const individual = document.getElementById("addDaysForIndividual");
+
+        if (type === "individual") {
+            general.style.display = "none";
+            individual.style.display = "block";
+        } else {
+            individual.style.display = "none";
+            general.style.display = "block";
+        }
+    })
+
+    const general = document.getElementById("addDaysForGeneral");
+    const individual = document.getElementById("addDaysForIndividual");
+    general.style.display = "none";
+    individual.style.display = "block";
+
 
     // Обработчик для кнопок выбора дня недели
     document.querySelectorAll('.day-button').forEach(button => {
@@ -134,38 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Добавляем контейнер в DOM
         addTime.appendChild(timeContainer);
     });
-
-    document.getElementById("training_type").addEventListener("change", function () {
-        const type = document.getElementById("training_type").value;
-        const general = document.getElementById("addDaysForGeneral");
-        const individual = document.getElementById("addDaysForIndividual");
-
-        if (type === "individual") {
-            general.style.display = "none";
-            individual.style.display = "block";
-        } else {
-            individual.style.display = "none";
-            general.style.display = "block";
-        }
-    })
-
-    const general = document.getElementById("addDaysForGeneral");
-    const individual = document.getElementById("addDaysForIndividual");
-    general.style.display = "none";
-    individual.style.display = "block";
-
-
-    function popupShow(text) {
-        const popup = document.getElementById("popup");
-        popup.innerHTML = text;
-        // Показываем всплывающее окно
-        popup.classList.add("show");
-
-        // Скрываем его через 3 секунды
-        setTimeout(() => {
-            popup.classList.remove("show");
-        }, 3000);
-    }
 
 
     //Добавить тренировку
@@ -355,16 +358,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
     // Вывод расписание для тренера(Индивидуальные,Общие)
 
     document.getElementById('scheduleForCouch').addEventListener('shown.bs.modal', function () {
+
+        fetch("/api/couch/sport-section/")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.message);
+                }
+                return response.json();
+            }).then(data => {
+            data.forEach(sportSection => {
+                const sportSectionSelect = document.getElementById("sports-section");
+                const option = document.createElement("option");
+                option.value = sportSection.id;
+                option.textContent = sportSection.name;
+                sportSectionSelect.appendChild(option);
+            })
+            // showScreen(trainingScreen);
+        })
+
+        getSchedule();
         const currentMonth = new Date().getMonth();
         document.getElementById('month').value = currentMonth;
         generateCalendarToCouch(currentMonth);
-        getSchedule();
     });
-    const couchTypeButtons = document.querySelectorAll('.schedule-type-btn');
 
+    const couchTypeButtons = document.querySelectorAll('.schedule-type-btn');
     couchTypeButtons.forEach(button => {
         button.addEventListener('click', function () {
             // Убираем выделение со всех кнопок
@@ -377,274 +399,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Устанавливаем выбранный тип пользователя
             selectedUserType = this.getAttribute('data-type');
             console.log("Выбранный тип пользователя:", selectedUserType);
+            getSchedule();
         });
     });
 
     let buttonEvents = {};
 
-
-    function showDetailsBookingTime(dayButton) {
-        const coach = document.getElementById("coach").value
-        const sportSection = document.getElementById("sports-section").value
-        const month = parseInt(document.getElementById('month').value)
-        const bookingTime = document.getElementById('allTime');
-        const timeSlots = document.getElementById("times-record");
-        timeSlots.innerHTML = '';
-
-
-        let type = "";
-        const radios = document.getElementsByName("training_type");
-
-        for (const radio of radios) {
-            if (radio.checked) {
-                type = radio.value;
-                break;
-            }
-        }
-
-        fetch("/api/schedule/couch/sport-section/" + sportSection)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(response.message);
-                }
-                return response.json();
-            }).then(data => {
-            data.forEach(scheduleDay => {
-                let scheduleDate = new Date(scheduleDay.date);
-                if (scheduleDate.getMonth() === month) {
-                    let day = scheduleDate.getDate();
-                    if (parseInt(dayButton.textContent) === day && type === scheduleDay.typeWorkout) {
-                        const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
-                        const timeButton = document.createElement('buttonTime');
-                        timeButton.classList.add('buttonTime');
-                        timeButton.textContent = time;
-                        timeButton.style.backgroundColor = 'greenYellow';
-
-                        // timeButton.setAttribute('buttonTimeId',scheduleDay.value);
-
-                        fetch("/api/booking/getAllBookingUser/")
-                            .then(response => {
-                                if (!response.ok){
-                                    throw new Error(response.message);
-                                }
-                                return response.json()
-
-                            }).then(data=>{
-                            data.forEach(bookingTimes => {
-                                const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
-                                if (scheduleDay.id === scheduleId) {
-                                    timeButton.style.backgroundColor = 'red';
-                                    dayButton.style.backgroundColor = 'red';
-                                }
-                            })
-                        })
-                        const listener = function () {
-                            showDetailsBooking(scheduleDay, timeButton);
-
-                        }
-                        timeButton.addEventListener("click",listener);
-                        timeSlots.appendChild(timeButton);
-                    }
-                }
-            })
-        });
-        bookingTime.classList.remove('hidden');
-
-    }
-
-    function showDetailsBooking(scheduleDay, dayButton) {
-        const coach = document.getElementById("coach").value
-
-        // Создаем или показываем окно с информацией
-        const infoBoxes = document.querySelectorAll("div.info-box");
-        infoBoxes.forEach(box => box.remove());
-
-        let infoBox = document.createElement('div');
-        infoBox.classList.add('info-box');
-        infoBox.display = 'flex';
-
-
-        const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
-        const description = scheduleDay.description || "Комментарий отсутствует";
-        const place = scheduleDay.place || "Место не указано";
-        const sum = scheduleDay.sum || "Сумма не указана";
-        const scheduleId = scheduleDay.id;
-
-
-
-        infoBox.innerHTML = `
-        <p><strong>Время:</strong> ${time}</p>
-        <p><strong>Место:</strong> ${place}</p>
-        <p><strong>Сумма:</strong> ${sum}</p>
-        <p><strong>Комментарий:</strong> ${description}</p>`;
-
-
-
-        if (dayButton.style.backgroundColor === "red"){
-            infoBox.innerHTML += `
-        <button id="bookButtonCancel" style="width: 95%">Отменить</button>
-        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
-        `
-            document.body.appendChild(infoBox);
-
-            // Отменить бронирование
-            document.getElementById('bookButtonCancel').addEventListener('click', function () {
-                bookButtonCancel(scheduleId); // Отменить бронирования
-            });
-
-        } else {
-            infoBox.innerHTML += `
-        <button id="bookButton" style="width: 95%">Забронировать</button>
-        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
-        `
-
-            document.body.appendChild(infoBox);
-
-            // Обработчик на кнопку "Забронировать"
-            document.getElementById('bookButton').addEventListener('click', function () {
-                bookTraining(scheduleId);// Функция бронирования
-                transactionForCouch(coach,sum);
-                document.body.removeChild(infoBox);
-
-            });
-        }
-
-        // Позиционируем окно рядом с кнопкой дня
-        const rect = dayButton.getBoundingClientRect();
-        infoBox.style.top = `${rect.bottom + window.scrollY}px`;
-        infoBox.style.left = `${rect.left + window.scrollX}px`;
-
-
-        // Обработчик на кнопку "Закрыть"
-        document.getElementById('closeInfoBox').addEventListener('click', function () {
-            document.body.removeChild(infoBox); // Удаляем окно
-
-        });
-    }
-
-    // function loadCouchSchedule(selectedDate) {
-    //     const couchesTrainingDiv = document.getElementById('couchesTraining');
-    //     couchesTrainingDiv.innerHTML = '';
-    //
-    //     // Загрузка расписания тренера
-    //     fetch('/api/schedule/couch/')
-    //         .then(response => response.json())
-    //         .then(scheduleData => {
-    //             // Фильтруем тренировки по выбранной дате
-    //             const filteredSchedule = scheduleData.filter(schedule =>
-    //                 new Date(schedule.date).toISOString().split('T')[0] === selectedDate);
-    //
-    //             // Загрузка данных о бронированиях
-    //             fetch('/api/booking/couchBooking/')
-    //                 .then(response => response.json())
-    //                 .then(bookingData => {
-    //                     // Отображаем расписание с бронированиями
-    //                     displayScheduleWithBookings(filteredSchedule, bookingData);
-    //                 })
-    //                 .catch(error => {
-    //                     console.error('Ошибка загрузки бронирований:', error);
-    //                     couchesTrainingDiv.innerHTML = 'Ошибка загрузки данных о бронированиях.';
-    //                 });
-    //         })
-    //         .catch(error => {
-    //             console.error('Ошибка загрузки расписания:', error);
-    //             couchesTrainingDiv.innerHTML = 'Ошибка загрузки расписания.';
-    //         });
-    // }
-
-    // function displayScheduleWithBookings(scheduleData, bookingData) {
-    //     const couchesTrainingDiv = document.getElementById('couchesTraining');
-    //
-    //     if (scheduleData.length === 0) {
-    //         couchesTrainingDiv.innerHTML = '<p>Тренировок на эту дату нет.</p>';
-    //         return;
-    //     }
-    //
-    //     // Индивидуальные тренировки
-    //     const individualTrainings = scheduleData.filter(item => item.typeWorkout === 'individual');
-    //     if (individualTrainings.length > 0) {
-    //         const individualBlock = document.createElement('div');
-    //         individualBlock.innerHTML = '<h5>Индивидуальные тренировки:</h5>';
-    //         individualTrainings.forEach(training => {
-    //             const trainingElement = createTrainingElement(training, bookingData);
-    //             individualBlock.appendChild(trainingElement);
-    //
-    //         });
-    //         couchesTrainingDiv.appendChild(individualBlock);
-    //     } else {
-    //         couchesTrainingDiv.innerHTML += '<p>Нет индивидуальных тренировок на эту дату.</p>';
-    //     }
-    //
-    //     // Общие тренировки
-    //     const generalTrainings = scheduleData.filter(item => item.typeWorkout === 'general');
-    //     if (generalTrainings.length > 0) {
-    //         const generalBlock = document.createElement('div');
-    //         generalBlock.innerHTML = '<h5>Общие тренировки:</h5>';
-    //         generalTrainings.forEach(training => {
-    //             const trainingElement = createTrainingElement(training, bookingData);
-    //             generalBlock.appendChild(trainingElement);
-    //         });
-    //         couchesTrainingDiv.appendChild(generalBlock);
-    //     } else {
-    //         couchesTrainingDiv.innerHTML += '<p>Нет общих тренировок на эту дату.</p>';
-    //     }
-    // }
-    //
-    // function createTrainingElement(training, bookingData) {
-    //     const trainingElement = document.createElement('div');
-    //     const time = new Date(training.date).toLocaleTimeString();
-    //     let buttonCancel = document.createElement('button');
-    //     buttonCancel.textContent = "Удалить";
-    //     buttonCancel.style.backgroundColor = "aqua";
-    //     buttonCancel.style.fontSize = "15px";
-    //     buttonCancel.style.cursor = "pointer"
-    //
-    //     const bookingsForTraining = bookingData.filter(booking => booking.schedule_id === training.id);
-    //
-    //     buttonCancel.onclick = () => {
-    //         bookingsForTraining.forEach(booking => {
-    //
-    //             fetch("/api/booking/" + booking.id, {
-    //                 method: 'DELETE',
-    //                 headers: {'Content-Type': 'application/json'}
-    //             }).then(response => {
-    //                 if (!response.ok) {
-    //                     throw new Error(response.message);
-    //                 }
-    //                 return response.json()
-    //             }).then(
-    //                 fetch("/api/schedule/" + training.id, {
-    //                     method: 'DELETE',
-    //                     headers: {'Content-Type': 'application/json'}
-    //                 })
-    //                     .then(response => {
-    //                         if (!response.ok) {
-    //                             throw new Error(response.message);
-    //                         }
-    //                         return response.json();
-    //                     })
-    //             )
-    //
-    //         })
-    //
-    //     }
-    //     let bookedUsers = bookingsForTraining.map(booking => booking.user.name + " " + booking.user.surname).join(', ');
-    //
-    //     let divElements = document.createElement("div");
-    //     divElements.className = "card-body";
-    //     divElements.innerHTML = `
-    //             <p><strong>Время:</strong> ${time}</p>
-    //             <p><strong>Место:</strong> ${training.place || 'Место не указано'}</p>
-    //             <p><strong>Описание:</strong> ${training.description || 'Без описания'}</p>
-    //             <p><strong>Забронировано:</strong> ${bookedUsers || 'Нет бронирований'}</p>
-    //             `;
-    //
-    //     divElements.appendChild(buttonCancel);
-    //     trainingElement.className = "card mb-3";
-    //     trainingElement.appendChild(divElements);
-    //
-    //     return trainingElement;
-    // }
 
     //Инвентарь
 
@@ -1068,6 +828,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
+    const currentMonth = new Date().getMonth();
+    document.getElementById('month').value = currentMonth;
+    generateCalendarToCouch(currentMonth);
+
 });
 
 function exit() {
@@ -1080,108 +844,10 @@ function exit() {
         }).catch(error => console.error('Error:', error))
 }
 
-function getSchedule() {
-    const sportSection = document.getElementById("sports-section").value
-    const month = parseInt(document.getElementById('month').value)
 
-    let type;
-    const infoBoxes = document.querySelectorAll("div.info-box");
-    infoBoxes.forEach(box => box.remove());
-
-    let individual= document.getElementById("individual-btn");
-    let general = document.getElementById("general-btn");
-    if (individual.classList.contains("btn-primary")){
-        type = "individual"
-    } else if (general.classList.contains("btn-primary")){
-        type = "general"
-    }
-
-
-    const dayButtons = document.getElementsByName("dayButton");
-
-    for (const dayButton of dayButtons) {
-        dayButton.style.backgroundColor = "";
-        if (buttonEvents.hasOwnProperty(dayButton.id)) {
-            dayButton.removeEventListener('click', buttonEvents[dayButton.id]);
-        }
-    }
-
-    const bookingTime = document.getElementById('allTime');
-    bookingTime.classList.add('hidden');
-
-    buttonEvents = {}
-
-    if (sportSection !== "" && !isNaN(month) && type !== "") {
-
-        fetch("/api/schedule/couch/sport-section/" + sportSection)
-
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(response.message);
-                }
-                return response.json();
-            }).then(data => {
-            const countTrainingsDay = {};
-            data.forEach(scheduleDay => {
-                let scheduleDate = new Date(scheduleDay.date);
-                if (scheduleDate.getMonth() === month) {
-                    const day = scheduleDate.getDate();
-                    if (type === scheduleDay.typeWorkout) {
-                        if (!countTrainingsDay.hasOwnProperty(day)) {
-                            countTrainingsDay[day] = 1
-                        } else {
-                            countTrainingsDay[day] += 1
-                        }
-                    }
-                }
-            })
-
-            data.forEach(scheduleDay => {
-                let scheduleDate = new Date(scheduleDay.date);
-                if (scheduleDate.getMonth() === month) {
-                    const day = scheduleDate.getDate();
-
-
-                    const dayButton = calendar.querySelector(`#button_${day}`)
-                    if (dayButton && type === scheduleDay.typeWorkout) {
-                        dayButton.style.backgroundColor = "#00FFCC";
-
-                        fetch("/api/booking/getAllBookingUser/")
-                            .then(response => {
-                                if (!response.ok){
-                                    throw new Error(response.message);
-                                }
-                                return response.json()
-
-                            }).then(data=>{
-                            data.forEach(bookingTimes => {
-                                const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
-                                if (scheduleDay.id === scheduleId) {
-                                    dayButton.style.backgroundColor = 'red';
-                                }
-                            })
-                        })
-
-                        const listener = function () {
-                            showDetailsBooking(scheduleDay, dayButton);
-                        }
-                        const showTime = function () {
-                            showDetailsBookingTime(dayButton);
-                        }
-                        if (countTrainingsDay[day] === 1) {
-                            dayButton.addEventListener('click', listener);
-                            buttonEvents[dayButton.id] = listener;
-                        } else if (countTrainingsDay[day] > 1) {
-                            dayButton.addEventListener('click', showTime);
-                            buttonEvents[dayButton.id] = showTime;
-                            countTrainingsDay[day] = 0;
-                        }
-                    }
-                }
-            })
-        })
-    }
-}
+document.getElementById("month").addEventListener('change', function () {
+    generateCalendarToCouch(this.value);
+})
 
 function generateCalendarToCouch(month) {
 
@@ -1192,9 +858,9 @@ function generateCalendarToCouch(month) {
         const emptySlot = document.createElement('div');
         emptySlot.style.textAlign = 'center';
         emptySlot.textContent = weekDays[i];
-
         calendar.appendChild(emptySlot);
     }
+
     const date = new Date();
     date.setMonth(month);
     date.setDate(1);
@@ -1234,8 +900,10 @@ function generateCalendarToCouch(month) {
         // }
 
 
-        dayButton.addEventListener('click', function () {
+        dayButton.addEventListener('click', function (event) {
             // Снимаем выделение с предыдущего выбранного дня
+            console.log(dayButton);
+            event.stopPropagation();
             const previouslySelected = document.querySelector('.calendar button.selected');
             if (previouslySelected) {
                 previouslySelected.classList.remove('selected');
@@ -1258,3 +926,251 @@ function generateCalendarToCouch(month) {
 
 }
 
+
+let buttonEvents = {}
+
+function getSchedule() {
+    const sportSection = document.getElementById("sports-section").value
+    const month = parseInt(document.getElementById('month').value)
+
+    const infoBoxes = document.querySelectorAll("div.info-box");
+    infoBoxes.forEach(box => box.remove());
+
+    let type;
+    let individual = document.getElementById("individual-btn");
+    let general = document.getElementById("general-btn");
+    if (individual.classList.contains("btn-primary")) {
+        type = "individual"
+    } else if (general.classList.contains("btn-primary")) {
+        type = "general"
+    }
+
+    const timeSlots = document.getElementById("times-record");
+    timeSlots.innerHTML = '';
+
+    const dayButtons = document.getElementsByName("dayButton");
+
+    for (const dayButton of dayButtons) {
+        dayButton.style.backgroundColor = "";
+        if (buttonEvents.hasOwnProperty(dayButton.id)) {
+            dayButton.removeEventListener('click', buttonEvents[dayButton.id]);
+        }
+    }
+
+    const bookingTime = document.getElementById('allTime');
+    bookingTime.classList.add('hidden');
+
+
+    if (sportSection !== "" && !isNaN(month) && type !== "") {
+        fetch("/api/schedule/couch/sport-section/" + sportSection)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.message);
+                }
+                return response.json();
+            }).then(data => {
+            const countTrainingsDay = {};
+            data.forEach(scheduleDay => {
+                let scheduleDate = new Date(scheduleDay.date);
+                if (scheduleDate.getMonth() === month) {
+                    const day = scheduleDate.getDate();
+                    if (type === scheduleDay.typeWorkout) {
+                        if (!countTrainingsDay.hasOwnProperty(day)) {
+                            countTrainingsDay[day] = 1
+                        } else {
+                            countTrainingsDay[day] += 1
+                        }
+                    }
+                }
+            })
+
+            data.forEach(scheduleDay => {
+                let scheduleDate = new Date(scheduleDay.date);
+                if (scheduleDate.getMonth() === month) {
+                    const day = scheduleDate.getDate();
+                    const dayButton = calendar.querySelector(`#button_${day}`)
+                    if (dayButton && type === scheduleDay.typeWorkout) {
+                        dayButton.style.backgroundColor = "#00FFCC";
+
+                        fetch("/api/booking/couchBooking/")
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(response.message);
+                                }
+                                return response.json()
+
+                            }).then(data => {
+                            data.forEach(bookingTimes => {
+                                const scheduleId = bookingTimes.schedule_id;
+                                console.log(scheduleId);
+                                if (scheduleDay.id === scheduleId) {
+                                    dayButton.style.backgroundColor = 'red';
+                                }
+                            })
+                        })
+
+                        const listener = function () {
+                            showDetailsBookingToCouch(scheduleDay, dayButton);
+                        }
+                        const showTime = function () {
+                            showDetailsBookingTime(dayButton);
+                        }
+                        if (countTrainingsDay[day] === 1) {
+                            dayButton.addEventListener('click', listener);
+                            buttonEvents[dayButton.id] = listener;
+                        } else if (countTrainingsDay[day] > 1) {
+                            dayButton.addEventListener('click', showTime);
+                            buttonEvents[dayButton.id] = showTime;
+                            countTrainingsDay[day] = 0;
+                        }
+                    }
+                }
+            })
+        })
+    }
+}
+
+function showDetailsBookingTime(dayButton) {
+
+    const sportSection = document.getElementById("sports-section").value
+    const month = parseInt(document.getElementById('month').value)
+    const bookingTime = document.getElementById('allTime');
+    const timeSlots = document.getElementById("times-record");
+    timeSlots.innerHTML = '';
+
+    let type;
+    let individual = document.getElementById("individual-btn");
+    let general = document.getElementById("general-btn");
+    if (individual.classList.contains("btn-primary")) {
+        type = "individual"
+    } else if (general.classList.contains("btn-primary")) {
+        type = "general"
+    }
+
+
+    fetch("/api/schedule/couch/sport-section/" + sportSection)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.message);
+            }
+            return response.json();
+        }).then(data => {
+        data.forEach(scheduleDay => {
+            let scheduleDate = new Date(scheduleDay.date);
+            if (scheduleDate.getMonth() === month) {
+                let day = scheduleDate.getDate();
+                if (parseInt(dayButton.textContent) === day && type === scheduleDay.typeWorkout) {
+                    const time = new Date(scheduleDay.date).toLocaleTimeString();
+                    const timeButton = document.createElement('buttonTime');
+                    timeButton.classList.add('buttonTime');
+                    timeButton.textContent = time;
+                    timeButton.style.backgroundColor = 'greenYellow';
+
+                    // timeButton.setAttribute('buttonTimeId',scheduleDay.value);
+
+                    fetch("/api/booking/couchBooking/")
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.message);
+                            }
+                            return response.json()
+
+                        }).then(data => {
+                        data.forEach(bookingTimes => {
+                            const scheduleId = bookingTimes.schedule_id;
+                            if (scheduleDay.id === scheduleId) {
+                                timeButton.style.backgroundColor = 'red';
+                                dayButton.style.backgroundColor = 'red';
+                            }
+                        })
+                    })
+                    const listener = function (event) {
+                        console.log("sssaaaasqwq");
+                        event.stopPropagation();
+                        showDetailsBookingToCouch(scheduleDay, timeButton);
+                    }
+                    timeButton.addEventListener("click", listener);
+                    timeSlots.appendChild(timeButton);
+                }
+            }
+        })
+    });
+
+}
+
+function showDetailsBookingToCouch(scheduleDay, dayButton) {
+
+    const schedule = document.getElementById("scheduleForCouch");
+    console.log("Данные для отображения:", scheduleDay);
+    // Создаем или показываем окно с информацией
+    const infoBoxes = document.querySelectorAll("div.info-box");
+    infoBoxes.forEach(box => box.remove());
+
+
+    let infoBox = document.createElement('div');
+    infoBox.classList.add('info-box');
+    infoBox.display = 'flex';
+
+
+    const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
+    const description = scheduleDay.description || "Комментарий отсутствует";
+    const place = scheduleDay.place || "Место не указано";
+    const sum = scheduleDay.sum || "Сумма не указана";
+    const scheduleId = scheduleDay.id;
+
+
+
+    infoBox.innerHTML = `
+        <p><strong>Время:</strong> ${time}</p>
+        <p><strong>Место:</strong> ${place}</p>
+        <p><strong>Сумма:</strong> ${sum}</p>
+        <p><strong>Комментарий:</strong> ${description}</p>
+        <button id="bookButtonCancel" style="width: 95%" class="btn btn-primary">Отменить</button>
+        <button id="closeInfoBox" style="width: 95%" class="btn btn-primary">Закрыть</button>
+`;
+
+        // Отменить бронирование
+        infoBox.querySelector('#bookButtonCancel').addEventListener('click', function () {
+            bookButtonCancel(scheduleId); // Отменить бронирования
+        });
+
+        // Обработчик на кнопку "Закрыть"
+        infoBox.querySelector('#closeInfoBox').addEventListener('click', function () {
+            schedule.removeChild(infoBox); // Удаляем окно
+        });
+
+
+    const rect = dayButton.getBoundingClientRect();
+        infoBox.style.top = `${rect.bottom + schedule.scrollTop}px`;
+        infoBox.style.left = `${rect.left + schedule.scrollLeft}px`;
+
+    schedule.appendChild(infoBox);
+    console.log('ssssss');
+
+    // document.body.appendChild(infoBox);
+}
+
+function bookButtonCancel(scheduleId) {
+    fetch("/api/schedule/" + scheduleId, {
+        method: "DELETE",
+        headers: {'Content-Type': 'application/json'},
+
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(response.message);
+        }
+    })
+
+}
+
+document.addEventListener("click", (event) => {
+
+    const infoBoxes = document.querySelectorAll("div.info-box");
+
+    infoBoxes.forEach((box) => {
+        if (!box.contains(event.target)) {
+            box.remove()
+        }
+    });
+
+})

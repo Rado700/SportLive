@@ -60,9 +60,8 @@ public class BookingController {
 
     @Operation(summary = "Удаление брони из расписания по id")
     @DeleteMapping("/schedule/{scheduleId}")
-    public ResponseEntity<Booking>deleteBookingSchedule(@PathVariable Integer scheduleId,HttpSession httpSession){
-        Integer userId = (Integer)httpSession.getAttribute("userId");
-        Booking booking = bookingService.deleteBookingSchedule(scheduleId,userId);
+    public ResponseEntity<Booking>deleteBookingSchedule(@PathVariable Integer scheduleId){
+        Booking booking = bookingService.deleteBooking(scheduleId);
         return new ResponseEntity<>(booking,HttpStatus.OK);
     }
 

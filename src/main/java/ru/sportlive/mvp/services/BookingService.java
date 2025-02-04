@@ -33,7 +33,7 @@ public class BookingService {
     }
 
     public Booking addBooking(Schedule schedule, User user){
-        Booking booking = new Booking(schedule,user);
+        Booking booking = new Booking(user,schedule);
         bookingRepository.save(booking);
         return booking;
     }
@@ -43,13 +43,19 @@ public class BookingService {
         bookingRepository.delete(booking);
         return booking;
     }
-    public Booking deleteBookingSchedule (Integer schedule_id,Integer userId){
-        List<Booking>bookings = bookingRepository.findByScheduleId(schedule_id);
-        bookings = bookings.stream().filter(booking1 -> Objects.equals(booking1.getUser().getId(), userId)).collect(Collectors.toList());
-        Booking booking = bookings.get(0);
-        bookingRepository.delete(booking);
-        return booking;
-    }
+//    public Booking deleteBookingSchedule (Integer schedule_id,Integer userId){
+//        List<Booking>bookings = bookingRepository.findByScheduleId(schedule_id);
+//        bookings = bookings.stream().filter(booking1 -> Objects.equals(booking1.getUser().getId(), userId)).collect(Collectors.toList());
+//        Booking booking = bookings.get(0);
+//        bookingRepository.delete(booking);
+//        return booking;
+//    }
+//
+//    public List<Booking> deleteAllBookingSchedule (Integer schedule_id){
+//        List<Booking>bookings = bookingRepository.findByScheduleId(schedule_id);
+//        bookingRepository.deleteAll(bookings);
+//        return bookings;
+//    }
 
     public List<Booking> getAllBookings(){
         return bookingRepository.findAll();
@@ -63,18 +69,20 @@ public class BookingService {
     public List<Booking>getCouchBookingBySchedules(List<Schedule> schedules){
         List<Booking> bookings = new ArrayList<>();
         for (Schedule schedule : schedules) {
-            Booking booking = schedule.getBooking();
-            if (booking != null) {
+            List<Booking> bookings2 = schedule.getBookings();
+            System.out.println("Бронирования для расписания: "+ bookings2);
+            if (bookings2 != null && !bookings2.isEmpty()) {
+                Booking booking = bookings2.get(0);
                 bookings.add(booking);
             }
         }
         return bookings;
-
     }
+
     public List<Schedule>getAllSchedulesCouchByUser(List<Booking>bookings,Couch couch){
         List<Schedule>schedules = new ArrayList<>();
         for (Booking booking: bookings) {
-            Schedule schedule = booking.getSchedule();
+            Schedule schedule = booking.getSchedules();
             Couch couch2 = schedule.getCouch();
             if (schedule != null && couch2 == couch ){
                 schedules.add(schedule);

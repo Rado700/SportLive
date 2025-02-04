@@ -94,6 +94,16 @@
     .modal-content {
         border-radius: 8px;
         padding: 20px;
+        z-index: 1;
+    }
+
+    .info-box {
+        position: absolute;
+        border: 5px solid #00FFCC;
+        border-radius: 0 15px 15px 15px;
+        padding: 25px;
+        z-index: 25;
+        background-color: white;
     }
 
     .hidden{
@@ -293,6 +303,7 @@
         cursor: pointer;
     }
 
+
     .active-button {
         color: #fff;
         background-color: #007bff;
@@ -323,6 +334,15 @@
     .popup.show {
         display: block; /* Показываем при добавлении класса */
         opacity: 1; /* Полная видимость */
+    }
+
+    .buttonTime {
+        padding: 10px 15px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
     }
 }
 @media(min-width: 600px) {
@@ -422,6 +442,15 @@
     .modal-content {
         border-radius: 8px;
         padding: 20px;
+    }
+
+    .info-box {
+        position: absolute;
+        border: 5px solid #00FFCC;
+        border-radius: 0 15px 15px 15px;
+        padding: 25px;
+        z-index: 25;
+        background-color: white;
     }
 
     /*.hidden{*/
@@ -683,3 +712,6 @@
     cursor: pointer;
     font-size: 14px;
 }
+
+
+

@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval;
 
 
-
     const showScreen = (screen) => {
         modal.classList.add('hidden')
         mainScreen.classList.add('hidden');
@@ -69,22 +68,22 @@ document.addEventListener('DOMContentLoaded', () => {
         openRecordScreenWithData(urlParams.get('couch'));
     }
 
-   //Пополнение баланса
-    addBalance.onclick = function() {
+    //Пополнение баланса
+    addBalance.onclick = function () {
         showScreen(modal);
     }
 
 // Действие при нажатии на кнопку "Пополнить"
-    confirmButton.onclick = function() {
+    confirmButton.onclick = function () {
         let amount = document.getElementById("amount").value;
 
-        fetch("/yoomoney/getInvoicePay/"+amount,{
+        fetch("/yoomoney/getInvoicePay/" + amount, {
             method: "GET",
-            headers: {'Content-type':'application/json'}
+            headers: {'Content-type': 'application/json'}
         })
             .then(response => {
                 console.log(response);
-                if (!response.ok){
+                if (!response.ok) {
                     throw new Error("Не получается оплатить")
                 }
                 return response.text()
@@ -265,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const profileInfo = document.getElementById('profile-info').querySelector('span');
         const trainerInfo = document.getElementById('trainer-info').querySelector('span');
         const equipmentInfo = document.getElementById('equipment-info').querySelector('span');
-
+        const trainerRest = document.getElementById('trainer-rest').querySelector('span')
 
         fetch('/api/user/')
             .then(response => response.json())
@@ -274,29 +273,52 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
 
-        fetch('/api/user/couch/', {
-            method: 'GET',
-            headers: {'Content-type': 'application/json'},
-        })
+        fetch('/api/user/couch/')
             .then(response => response.json())
             .then(data => {
-                trainerInfo.textContent = JSON.stringify(data, null, 2);
+                getUserCouch(data)
             });
 
 
-        fetch('/api/inventory/userInventory/', {
-            method: 'GET',
-            headers: {'Content-type': 'application/json'},
-        })
+        fetch('/api/inventory/userInventory/')
             .then(response => response.json())
             .then(data => {
                 getEquipment(data)
             });
     });
 
+    function getUserCouch(data){
+        const container = document.getElementById('trainer-info');
+        container.innerHTML ='';
+
+        if (data === 0){
+            container.innerHTML ='<p>Нету тренеров</p>';
+            return;
+        }
+        data.forEach(item => {
+            const newContainer = document.createElement('div');
+            newContainer.classList.add('trainer-container');
+
+            const trainer = document.createElement('h3')
+            trainer.textContent = 'Тренер: '
+            newContainer.appendChild(trainer);
+
+            const name = document.createElement("p")
+            name.textContent ='Имя '+ item.name;
+            newContainer.appendChild(name);
+
+            const experience = document.createElement("p")
+            experience.textContent ='Опыт '+ item.experience;
+            newContainer.appendChild(experience);
+
+            container.appendChild(newContainer);
+        })
+    }
+
     function getEquipment(getData) {
         const container = document.getElementById('equipment-info')
         container.innerHTML = '';
+
         if (getData.length === 0) {
             container.innerHTML = '<p>No equipment available</p>';
             return;
@@ -305,20 +327,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const newElement = document.createElement("div");
             newElement.classList.add("equipment-item");
 
-            const name = document.createElement("h3");
-            name.textContent = item.name;
+            const inventory = document.createElement("h3");
+            inventory.textContent = 'Инвентарь: ';
+            newElement.appendChild(inventory);
+
+            const name = document.createElement("p");
+            name.textContent =`Наименование - `+ item.name;
             newElement.appendChild(name);
 
             const type = document.createElement("p");
-            type.textContent = item.type;
+            type.textContent = `Тип - `+ item.type;
             newElement.appendChild(type);
 
             const price = document.createElement("p");
-            price.textContent = item.price;
+            price.textContent = `Цена - `+ item.price;
             newElement.appendChild(price);
 
             const size = document.createElement("p");
-            size.textContent = item.size;
+            size.textContent =`Размер - `+ item.size;
             newElement.appendChild(size);
 
             container.appendChild(newElement);
@@ -624,8 +650,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('stopwatch').addEventListener('click', () => {
         showScreen(stopwatchScreen);
-
     });
+
 
     // Stopwatch functionality
     document.getElementById('start-stopwatch').addEventListener('click', () => {
@@ -838,6 +864,8 @@ function getSchedule() {
     }
     const dayButtons = document.getElementsByName("dayButton");
 
+    console.log(dayButtons);
+
     for (const dayButton of dayButtons) {
         dayButton.style.backgroundColor = "";
         if (buttonEvents.hasOwnProperty(dayButton.id)) {
@@ -879,20 +907,18 @@ function getSchedule() {
                 let scheduleDate = new Date(scheduleDay.date);
                 if (scheduleDate.getMonth() === month) {
                     const day = scheduleDate.getDate();
-
-
                     const dayButton = calendar.querySelector(`#button_${day}`)
                     if (dayButton && type === scheduleDay.typeWorkout) {
                         dayButton.style.backgroundColor = "#00FFCC";
 
                         fetch("/api/booking/getAllBookingUser/")
                             .then(response => {
-                                if (!response.ok){
+                                if (!response.ok) {
                                     throw new Error(response.message);
                                 }
                                 return response.json()
 
-                            }).then(data=>{
+                            }).then(data => {
                             data.forEach(bookingTimes => {
                                 const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
                                 if (scheduleDay.id === scheduleId) {
@@ -963,25 +989,25 @@ function showDetailsBookingTime(dayButton) {
 
                     fetch("/api/booking/getAllBookingUser/")
                         .then(response => {
-                            if (!response.ok){
+                            if (!response.ok) {
                                 throw new Error(response.message);
                             }
                             return response.json()
 
-                        }).then(data=>{
+                        }).then(data => {
                         data.forEach(bookingTimes => {
-                                const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
-                                if (scheduleDay.id === scheduleId) {
-                                    timeButton.style.backgroundColor = 'red';
-                                    dayButton.style.backgroundColor = 'red';
-                                }
-                            })
+                            const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
+                            if (scheduleDay.id === scheduleId) {
+                                timeButton.style.backgroundColor = 'red';
+                                dayButton.style.backgroundColor = 'red';
+                            }
+                        })
                     })
                     const listener = function () {
                         showDetailsBooking(scheduleDay, timeButton);
 
                     }
-                    timeButton.addEventListener("click",listener);
+                    timeButton.addEventListener("click", listener);
                     timeSlots.appendChild(timeButton);
                 }
             }
@@ -1010,7 +1036,6 @@ function showDetailsBooking(scheduleDay, dayButton) {
     const scheduleId = scheduleDay.id;
 
 
-
     infoBox.innerHTML = `
         <p><strong>Время:</strong> ${time}</p>
         <p><strong>Место:</strong> ${place}</p>
@@ -1018,8 +1043,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
         <p><strong>Комментарий:</strong> ${description}</p>`;
 
 
-
-    if (dayButton.style.backgroundColor === "red"){
+    if (dayButton.style.backgroundColor === "red") {
         infoBox.innerHTML += `
         <button id="bookButtonCancel" style="width: 95%">Отменить</button>
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
@@ -1042,7 +1066,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
         // Обработчик на кнопку "Забронировать"
         document.getElementById('bookButton').addEventListener('click', function () {
             bookTraining(scheduleId);// Функция бронирования
-            transactionForCouch(coach,sum);
+            transactionForCouch(coach, sum);
             document.body.removeChild(infoBox);
 
         });
@@ -1061,13 +1085,13 @@ function showDetailsBooking(scheduleDay, dayButton) {
     });
 }
 
-function bookButtonCancel(scheduleId){
-    fetch("/api/booking/schedule/"+scheduleId, {
+function bookButtonCancel(scheduleId) {
+    fetch("/api/booking/schedule/" + scheduleId, {
         method: "DELETE",
-        headers: {'Content-Type' : 'application/json'},
+        headers: {'Content-Type': 'application/json'},
 
-    }).then(response =>{
-        if(!response.ok){
+    }).then(response => {
+        if (!response.ok) {
             throw new Error(response.message);
         }
         return response.json();
@@ -1075,17 +1099,17 @@ function bookButtonCancel(scheduleId){
 
 }
 
-function transactionForCouch(couchId,sum){
-    fetch("api/balance/transfer/user/couch/"+couchId,{
-        method:"POST",
-        headers:{'Content-Type' : 'application/json'},
-        body:JSON.stringify({sum:sum})
+function transactionForCouch(couchId, sum) {
+    fetch("api/balance/transfer/user/couch/" + couchId, {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({sum: sum})
     }).then(response => {
-        if(!response.ok){
+        if (!response.ok) {
             throw new Error(response.message);
         }
         return response.json();
-    }).then(date =>{
+    }).then(date => {
         alert("Деньги успешно переведены")
     })
 }

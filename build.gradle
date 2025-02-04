@@ -56,6 +56,21 @@ dependencies {
 	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
 
+//
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
+//
+//
+//	implementation 'de.codecentric:spring-boot-admin-starter-server:3.4.1'
+//
+//	implementation 'de.codecentric:spring-boot-admin-starter-client:3.4.1'
+//
+//	implementation 'de.codecentric:spring-boot-admin-server-ui:3.4.1'
+
+
+	// https://mvnrepository.com/artifact/com.vaadin/vaadin-spring-boot-starter
+//	implementation 'com.vaadin:vaadin-spring-boot-starter:24.6.2'
+
+
 
 }
 

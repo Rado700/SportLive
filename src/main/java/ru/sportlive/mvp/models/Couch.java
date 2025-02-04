@@ -64,7 +64,7 @@ public class Couch {
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToMany(mappedBy = "couch", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "couch", fetch = FetchType.EAGER)
     private Set<Schedule> schedules = new HashSet<>();
 
     @Getter

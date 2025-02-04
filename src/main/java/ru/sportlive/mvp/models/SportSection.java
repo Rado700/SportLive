@@ -46,7 +46,7 @@ public class SportSection {
     @Getter
     @Setter
     @JsonBackReference
-    @OneToMany(mappedBy = "sportSection",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "sportSection")
     private List<Schedule>schedules;
 
     @Getter

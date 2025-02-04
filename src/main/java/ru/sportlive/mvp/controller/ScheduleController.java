@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.ScheduleAddExerciseDTO;
 import ru.sportlive.mvp.dto.input.ScheduleDTO;
+import ru.sportlive.mvp.models.Booking;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.services.BookingService;
 import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.ScheduleService;
 import ru.sportlive.mvp.services.SportSectionService;
@@ -31,6 +33,8 @@ public class ScheduleController {
     @Autowired
     SportSectionService sportSectionService;
 
+    @Autowired
+    BookingService bookingService;
 
     @GetMapping("/getExercises/")
     public ResponseEntity<Object> getExercises(HttpSession httpSession) {
@@ -83,11 +87,23 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
+//    @Operation(summary = "Удалить расписание по id")
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Schedule> deleteSchedule(@PathVariable Integer id) {
+//        Schedule schedule = scheduleService.getSchedule(id);
+//        List<Booking> getBookings = schedule.getBookings();
+//        scheduleService.deleteSchedule(id);
+//        for (Booking booking : getBookings) {
+//            bookingService.deleteBooking(booking.getId());
+//        }
+//        return new ResponseEntity<>(schedule, HttpStatus.OK);
+//    }
+
     @Operation(summary = "Удалить расписание по id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Schedule> deleteSchedule(@PathVariable Integer id) {
-        Schedule schedule = scheduleService.deleteSchedule(id);
-        return new ResponseEntity<>(schedule, HttpStatus.OK);
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Integer id) {
+        scheduleService.deleteSchedule(id);
+        return ResponseEntity.ok().build(); // Возвращаем успешный ответ без тела
     }
 
     @Operation(summary = "Вывести расписание у тренера по id")
@@ -113,7 +129,7 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
-    @Operation(summary = "Вывести расписание у тренера  и спортсекций")
+    @Operation(summary = "Вывести расписание у тренера и спортсекций")
     @GetMapping("/couch/sport-section/{couch_id}/{sportSection_id}")
     public ResponseEntity<List<Schedule>> getScheduleCouch(@PathVariable Integer couch_id, @PathVariable Integer sportSection_id) {
         Couch couch = couchService.getCouch(couch_id);

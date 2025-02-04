@@ -47,7 +47,7 @@ public class User {
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user")
     private List<Booking> booking = new ArrayList<>();
 
     @Getter

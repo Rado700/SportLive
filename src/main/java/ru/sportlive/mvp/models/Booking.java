@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.sportlive.mvp.dto.output.BookingUserCouchDTO;
+import ru.sportlive.mvp.dto.output.CouchInfoDTO;
+
+import java.util.List;
 
 @Entity
 public class Booking {
@@ -17,13 +20,7 @@ public class Booking {
     @Getter
     @Setter
     @JsonBackReference
-    @OneToOne(cascade = CascadeType.ALL)
-    private Schedule schedule;
-
-    @Getter
-    @Setter
-    @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "user_id",unique = false)
     private User user;
 
@@ -37,16 +34,29 @@ public class Booking {
 //    private Couch couch;
 
 
-    public Booking() {
+    @Getter
+    @Setter
+    @JsonBackReference
+    @ManyToOne
+    private Schedule schedules;
+
+
+    public Booking(User user, Schedule schedules) {
+        this.user = user;
+        this.schedules = schedules;
     }
 
-    public Booking(Schedule schedule, User user) {
-        this.schedule = schedule;
-        this.user = user;
+    public Booking() {
+
     }
 
     public BookingUserCouchDTO getBookingUserCouch(){
-        return new BookingUserCouchDTO(id,schedule.getCouch().getCouchInfo(),user.getUserInfo(),schedule);
+        CouchInfoDTO couchInfoDTO = null;
+        if (schedules != null && schedules.getCouch() != null) {
+            couchInfoDTO = schedules.getCouch().getCouchInfo();
+        }
+
+        return new BookingUserCouchDTO(id,couchInfoDTO,user.getUserInfo(),schedules);
     }
 
 }
