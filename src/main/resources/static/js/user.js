@@ -843,6 +843,7 @@ function generateCalendar(month) {
 }
 
 let buttonEvents = {};
+let userId;
 
 function getSchedule() {
     const coach = document.getElementById("coach").value
@@ -911,7 +912,18 @@ function getSchedule() {
                     if (dayButton && type === scheduleDay.typeWorkout) {
                         dayButton.style.backgroundColor = "#00FFCC";
 
-                        fetch("/api/booking/getAllBookingUser/")
+                        console.log(userId)
+                        fetch("/api/user/")
+                            .then(response =>{
+                                if (!response.ok){
+                                    throw new Error(response.message);
+                                }
+                               return response.json();
+                            }).then(user =>{
+                               userId = user.id;
+                        })
+
+                        fetch("/api/booking/")
                             .then(response => {
                                 if (!response.ok) {
                                     throw new Error(response.message);
@@ -921,8 +933,13 @@ function getSchedule() {
                             }).then(data => {
                             data.forEach(bookingTimes => {
                                 const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
+                                const bookingUserId = bookingTimes.bookingUserCouch.user.id
                                 if (scheduleDay.id === scheduleId) {
-                                    dayButton.style.backgroundColor = 'red';
+                                    if (bookingUserId === userId) {
+                                        dayButton.style.backgroundColor = 'yellow';
+                                    } else {
+                                        dayButton.style.backgroundColor = 'red';
+                                    }
                                 }
                             })
                         })
@@ -997,9 +1014,11 @@ function showDetailsBookingTime(dayButton) {
                         }).then(data => {
                         data.forEach(bookingTimes => {
                             const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
+                            const bookingUserId = bookingTimes.bookingUserCouch.user.id
                             if (scheduleDay.id === scheduleId) {
-                                timeButton.style.backgroundColor = 'red';
-                                dayButton.style.backgroundColor = 'red';
+                                if (bookingUserId === userId) {
+                                    dayButton.style.backgroundColor = 'yellow';
+                                }
                             }
                         })
                     })
@@ -1043,7 +1062,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
         <p><strong>Комментарий:</strong> ${description}</p>`;
 
 
-    if (dayButton.style.backgroundColor === "red") {
+    if (dayButton.style.backgroundColor === "yellow") {
         infoBox.innerHTML += `
         <button id="bookButtonCancel" style="width: 95%">Отменить</button>
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
@@ -1055,7 +1074,14 @@ function showDetailsBooking(scheduleDay, dayButton) {
             bookButtonCancel(scheduleId); // Отменить бронирования
         });
 
-    } else {
+    }else if(dayButton.style.backgroundColor === "red"){
+        infoBox.innerHTML += `
+        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
+        `
+        document.body.appendChild(infoBox);
+    }
+
+    else {
         infoBox.innerHTML += `
         <button id="bookButton" style="width: 95%">Забронировать</button>
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>

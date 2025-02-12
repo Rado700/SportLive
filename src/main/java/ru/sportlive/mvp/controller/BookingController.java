@@ -60,9 +60,11 @@ public class BookingController {
 
     @Operation(summary = "Удаление брони из расписания по id")
     @DeleteMapping("/schedule/{scheduleId}")
-    public ResponseEntity<Booking>deleteBookingSchedule(@PathVariable Integer scheduleId){
-        Booking booking = bookingService.deleteBooking(scheduleId);
-        return new ResponseEntity<>(booking,HttpStatus.OK);
+    public ResponseEntity<Void>deleteBookingSchedule(@PathVariable Integer scheduleId, HttpSession httpSession){
+        Integer userId = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(userId);
+        bookingService.deleteBookingByScheduleForUser(scheduleId, user);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Вывести все брони")

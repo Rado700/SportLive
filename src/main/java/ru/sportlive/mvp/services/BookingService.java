@@ -1,5 +1,6 @@
 package ru.sportlive.mvp.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Schedule;
 import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.repository.BookingRepository;
+import ru.sportlive.mvp.repository.ScheduleRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -25,16 +27,19 @@ public class BookingService {
     @Autowired
     UserRepository userRepository;
 
-
-
+    @Autowired
+    ScheduleRepository scheduleRepository;
 
     public Booking getBooking (Integer id){
         return bookingRepository.findById(id).orElse(null);
     }
 
     public Booking addBooking(Schedule schedule, User user){
-        Booking booking = new Booking(user,schedule);
-        bookingRepository.save(booking);
+        Booking booking = null;
+        if (schedule.getBookings().isEmpty()) {
+            booking = new Booking(user, schedule);
+            bookingRepository.save(booking);
+        }
         return booking;
     }
 
@@ -42,6 +47,25 @@ public class BookingService {
         Booking booking = getBooking(id);
         bookingRepository.delete(booking);
         return booking;
+    }
+
+    public void deleteBookingByScheduleForUser(Integer id, User user){
+        Schedule schedule = scheduleRepository.findById(id).orElse(null);
+        List<Booking> bookingsToRemove = new ArrayList<>();
+
+        for (Booking book : schedule.getBookings()) {
+            if (book.getUser().equals(user)) {
+                bookingsToRemove.add(book);
+            }
+        }
+
+        if (!bookingsToRemove.isEmpty()) {
+            for (Booking book : bookingsToRemove) {
+                schedule.getBookings().remove(book); // Удаляем из списка бронирований расписания
+                bookingRepository.delete(book); // Удаляем из базы
+            }
+            scheduleRepository.save(schedule); // Сохраняем обновленное расписание
+        }
     }
 //    public Booking deleteBookingSchedule (Integer schedule_id,Integer userId){
 //        List<Booking>bookings = bookingRepository.findByScheduleId(schedule_id);
