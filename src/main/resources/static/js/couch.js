@@ -577,66 +577,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return infoBox3;
 
-
-            // console.log("profile")
-            // const infoBox = document.createElement('div');
-            // infoBox.classList.add('info-box');
-            // infoBox.style.display = 'flex';
-            // infoBox.style.flexDirection = 'column';
-            //
-            // if (!data || Object.keys(data).length === 0) {
-            //     infoBox.innerHTML = '<p>Нет данных профиля</p>';
-            //     return infoBox;
-            // }
-            //
-            // const profileDiv = document.createElement("div");
-            // profileDiv.classList.add("profile-item");
-            //
-            // // Добавляем данные профиля
-            // const name = document.createElement("p");
-            // name.textContent = `Имя: ${data.name || "Не указано"}`;
-            // profileDiv.appendChild(name);
-            //
-            // const balance = document.createElement("p");
-            // balance.textContent = `Баланс: ${data.balance || 0}`;
-            // profileDiv.appendChild(balance);
-            //
-            // const experience = document.createElement("p");
-            // experience.textContent = `Опыт: ${data.experience || "Не указано"}`;
-            // profileDiv.appendChild(experience);
-            //
-            // const login = document.createElement("p");
-            // login.textContent = `Логин: ${data.login?.login || "Не указано"}`;
-            // profileDiv.appendChild(login);
-            //
-            // infoBox.appendChild(profileDiv);
-            //
-            // return infoBox;
         };
 
         // Функция обработки данных расписания
-        const processBookingData = (data) => {
+        const processBookingData = (count) => {
             console.log("booking")
             let infoBox3 = document.createElement('div');
             infoBox3.classList.add('info-box3');
             infoBox3.display = 'flex';
 
-
-            const place = data.schedule?.place || "Место положения отсутствует";
-            const description = data.description || "Коментарий нету";
-            const date = data.date || "Время не указано"
-            const typeWorkout = data.typeWorkout || "Тип тренировки не указан";
-            const price = data.sum || "Цена не указана";
-
+            const countBooking = count > 0 ? count : "Нету забронированных тренировок";
 
             infoBox3.innerHTML = `
-            <h4>Расписание тренировок:</h4>
-            <p><strong>Место проведения:</strong> ${place}</p>
-            <p><strong>Комментарий:</strong> ${description}</p>
-            <p><strong>Дата:</strong> ${date}</p>
-            <p><strong>Тип тренировки:</strong> ${typeWorkout}</p>
-            <p><strong>Цена:</strong> ${price}</p>`;
+            <h4>Зал:</h4>
+            <p><strong>Осталось тренировок:</strong> ${countBooking}</p>
+           
+          `;
+            return infoBox3;
 
+        };
+
+        const processUserAll = (count) => {
+
+            let infoBox3 = document.createElement('div');
+            infoBox3.classList.add('info-box3');
+            infoBox3.display = 'flex';
+
+            const countPeople = count > 0 ? count : "Нету зарегестрированных учеников"
+
+            infoBox3.innerHTML += `
+            <p><strong>Количество учеников:</strong> ${countPeople}</p>
+            <button id="showAllUsers" class="btn btn-primary">Показать всех учеников</button>
+            <div id="userList" style="display: none;"></div>
+          `;
             return infoBox3;
 
         };
@@ -648,14 +621,41 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch('/api/booking/couchBooking/')
                 .then(response => response.json())
                 .then(data => {
-                    console.log("BOOKING")
-                    const bookingResult = processBookingData(data);
-                    trainerInfo.innerHTML = bookingResult.innerHTML;
+                    let count = 0;
+                    trainerInfo.innerHTML = '';
+                    data.forEach(countAll => {
+                        if (countAll !== null){
+                            count ++;
+
+                        }
+                    });
+                    const bookingResult = processBookingData(count);
+                    trainerInfo.appendChild(bookingResult);
+
                 })
                 .catch(error => {
                     trainerInfo.innerHTML = 'Ошибка загрузки данных расписания: ' + error;
                 });
 
+            fetch('/api/couch/allUserForCouch/')
+                .then(response =>{
+                    if (!response.ok){
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                }).then(data => {
+                    let count = 0;
+                    data.forEach(countAll => {
+                        if (countAll !== null){
+                            count++;
+                        }
+                    })
+                    const userCountInfo = processUserAll(count);
+                    trainerInfo.appendChild(userCountInfo);
+                    document.getElementById("showAllUsers").addEventListener("click", function() {
+                    fetchUserList();
+                });
+            })
             // Обработка профиля
             fetch('/api/couch/getCouch/')
                 .then(response => {
@@ -673,6 +673,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch(error => {
                     profileInfo.innerHTML = `<p>Ошибка загрузки данных профиля: ${error.message}</p>`;
+                });
+        };
+
+
+        const fetchUserList = () => {
+            fetch('/api/couch/allUserForCouch/')
+                .then(response => response.json())
+                .then(data => {
+                    let userListDiv = document.getElementById("userList");
+                    userListDiv.style.display = 'block';
+                    userListDiv.innerHTML = '<h4>Список учеников:</h4>';
+                    userListDiv.style.color = 'black';
+                    data.forEach(user => {
+                        userListDiv.innerHTML += `<p>${user.name} ${user.surname}</p>`;
+                    });
+                    userListDiv.innerHTML += '<button class="btn btn-primary mt-3" id="closeUserList">▲ Закрыть список</button>';
+                    document.getElementById("closeUserList").addEventListener("click",function() {
+                        userListDiv.style.display = "none";
+                    })
+                })
+                .catch(error => {
+                    document.getElementById("userList").innerHTML = `<p>Ошибка загрузки списка учеников: ${error.message}</p>`;
                 });
         };
 
@@ -989,6 +1011,7 @@ function getSchedule() {
                 if (scheduleDate.getMonth() === month) {
                     const day = scheduleDate.getDate();
                     const dayButton = calendar.querySelector(`#button_${day}`)
+                    let userBase ;
                     if (dayButton && type === scheduleDay.typeWorkout) {
                         dayButton.style.backgroundColor = "#00FFCC";
 
@@ -1002,7 +1025,7 @@ function getSchedule() {
                             }).then(data => {
                             data.forEach(bookingTimes => {
                                 const scheduleId = bookingTimes.schedule_id;
-                                console.log(scheduleId);
+                                userBase = bookingTimes.user;
                                 if (scheduleDay.id === scheduleId) {
                                     dayButton.style.backgroundColor = 'red';
                                 }
@@ -1010,7 +1033,7 @@ function getSchedule() {
                         })
 
                         const listener = function () {
-                            showDetailsBookingToCouch(scheduleDay, dayButton);
+                            showDetailsBookingToCouch(scheduleDay, dayButton,userBase);
                         }
                         const showTime = function () {
                             showDetailsBookingTime(dayButton);
@@ -1098,7 +1121,7 @@ function showDetailsBookingTime(dayButton) {
 
 }
 
-function showDetailsBookingToCouch(scheduleDay, dayButton) {
+function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
 
     const schedule = document.getElementById("scheduleForCouch");
     console.log("Данные для отображения:", scheduleDay);
@@ -1116,18 +1139,30 @@ function showDetailsBookingToCouch(scheduleDay, dayButton) {
     const description = scheduleDay.description || "Комментарий отсутствует";
     const place = scheduleDay.place || "Место не указано";
     const sum = scheduleDay.sum || "Сумма не указана";
+    const name = userBase.name || "Имя не указанно";
+    const surname = userBase.surname || "Фамилия не указана";
     const scheduleId = scheduleDay.id;
 
 
 
-    infoBox.innerHTML = `
+    infoBox.innerHTML += `
         <p><strong>Время:</strong> ${time}</p>
         <p><strong>Место:</strong> ${place}</p>
         <p><strong>Сумма:</strong> ${sum}</p>
         <p><strong>Комментарий:</strong> ${description}</p>
+        
+`;
+    if (dayButton.style.backgroundColor === "red"){
+        infoBox.innerHTML +=` <p><strong>Имя:</strong> ${name}</p>`;
+        infoBox.innerHTML +=` <p><strong>Фамилия:</strong> ${surname}</p>`;
+        schedule.appendChild(infoBox);
+
+    }
+    infoBox.innerHTML += `
         <button id="bookButtonCancel" style="width: 95%" class="btn btn-primary">Отменить</button>
         <button id="closeInfoBox" style="width: 95%" class="btn btn-primary">Закрыть</button>
 `;
+
 
         // Отменить бронирование
         infoBox.querySelector('#bookButtonCancel').addEventListener('click', function () {
@@ -1141,8 +1176,28 @@ function showDetailsBookingToCouch(scheduleDay, dayButton) {
 
 
     const rect = dayButton.getBoundingClientRect();
+
         infoBox.style.top = `${rect.bottom + schedule.scrollTop}px`;
         infoBox.style.left = `${rect.left + schedule.scrollLeft}px`;
+
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const infoBoxHeight = infoBox.offsetHeight;
+    const infoBoxWidth = infoBox.offsetWidth;
+
+    // Устанавливаем окно ровно по центру экрана
+    let left = (screenWidth - infoBoxWidth) / 2;
+    let top = (screenHeight - infoBoxHeight) / 2;
+
+    // Проверяем, выходит ли окно за нижнюю границу экрана
+    if (top + infoBoxHeight > screenHeight) {
+        top = screenHeight - infoBoxHeight - 10; // Отступ 10px от края
+    }
+
+    // Применяем вычисленные координаты
+    infoBox.style.top = `${top}px`;
+    infoBox.style.left = `${left}px`;
+
 
     schedule.appendChild(infoBox);
     console.log('ssssss');

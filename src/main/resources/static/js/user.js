@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     const mainScreen = document.getElementById('main-screen');
     const profileScreen = document.getElementById('profile-screen');
@@ -91,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.location.href = data;
                     })
             })
-
     }
 
 
@@ -287,12 +287,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
-    function getUserCouch(data){
+    function getUserCouch(data) {
         const container = document.getElementById('trainer-info');
-        container.innerHTML ='';
+        container.innerHTML = '';
 
-        if (data === 0){
-            container.innerHTML ='<p>Нету тренеров</p>';
+        if (data === 0) {
+            container.innerHTML = '<p>Нету тренеров</p>';
             return;
         }
         data.forEach(item => {
@@ -304,11 +304,11 @@ document.addEventListener('DOMContentLoaded', () => {
             newContainer.appendChild(trainer);
 
             const name = document.createElement("p")
-            name.textContent ='Имя '+ item.name;
+            name.textContent = 'Имя ' + item.name;
             newContainer.appendChild(name);
 
             const experience = document.createElement("p")
-            experience.textContent ='Опыт '+ item.experience;
+            experience.textContent = 'Опыт ' + item.experience;
             newContainer.appendChild(experience);
 
             container.appendChild(newContainer);
@@ -332,19 +332,19 @@ document.addEventListener('DOMContentLoaded', () => {
             newElement.appendChild(inventory);
 
             const name = document.createElement("p");
-            name.textContent =`Наименование - `+ item.name;
+            name.textContent = `Наименование - ` + item.name;
             newElement.appendChild(name);
 
             const type = document.createElement("p");
-            type.textContent = `Тип - `+ item.type;
+            type.textContent = `Тип - ` + item.type;
             newElement.appendChild(type);
 
             const price = document.createElement("p");
-            price.textContent = `Цена - `+ item.price;
+            price.textContent = `Цена - ` + item.price;
             newElement.appendChild(price);
 
             const size = document.createElement("p");
-            size.textContent =`Размер - `+ item.size;
+            size.textContent = `Размер - ` + item.size;
             newElement.appendChild(size);
 
             container.appendChild(newElement);
@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function selectEquipment(id, price, name) {
         const couch_id = coachForInventory.value;
-
+        console.log(couch_id);
         fetch("api/balance/transfer/user/couch/" + couch_id, {
             method: "POST",
             headers: {"Content-type": "application/json"},
@@ -576,25 +576,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
                 return response.json();
-
-            }).then(data => {
-            console.log("Selected equipment ID:", id);
-            const url = "api/inventory/user/" + id
-            fetch(url, {
-                method: "POST",
-                headers: {"Content-type": "application/json"}
-            }).then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        alert(text);
-                        throw new Error(text);
-                    })
-                }
-                alert("Было куплено " + name + " сумма перевода " + price);
-
-                return response.json();
             })
-        })
+            .then(data => {
+                console.log("Selected equipment ID:", id);
+                const url = "api/inventory/user/" + id
+                fetch(url, {
+                    method: "POST",
+                    headers: {"Content-type": "application/json"}
+                }).then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            alert(text);
+                            throw new Error(text);
+                        })
+                    }
+                    alert("Было куплено " + name + " сумма перевода " + price);
+
+                    return response.json();
+                })
+            })
     }
 
 
@@ -743,7 +743,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentMonth = new Date().getMonth();
     document.getElementById('month').value = currentMonth;
     generateCalendar(currentMonth);
+
+
+    openTgBot();
+
+    //openTgBotIdUser();
 });
+// function openTgBotIdUser(){
+//     document.getElementById("notification").addEventListener("click",function (){
+//         fetch("/getIdTg")
+//             .then(response => {
+//                 if(!response.ok){
+//                     throw new Error(response.message);
+//                 }
+//                 return response.text();
+//             }).then(data => {
+//                 const tgId = data.id;
+//         })
+//     })
+// }
+
+
+function openTgBot() {
+    document.getElementById("notification").addEventListener("click", function () {
+        fetch("/api/login/hashId/")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.message);
+                }
+                return response.text();
+            }).then(data => {
+            window.location.href = "https://t.me/sportliveapp_bot?start=auth_" + data;
+        })
+    })
+}
 
 // Замена тренера
 function change() {
@@ -914,13 +947,13 @@ function getSchedule() {
 
                         console.log(userId)
                         fetch("/api/user/")
-                            .then(response =>{
-                                if (!response.ok){
+                            .then(response => {
+                                if (!response.ok) {
                                     throw new Error(response.message);
                                 }
-                               return response.json();
-                            }).then(user =>{
-                               userId = user.id;
+                                return response.json();
+                            }).then(user => {
+                            userId = user.id;
                         })
 
                         fetch("/api/booking/")
@@ -1074,14 +1107,12 @@ function showDetailsBooking(scheduleDay, dayButton) {
             bookButtonCancel(scheduleId); // Отменить бронирования
         });
 
-    }else if(dayButton.style.backgroundColor === "red"){
+    } else if (dayButton.style.backgroundColor === "red") {
         infoBox.innerHTML += `
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
         `
         document.body.appendChild(infoBox);
-    }
-
-    else {
+    } else {
         infoBox.innerHTML += `
         <button id="bookButton" style="width: 95%">Забронировать</button>
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>

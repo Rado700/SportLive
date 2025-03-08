@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.InventoryDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Inventory;
+import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.models.User;
-import ru.sportlive.mvp.services.CouchService;
-import ru.sportlive.mvp.services.InventoryService;
-import ru.sportlive.mvp.services.UserService;
+import ru.sportlive.mvp.services.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +30,11 @@ public class InventoryController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    LoginService loginService;
+
+    @Autowired
+    TGService tgService;
     @Operation(summary = "Добавить инвентарь",description = "Добавить инвентарь для тренера ")
     @PostMapping("/couch/")
     public ResponseEntity<Inventory> addInventoryCouch(@RequestBody InventoryDTO inventoryDTO, HttpSession httpSession){
@@ -39,12 +44,21 @@ public class InventoryController {
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
     @Operation(summary = "добавить инвентарь для user")
-    @PostMapping("/user/{inventory_id}")
-    public ResponseEntity <Inventory>addInventoryUser(@PathVariable Integer inventory_id, HttpSession httpSession){
+    @PostMapping("/user/{inventory_id}")//TODO:Был добавлен такой то инвентарь
+    public ResponseEntity <Inventory>addInventoryUser(@PathVariable Integer inventory_id, HttpSession httpSession) throws IOException {
         Inventory inventory = inventoryService.getInventory(inventory_id);
         Integer id = (Integer) httpSession.getAttribute("userId");
+        Couch couch = inventory.getCouch();
+        Login couchLoginId = loginService.getCouchLogin(couch.getId());
+        String couchTelegramId = couchLoginId.getTelegramId();
         User user = userService.getUser(id);
         User user2 = inventoryService.addInventoryToUser(inventory,user);
+        Login userLoginId = loginService.getUserLogin(user.getId());
+        String userTelegramId = userLoginId.getTelegramId();
+        String userMessageText = "Был куплен инвентраь "+inventory.getName();
+        String couchMessageText = "Был куплен инвентарь для "+"<b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b>";
+        tgService.sendMessage(couchTelegramId,couchMessageText);
+        tgService.sendMessage(userTelegramId,userMessageText);
         return new ResponseEntity<>(inventory,HttpStatus.OK);
 
     }

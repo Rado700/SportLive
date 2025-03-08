@@ -88,7 +88,7 @@ public class CouchController {
 
     }
     @Operation(summary = "Вывести всех пользователей у тренера")
-    @GetMapping("/allUserForCouch")
+    @GetMapping("/allUserForCouch/")
     public ResponseEntity<List<User>>getAllUserForCouch(HttpSession httpSession){
         Integer couch_id = (Integer) httpSession.getAttribute("couchId");
         List<User>getAllUser = couchService.getAllUsersForCouch(couch_id);

@@ -26,6 +26,10 @@ public class Login {
     @Setter
     private String password;
 
+    @Getter
+    @Setter
+    private String telegramId;
+
     public Login(String login, String password) {
         this.login = login;
         this.password = password;

@@ -30,7 +30,6 @@ public class MoneyPaymentController {
 
     @Autowired
     MoneyPaymentService moneyPaymentService;
-
     @Autowired
     LoginService loginService;
     @Autowired
@@ -46,13 +45,13 @@ public class MoneyPaymentController {
         System.out.println(ACCESS_TOKEN);
         return moneyPaymentService.getPaymentHistory();
     }
-
+    @Operation(summary = "История операций по id")
     @GetMapping("/infoPay/{operationId}")
     public String getInfoPay(@PathVariable String operationId) throws Exception {
         return moneyPaymentService.getDetailedPaymentHistory(operationId);
     }
-
-    @GetMapping("/getInvoicePay/{amount}")
+    @Operation(summary = "Оплата")
+    @GetMapping("/getInvoicePay/{amount}")//TODO:Прошла оплата на сумму(..)
     public String getInvoicePay(@PathVariable Double amount,HttpSession httpSession) throws Exception {
         Integer user_id = (Integer) httpSession.getAttribute("userId");
             if (amount <= 2) {
@@ -61,7 +60,7 @@ public class MoneyPaymentController {
 
         return moneyPaymentService.createPaymentLink("4100115951516729", amount/0.92, user_id, "https://sportliveapp.ru");
     }
-
+    @Operation(summary = "Уведомления по оплате")
     @PostMapping("/getNotificationForPay/")
     public String getNotificationForPay() throws Exception {
         return moneyPaymentService.getNotification();

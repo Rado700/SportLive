@@ -12,10 +12,7 @@ import ru.sportlive.mvp.dto.input.CouchUserDTO;
 import ru.sportlive.mvp.dto.input.SportUserDTO;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.models.*;
-import ru.sportlive.mvp.services.CouchService;
-import ru.sportlive.mvp.services.SportSectionService;
-import ru.sportlive.mvp.services.SportService;
-import ru.sportlive.mvp.services.UserService;
+import ru.sportlive.mvp.services.*;
 
 import java.util.List;
 
@@ -33,6 +30,9 @@ public class UserController {
 
     @Autowired
     SportSectionService sportSectionService;
+
+    @Autowired
+    TGService tgService;
 
     @PostMapping("/")
     @Operation(summary = "Добавляет нового пользователя")
@@ -102,11 +102,16 @@ public class UserController {
     }
     @Operation(summary = "Добавить couch к user")
     @PostMapping("/couch/{couch_id}")
+    //TODO:Был добавлен пользователь
     public ResponseEntity<User>addUserForCouch(@PathVariable Integer couch_id,HttpSession httpSession) throws Exception {
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = userService.getUser(userId);
         Couch couch = couchService.getCouch(couch_id);
         userService.addUserToCouch(user,couch);
+        Login login = couch.getLogin();
+        String couchTelegramId = login.getTelegramId();
+        String couchMessageText = "Был добавлен пользователь "+user.getName();
+        tgService.sendMessage(couchTelegramId,couchMessageText);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 

@@ -3,6 +3,7 @@ package ru.sportlive.mvp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +13,9 @@ import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.models.Transaction;
 import ru.sportlive.mvp.models.User;
-import ru.sportlive.mvp.services.CouchService;
-import ru.sportlive.mvp.services.LoginService;
-import ru.sportlive.mvp.services.TransactionService;
-import ru.sportlive.mvp.services.UserService;
+import ru.sportlive.mvp.services.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,21 +31,24 @@ public class BalanceController {
     CouchService couchService;
     @Autowired
     LoginService loginService;
+    @Autowired
+    TGService tgService;
 
     @Operation(summary = "Добавить депозит на счет для пользователя",description = "Ввести сумму пополнения")
-    @PostMapping("/user/deposit/")
-    public ResponseEntity<Object> deposit (@RequestBody UserPayDTO userPayDTO,HttpSession httpSession) {
+    @PostMapping("/user/deposit/")//TODO: баланс поплнен на сумму ..
+    public ResponseEntity<Object> deposit (@RequestBody UserPayDTO userPayDTO,HttpSession httpSession) throws IOException {
         Integer user_id =(Integer) httpSession.getAttribute("userId");
         if (user_id == null){
             return new ResponseEntity<>("Пользователь не авторизован",HttpStatus.UNAUTHORIZED);
         }
-
-
         User user = userService.getUser(user_id);
         user = userService.deposit(userPayDTO.getSum().doubleValue(), user);
         Integer login_id = (Integer) httpSession.getAttribute("loginUserId");
         Login login = loginService.getLogin(login_id);
         transactionService.addTransaction(login,userPayDTO.getSum(),"deposit");
+        String userTelegramId = login.getTelegramId();
+        String messageText = "Пополнения на сумму "+ userPayDTO.getSum()+"RUB";
+        tgService.sendMessage(userTelegramId,messageText);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
@@ -102,9 +104,15 @@ public class BalanceController {
     }
 
     @Operation(summary = "Перевод средств от user к couch")
-    @PostMapping("/transfer/user/couch/{couch_id}")
-    public ResponseEntity<Object>transferUserCouch(@RequestBody UserPayDTO userPayDTO, @PathVariable Integer couch_id,HttpSession httpSession){
+    @PostMapping("/transfer/user/couch/{couch_id}")//TODO:Был совершен перевод тренеру на сумму..
+    public ResponseEntity<Object>transferUserCouch(@RequestBody UserPayDTO userPayDTO, @PathVariable Integer couch_id,HttpSession httpSession) throws IOException {
         Integer user_id = (Integer)httpSession.getAttribute("userId");
+        Login login = loginService.getCouchLogin(couch_id);
+        String couchTelegramId = login.getTelegramId();
+        Integer userLoginId = (Integer) httpSession.getAttribute("loginUserId");
+        Login loginUser = loginService.getLogin(userLoginId);
+        String userTelegramId = loginUser.getTelegramId();
+
         if (user_id == null){
             return new ResponseEntity<>("Пользователь не авторизован",HttpStatus.UNAUTHORIZED);
         }
@@ -123,6 +131,8 @@ public class BalanceController {
         List<Transaction>getTransaction = new ArrayList<>();
         getTransaction.add(transaction1);
         getTransaction.add(transaction2);
+        String messageText = "Перевод от <b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b> ,было пополнено средств на сумму "+userPayDTO.getSum();
+        tgService.sendMessage(couchTelegramId,messageText, "https://sportliveapp.ru/account?page=balance", "Посмотреть баланс");
         return new ResponseEntity<>(getTransaction,HttpStatus.OK);
     }
 

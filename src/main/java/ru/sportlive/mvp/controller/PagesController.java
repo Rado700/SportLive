@@ -25,6 +25,11 @@ public class PagesController {
         }
     }
 
+    @GetMapping("/auth/tg")
+    public String authTg(HttpSession httpSession){
+        return "authTg";
+    }
+
     @GetMapping("/account")
     public String account(HttpSession httpSession){
         Integer userId = (Integer) httpSession.getAttribute("userId");

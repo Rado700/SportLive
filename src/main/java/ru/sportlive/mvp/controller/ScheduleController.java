@@ -8,14 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.ScheduleAddExerciseDTO;
 import ru.sportlive.mvp.dto.input.ScheduleDTO;
-import ru.sportlive.mvp.models.Booking;
-import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.Schedule;
-import ru.sportlive.mvp.models.SportSection;
-import ru.sportlive.mvp.services.BookingService;
-import ru.sportlive.mvp.services.CouchService;
-import ru.sportlive.mvp.services.ScheduleService;
-import ru.sportlive.mvp.services.SportSectionService;
+import ru.sportlive.mvp.models.*;
+import ru.sportlive.mvp.services.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +29,9 @@ public class ScheduleController {
 
     @Autowired
     BookingService bookingService;
+
+    @Autowired
+    LoginService loginService;
 
     @GetMapping("/getExercises/")
     public ResponseEntity<Object> getExercises(HttpSession httpSession) {
@@ -67,10 +64,15 @@ public class ScheduleController {
 
     @Operation(summary = "Добавить расписание", description = "Добавить расписание по спортсекций id")
     @PostMapping("/{sportSectionId}")
+    //TODO:Добавлено расписание(..)
     public ResponseEntity<Schedule> addSchedule(@PathVariable Integer sportSectionId, @RequestBody ScheduleDTO scheduleDTO, HttpSession httpSession) {
         Integer couchId = (Integer) httpSession.getAttribute("couchId");
         Couch couch = couchService.getCouch(couchId);
+
         SportSection section = sportSectionService.getSportSection(sportSectionId);
+        Integer loginCouchId = (Integer) httpSession.getAttribute("loginCouchId");
+        String couchTgId = loginService.getTgForCouch(loginCouchId);
+        String messageText = couch.getName()+" "+section.getName();
         if (couch == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

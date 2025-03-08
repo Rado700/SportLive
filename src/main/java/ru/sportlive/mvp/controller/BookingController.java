@@ -9,15 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.BookingDTO;
 import ru.sportlive.mvp.dto.output.BookingUserCouchDTO;
 import ru.sportlive.mvp.dto.output.GetScheduleDateUser;
-import ru.sportlive.mvp.models.Booking;
-import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.Schedule;
-import ru.sportlive.mvp.models.User;
-import ru.sportlive.mvp.services.BookingService;
-import ru.sportlive.mvp.services.CouchService;
-import ru.sportlive.mvp.services.ScheduleService;
-import ru.sportlive.mvp.services.UserService;
+import ru.sportlive.mvp.models.*;
+import ru.sportlive.mvp.services.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,9 +25,12 @@ public class BookingController {
     UserService userService;
     @Autowired
     ScheduleService scheduleService;
-
     @Autowired
     CouchService couchService;
+    @Autowired
+    LoginService loginService;
+    @Autowired
+    TGService tgService;
 
     @Operation(summary = "Вывести бронь по id")
     @GetMapping("/{id}")
@@ -41,13 +39,22 @@ public class BookingController {
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
     @Operation(summary = "Добавить бронь",description = "Добавляем бронь по user,добавляем в расписание")
-    @PostMapping("/")
-    public ResponseEntity<Booking>addBooking(@RequestBody BookingDTO bookingDTO, HttpSession httpSession){
+    @PostMapping("/")//TODO:Бронь на (такое то число и время)
+    public ResponseEntity<Booking>addBooking(@RequestBody BookingDTO bookingDTO, HttpSession httpSession) throws IOException {
         Integer id = (Integer) httpSession.getAttribute("userId");
-        User user = userService.getUser(id);
+        Integer loginUserId = (Integer) httpSession.getAttribute("loginUserId");
         Schedule schedule = scheduleService.getSchedule(bookingDTO.getSchedule_id());
+        Couch couch = schedule.getCouch();
+        User user = userService.getUser(id);
+        Login couchLogin = loginService.getCouchLogin(couch.getId());
+        Login userLogin = loginService.getLogin(loginUserId);
+        String userTelegramId = userLogin.getTelegramId();
+        String couchTelegramId = couchLogin.getTelegramId();
         Booking booking = bookingService.addBooking(schedule,user);
-
+        String couchMessageText = "Забронированно время на "+booking.getSchedules().getDate().getTime()+" Забронированно пользователем "+"<b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b>";
+        String userMessageText = "Забронирована тренировка на "+booking.getSchedules().getDate();
+        tgService.sendMessage(couchTelegramId,couchMessageText);
+        tgService.sendMessage(userTelegramId,userMessageText);
         return new ResponseEntity<>(booking,HttpStatus.OK);
     }
 
@@ -59,11 +66,22 @@ public class BookingController {
     }
 
     @Operation(summary = "Удаление брони из расписания по id")
-    @DeleteMapping("/schedule/{scheduleId}")
-    public ResponseEntity<Void>deleteBookingSchedule(@PathVariable Integer scheduleId, HttpSession httpSession){
+    @DeleteMapping("/schedule/{scheduleId}")//TODO:Бронь удалена на (число и время)
+    public ResponseEntity<Void>deleteBookingSchedule(@PathVariable Integer scheduleId, HttpSession httpSession) throws IOException {
         Integer userId = (Integer) httpSession.getAttribute("userId");
+        Schedule schedule = scheduleService.getSchedule(scheduleId);
+        Couch couch = schedule.getCouch();
         User user = userService.getUser(userId);
+        Login loginUser = loginService.getUserLogin(user.getId());
+        Login loginCouch = loginService.getCouchLogin(couch.getId());
+        String couchTelegramId = loginCouch.getTelegramId();
+        String userTelegramId = loginUser.getTelegramId();
+        String messageText = "Бронь снята на "+ schedule.getBookings();
+        String couchMessageText = "Бронь снята на "+ schedule.getBookings()+" пользователем "+user.getName();
+        tgService.sendMessage(userTelegramId,messageText);
+        tgService.sendMessage(couchTelegramId,couchMessageText);
         bookingService.deleteBookingByScheduleForUser(scheduleId, user);
+
         return ResponseEntity.ok().build();
     }
 

@@ -104,6 +104,7 @@
         padding: 25px;
         z-index: 25;
         background-color: white;
+
     }
 
     .hidden{
@@ -222,19 +223,6 @@
         margin: 0 auto;
     }
 
-    /* Стили для модального inventory */
-    .modal-header {
-        /*background-color: #007bff;*/
-        /*color: #fff;*/
-        /*border-bottom: 2px solid #0056b3;*/
-    }
-
-    /*#equipment-info {*/
-    /*    font-size: 16px;*/
-    /*    margin-bottom: 1rem;*/
-    /*    color: #6c757d;*/
-    /*}*/
-    /* Контейнер для карточек инвентаря */
     .inventory-container {
         display: flex;
         flex-wrap: wrap;
@@ -302,7 +290,6 @@
         text-decoration: none;
         cursor: pointer;
     }
-
 
     .active-button {
         color: #fff;
