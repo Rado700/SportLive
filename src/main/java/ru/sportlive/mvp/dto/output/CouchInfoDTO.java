@@ -34,6 +34,7 @@ public class CouchInfoDTO {
     }
 
     public CouchInfoDTO(Integer id,String name, Integer balance, String experience, String photo) {
+        this.id = id;
         this.name = name;
         this.balance = balance;
         this.experience = experience;

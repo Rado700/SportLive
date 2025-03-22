@@ -9,6 +9,8 @@ import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.repository.TransactionRepository;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Transactional
 @Service
 public class TransactionService {
@@ -20,7 +22,7 @@ public class TransactionService {
     }
 
     public Transaction addTransaction(Login login, Integer summa, String type) {
-        Timestamp date = new Timestamp(System.currentTimeMillis());
+        LocalDateTime date = LocalDateTime.now();
         Transaction transaction = new Transaction(summa, type, date,login);
         transactionRepository.save(transaction);
         return transaction;

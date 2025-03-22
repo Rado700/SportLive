@@ -2,7 +2,7 @@
 
     body {
         font-family: Arial, sans-serif;
-        background-image: url(../img/sport-image.jpg);
+        background-image: url(../img/ФонКопия.jpg);
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
@@ -355,20 +355,20 @@
     #profile-screen {
         font-variant: small-caps;
         background-image: url('../img/scale_1200.jpeg');
-        background-position-x: center;
+        /*background-position-x: center;*/
         /*display: block;*/
         font-size: 10px;
         font-weight: bold;
-        margin-top: -20px;
+        /*margin-top: -20px;*/
         padding: 10px;
         /*background-color: #e0f7fa;*/
         border-radius: 18px;
         color: #00796b;
-        /*margin: 10px;*/
+        margin: 10px;
         /*margin-top: 10px;*/
         margin-inline: 1px;
-        padding-right: 260px;
-        padding-top: 0px;
+        /*padding-right: 260px;*/
+        /*padding-top: 0px;*/
         /*padding-left: 77px;*/
         padding-bottom: 13px;
     }
@@ -454,12 +454,33 @@
         color: #333;
     }
 
+    .popup {
+        width: 90%;
+        max-width: initial;
+        display: none; /* Скрыто по умолчанию */
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50; /* Зеленый цвет */
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        z-index: 1000; /* На переднем плане */
+        transition: opacity 0.5s ease; /* Плавный переход */
+    }
+
+    .popup.show {
+        display: block; /* Показываем при добавлении класса */
+        opacity: 1; /* Полная видимость */
+    }
+
 }
 
 @media (max-width: 600px) {
     body {
         font-family: Arial, sans-serif;
-        background-image: url(../img/usain2.jpg);
+        background-image: url(../img/boks-sila-udar.jpg);
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
@@ -467,7 +488,8 @@
         justify-content: center;
         align-items: center;
         height: 100%;
-        background-position: inherit;
+        background-position: top;
+        color: gainsboro;
     }
 
     .container {
@@ -492,20 +514,21 @@
 
     #bottom-nav {
         display: flex;
-        justify-content: center;
+        /*justify-content: center;*/
         gap: 10px;
-        box-sizing: border-box;
+        /*box-sizing: border-box;*/
+        filter: drop-shadow(2px 4px 6px black);
     }
 
     #bottom-nav button {
-        flex: 1;
-        max-inline-size: 150px;
-        padding: 10px 0;
-        border-radius: 8px;
-        color: white;
+        /*flex: 1;*/
+        /*max-inline-size: 150px;*/
+        /*padding: 10px 0;*/
+        /*border-radius: 8px;*/
+        /*color: white;*/
         background-color: darkorange;
-        border: none;
-        font-size: 16px;
+        /*border: none;*/
+        /*font-size: 16px;*/
     }
 
     #bottom-nav button:hover {
@@ -790,8 +813,9 @@
 
     #profile-screen {
         font-variant: small-caps;
-        background-image: url('../img/scale_1200.jpeg');
+        background-image: url('../img/фон4 тайсон.jpg');
         background-position-x: center;
+        background-repeat: round;
         /*display: block;*/
         font-size: 10px;
         font-weight: bold;
@@ -905,5 +929,34 @@
         font-size: 16px;
         margin: 0;
         color: #333;
+    }
+    .popup {
+        width: 90%;
+        max-width: initial;
+        display: none; /* Скрыто по умолчанию */
+        position: fixed;
+        top: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50; /* Зеленый цвет */
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        z-index: 1000; /* На переднем плане */
+        transition: opacity 0.5s ease; /* Плавный переход */
+    }
+
+    .popup.show {
+        display: block; /* Показываем при добавлении класса */
+        opacity: 1; /* Полная видимость */
+    }
+
+    .icon {
+        /*inline-size: min-content;*/
+        /*cursor: pointer;*/
+        font-size: 17px;
+        padding: 10px;
+        /*background-color: darkgray;*/
+        border-radius:8px;
     }
 }

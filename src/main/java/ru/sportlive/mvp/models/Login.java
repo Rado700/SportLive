@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.sportlive.mvp.dto.input.LoginDTO;
+import ru.sportlive.mvp.dto.output.CouchInfoDTO;
+import ru.sportlive.mvp.dto.output.LoginInfoDTO;
+import ru.sportlive.mvp.dto.output.UserInfoDTO;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -62,4 +66,16 @@ public class Login {
     @OneToMany(mappedBy = "login", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Transaction> transactionList = new HashSet<>();
 
+
+    public LoginInfoDTO getLoginInfo (){
+        UserInfoDTO userInfoDTO = null;
+        CouchInfoDTO couchInfoDTO = null;
+        if (user != null){
+            userInfoDTO = user.getUserInfo();
+        }
+        if (couch != null){
+            couchInfoDTO = couch.getCouchInfo();
+        }
+        return new LoginInfoDTO(id,userInfoDTO,couchInfoDTO);
+    }
 }

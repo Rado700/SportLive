@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import ru.sportlive.mvp.models.User;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class GetScheduleDateUser {
     private String place;
     @Getter
     @Setter
-    private Date date;
+    private LocalDateTime date;
     @Getter
     @Setter
     private CouchInfoDTO couchInfoDTO;
@@ -28,7 +29,7 @@ public class GetScheduleDateUser {
     @Setter
     private List<UserInfoDTO> userInfoDTO;
 
-    public GetScheduleDateUser(Integer id, String place, Date date, CouchInfoDTO couchInfoDTO, List<UserInfoDTO> userInfoDTO) {
+    public GetScheduleDateUser(Integer id, String place, LocalDateTime date, CouchInfoDTO couchInfoDTO, List<UserInfoDTO> userInfoDTO) {
         this.id = id;
         this.place = place;
         this.date = date;

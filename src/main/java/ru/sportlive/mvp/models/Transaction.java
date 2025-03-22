@@ -25,7 +25,8 @@ public class Transaction {
     private String type;
     @Getter
     @Setter
-    private Timestamp dateTime;
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private LocalDateTime localDateTime;
 
     @Getter
     @Setter
@@ -36,10 +37,10 @@ public class Transaction {
     private Login login;
 
 
-    public Transaction(Integer summa, String type, Timestamp date, Login login) {
+    public Transaction(Integer summa, String type, LocalDateTime date, Login login) {
         this.summa = summa;
         this.type = type;
-        this.dateTime = date;
+        this.localDateTime = date;
         this.login = login;
     }
 

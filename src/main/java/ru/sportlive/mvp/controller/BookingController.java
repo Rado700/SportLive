@@ -51,7 +51,7 @@ public class BookingController {
         String userTelegramId = userLogin.getTelegramId();
         String couchTelegramId = couchLogin.getTelegramId();
         Booking booking = bookingService.addBooking(schedule,user);
-        String couchMessageText = "Забронированно время на "+booking.getSchedules().getDate().getTime()+" Забронированно пользователем "+"<b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b>";
+        String couchMessageText = "Забронированно время на "+booking.getSchedules().getDate().toLocalDate()+" Забронированно пользователем "+"<b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b>";
         String userMessageText = "Забронирована тренировка на "+booking.getSchedules().getDate();
         tgService.sendMessage(couchTelegramId,couchMessageText);
         tgService.sendMessage(userTelegramId,userMessageText);

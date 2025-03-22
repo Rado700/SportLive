@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.AuthTgDTO;
 import ru.sportlive.mvp.dto.input.LoginDTO;
+import ru.sportlive.mvp.dto.output.LoginInfoDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.models.User;
@@ -223,6 +224,25 @@ public class LoginController {
         Login login = loginService.getLogin(Integer.valueOf(decryptHashIdLogin));
         loginService.setTgForUserCouch(login.getId(), authTgDTO.getTgId());
         return new ResponseEntity<>(decryptHashIdLogin, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получить по TgId пользователя и тренера")
+    @GetMapping("/tgId/{tgId}")
+    public ResponseEntity<LoginInfoDTO>getCouchUserByTgId(@PathVariable String tgId) throws NoSuchAlgorithmException {
+        Login login = loginService.getLoginByTgId(tgId);
+        if (login == null){
+            return null;
+        }
+        return new ResponseEntity<>(login.getLoginInfo(),HttpStatus.OK);
+//        User user = login.getUser();
+//        Couch couch = login.getCouch();
+//        if (user != null){
+//            return new ResponseEntity<>(user,HttpStatus.OK);
+//        } else if (couch != null) {
+//            return new ResponseEntity<>(couch,HttpStatus.OK);
+//        }else {
+//            return null;
+//        }
     }
 
 }

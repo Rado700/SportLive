@@ -1,16 +1,19 @@
 package ru.sportlive.mvp.dto.input;
 
+import org.springframework.cglib.core.Local;
+
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 public class ScheduleDTO {
     private String place;
     private String description;
-    private Timestamp date;
+    private LocalDateTime date;
     private String typeWorkout;
     private Integer sum;
 
-    public ScheduleDTO(String place, String description, Timestamp date, String typeWorkout, Integer sum) {
+    public ScheduleDTO(String place, String description, LocalDateTime date, String typeWorkout, Integer sum) {
         this.place = place;
         this.description = description;
         this.date = date;
@@ -34,11 +37,11 @@ public class ScheduleDTO {
         this.description = description;
     }
 
-    public Timestamp getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

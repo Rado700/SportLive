@@ -98,6 +98,7 @@ public class LoginService {
         }
     }
 
+
     public Login getLoginByTgId(String hashTgId) throws NoSuchAlgorithmException {
         List<Login>getAllLogin = loginRepository.findAll();
         for (Login login:getAllLogin) {
@@ -137,8 +138,13 @@ public class LoginService {
         return login;
     }
     public Login getUserLogin(Integer id){
-        Optional<User> user = userRepository.findById(id);
-        return user.map(User::getLogin).orElse(null);
+        List<Login> logins = loginRepository.findAll();
+        for (Login login : logins){
+            if (login.getUser() != null && login.getUser().getId() == id){
+                return login;
+            }
+        }
+        return null;
     }
     public Login getCouchLogin(Integer id){
         Optional<Couch> couch = couchRepository.findById(id);
@@ -201,8 +207,8 @@ public class LoginService {
             }
         }
         return false;
-
     }
+
     public Boolean isLoginOccupiedUser(String login) {
         List<Login> byLogin = loginRepository.findByLogin(login);
         for (Login logins : byLogin) {
@@ -212,7 +218,6 @@ public class LoginService {
         }
         return false;
     }
-
 
     public Login updateLogin(Login login, LoginDTO loginDTO){
         login.setLogin(loginDTO.getName());

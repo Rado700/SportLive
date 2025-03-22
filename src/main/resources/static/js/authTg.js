@@ -17,7 +17,7 @@ function enterByTg (hashTgId){
         .then(response => {
             return response.text();
         }).then(data => {
-        window.location.href = data;
+        window.location.href = data + window.location.search;
     })
 }
 

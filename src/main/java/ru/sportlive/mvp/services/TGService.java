@@ -19,6 +19,9 @@ public class TGService {
 
 
     public String sendMessage(String chatId, String message) throws IOException {
+        if (chatId == null){
+            return null;
+        }
         Dotenv dotenv = Dotenv.load();
         String token = dotenv.get("BOT_TOKEN");
 

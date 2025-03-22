@@ -2,12 +2,14 @@ package ru.sportlive.mvp;
 
 //import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import tech.ailef.snapadmin.external.SnapAdminAutoConfiguration;
 
 @SpringBootApplication
 //@EnableAdminServer
+@ImportAutoConfiguration(SnapAdminAutoConfiguration.class)
 public class MvpApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(MvpApplication.class, args);
 	}

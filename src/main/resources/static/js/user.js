@@ -66,8 +66,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(queryString);
 
     if (urlParams.get("page") === 'recordScreen') {
-        openRecordScreenWithData(urlParams.get('couch'));
+        openRecordScreenWithData(urlParams.get('couch'),urlParams.get('section'));
     }
+    if (urlParams.get("page") === 'scheduleScreen'){
+        openRecordScreenWithData();
+    }
+    if (urlParams.get("page") === 'addBalanceScreen'){
+        showScreen(modal);
+    }
+
+    function popup(text){
+        const popup = document.getElementById("popup");
+        popup.innerHTML = text;
+        popup.classList.add("show");
+
+        setTimeout(() => {
+            popup.classList.remove("show")},3000)
+
+    }
+
 
     //Пополнение баланса
     addBalance.onclick = function () {
@@ -347,6 +364,10 @@ document.addEventListener('DOMContentLoaded', () => {
             size.textContent = `Размер - ` + item.size;
             newElement.appendChild(size);
 
+            const amount = document.createElement("p");
+            amount.textContent = `Количество - ` + item.amount;
+            newElement.appendChild(amount);
+
             container.appendChild(newElement);
 
         })
@@ -426,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Записаться на тренеровку(выбор спортсекций и тренера)
 
-    function openRecordScreenWithData(couchName) {
+    function openRecordScreenWithData(couchName,couchSection) {
         showScreen(recordForSection);
 
         const url = "/api/user/"
@@ -446,6 +467,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const option = document.createElement("option");
                 option.value = item.id;
                 option.textContent = item.name;
+                if (item.name === couchSection) {
+                    option.selected = true;
+                }
                 allSportSection.appendChild(option);
             })
             return data;
@@ -475,10 +499,16 @@ document.addEventListener('DOMContentLoaded', () => {
         openRecordScreenWithData();
     })
 
+
+
     // Добавление инвентаря для пользователя
 
     addEquipment.addEventListener('click', () => {
+        const container = document.getElementById("equipmentList");
+        document.getElementById("getAllEquipment").style.display = 'none';
+        container.innerHTML = '';
         showScreen(recordForEquipment)
+
 
         const url = "/api/user/"
         fetch(url)
@@ -522,6 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayEquipment(equipmentList) {
         const container = document.getElementById("equipmentList");
+        document.getElementById("getAllEquipment").style.display = 'block';
         container.innerHTML = '';
 
         if (equipmentList.length === 0) {
@@ -549,12 +580,18 @@ document.addEventListener('DOMContentLoaded', () => {
             price.textContent = `Price: ${equipment.price} RUB`;
             equipmentDiv.appendChild(price);
 
+            const amount = document.createElement("p");
+            amount.textContent = `Amount: ${equipment.amount} Кол-во`;
+            equipmentDiv.appendChild(amount);
+
+
             const selectButton = document.createElement("button");
             selectButton.textContent = "Выбрать";
             selectButton.addEventListener("click", () => selectEquipment(equipment.id, equipment.price, equipment.name));
             equipmentDiv.appendChild(selectButton);
 
             container.appendChild(equipmentDiv);
+
         });
 
         document.getElementById("getAllEquipment").style.display = "block";
@@ -593,8 +630,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert("Было куплено " + name + " сумма перевода " + price);
 
                     return response.json();
+
                 })
             })
+        document.getElementById("getAllEquipment").style.display = 'none';
+        popup("Был куплен инвентарь: "+name)
+
     }
 
 

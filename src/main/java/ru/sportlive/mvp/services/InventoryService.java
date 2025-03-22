@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.InventoryDTO;
+import ru.sportlive.mvp.dto.output.UserAllInventoryDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Inventory;
 import ru.sportlive.mvp.models.User;
@@ -11,9 +12,8 @@ import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 @Transactional
 @Service
 public class InventoryService {
@@ -30,8 +30,8 @@ public class InventoryService {
         return inventoryRepository.findById(id).orElse(null);
     }
 
-    public Inventory addInventory(String name, Integer price, String type, String size, Couch couch_id){
-        Inventory inventory = new Inventory(name,price,type,size,couch_id);
+    public Inventory addInventory(String name, Integer price, String type, String size, Couch couch_id,Integer amount){
+        Inventory inventory = new Inventory(name,price,type,size,couch_id,amount);
         inventoryRepository.save(inventory);
         return inventory;
     }
@@ -81,13 +81,35 @@ public class InventoryService {
         return inventory;
     }
     public User addInventoryToUser(Inventory getInventory, User user) {
-       user.addInventoryToUser(getInventory);
+        if (getInventory.getAmount() > 0) {
+            user.addInventoryToUser(getInventory);
+            getInventory.setAmount(getInventory.getAmount()-1);
+        }
        userRepository.save(user);
        return user;
     }
 
-    public Set<Inventory>getInventoryUser(Integer user_id){
+    public Set<UserAllInventoryDTO>getInventoryUser(Integer user_id){
         Optional<User>user = userRepository.findById(user_id);
-        return user.map(User::getSelectedInventory).orElse(null);
+        List<Inventory> inventories =  user.map(User::getSelectedInventory).orElse(null);
+        if (inventories == null){
+            return null;
+        }
+        List<Integer> tackedInventory = new ArrayList<>();
+        Set<UserAllInventoryDTO>inventoryAllPay = new HashSet<>();
+        for (Inventory inventory : inventories){
+            if (tackedInventory.contains(inventory.getId())){
+                continue;
+            }
+            UserAllInventoryDTO userAllInventory = new UserAllInventoryDTO(
+                    inventory.getId(), inventory.getName(),
+                    inventory.getPrice(),inventory.getType(),inventory.getSize(),
+                    Collections.frequency(inventories, inventory)
+            );
+            tackedInventory.add(inventory.getId());
+            inventoryAllPay.add(userAllInventory);
+
+        }
+        return inventoryAllPay;
     }
 }

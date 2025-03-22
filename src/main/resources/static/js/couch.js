@@ -43,9 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         confirmCashBack.onclick = function () {
-            let amount = document.getElementById("amount").value;
+            let amounts = document.getElementById("amounts").value;
 
-            // fetch("/yoomoney/getInvoicePay/" + amount, {
+            // fetch("/yoomoney/getInvoicePay/" + amounts, {
             //     method: "GET",
             //     headers: {'Content-type': 'application/json'}
             // })
@@ -416,6 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
             type: formData.get('type'),
             size: formData.get('size'),
             price: formData.get('price'),
+            amount:formData.get('amount'),
         }
 
         fetch('/api/inventory/couch/', {
@@ -471,6 +472,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const size = document.createElement("p");
                 size.textContent = `Размер: ${profile.size || "Не указано"}`;
                 profileDiv.appendChild(size);
+
+                const amount = document.createElement("p");
+                amount.textContent = `Количество: ${profile.amount || 0 }`;
+                profileDiv.appendChild(amount);
+
 
                 // Кнопка "Удалить"
                 const deleteButton = document.createElement("button");

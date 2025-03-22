@@ -9,6 +9,7 @@ import ru.sportlive.mvp.dto.output.GetScheduleDateUser;
 import ru.sportlive.mvp.dto.output.UserInfoDTO;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class Schedule implements Comparable<Schedule> {
     private String description;
     @Getter
     @Setter
-    private Timestamp date;
+    private LocalDateTime date;
 
     @Getter
     @Setter
@@ -72,7 +73,7 @@ public class Schedule implements Comparable<Schedule> {
         this.exercise = exercise;
     }
 
-    public Schedule(String place, String description, Timestamp date, Couch couch, SportSection sportSection, String typeWorkout, Integer sum) {
+    public Schedule(String place, String description, LocalDateTime date, Couch couch, SportSection sportSection, String typeWorkout, Integer sum) {
         this.place = place;
         this.description = description;
         this.date = date;
@@ -94,6 +95,6 @@ public class Schedule implements Comparable<Schedule> {
            userBooking = bookings.stream().map(booking -> booking.getUser().getUserInfo()).collect(Collectors.toList());
 
         }
-        return new GetScheduleDateUser(id,place, date,couch.getCouchInfo(),userBooking);
+        return new GetScheduleDateUser(id,place,date,couch.getCouchInfo(),userBooking);
     }
 }

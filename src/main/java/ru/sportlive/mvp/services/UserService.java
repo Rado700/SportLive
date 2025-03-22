@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.repository.LoginRepository;
 import ru.sportlive.mvp.repository.TransactionRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 import ru.sportlive.mvp.models.User;
@@ -20,6 +22,9 @@ public class UserService {
 
     @Autowired
     TransactionRepository transactionRepository;
+
+    @Autowired
+    LoginRepository loginRepository;
 
 
     public List<User> getAllUsers(){

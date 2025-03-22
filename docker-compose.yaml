@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/sportlive
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=810513
+  db:
+    image: postgres:17.4
+    restart: always
+    environment:
+      POSTGRES_DB: sportlive
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 810513
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  bot:
+    build:
+      context: ../botSportLive
+      dockerfile: Dockerfile
+    environment:
+      - USERNAME=sportliveapp_bot
+      - TOKEN=8056369700:AAGDtmRyCFalwdvSj7U5lYUWKRq21-Mi2pk
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:

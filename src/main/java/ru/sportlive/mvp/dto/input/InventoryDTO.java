@@ -6,12 +6,15 @@ public class InventoryDTO {
     private String type;
     private String size;
 
+    private Integer amount;
 
-    public InventoryDTO(String name, Integer price, String type, String size) {
+
+    public InventoryDTO(String name, Integer price, String type, String size, Integer amount) {
         this.name = name;
         this.price = price;
         this.type = type;
         this.size = size;
+        this.amount = amount;
     }
 
     public String getName() {
@@ -46,5 +49,11 @@ public class InventoryDTO {
         this.size = size;
     }
 
+    public Integer getAmount() {
+        return amount;
+    }
 
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+    }
 }

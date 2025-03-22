@@ -58,7 +58,7 @@ public class User {
             name = "user_inventory",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "inventory_id"))
-    private Set<Inventory> selectedInventory = new HashSet<>();
+    private List<Inventory> selectedInventory = new ArrayList<>();
 
     @Getter
     @Setter

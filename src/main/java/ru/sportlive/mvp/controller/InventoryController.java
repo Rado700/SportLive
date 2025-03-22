@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.InventoryDTO;
+import ru.sportlive.mvp.dto.output.UserAllInventoryDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Inventory;
 import ru.sportlive.mvp.models.Login;
@@ -40,7 +41,7 @@ public class InventoryController {
     public ResponseEntity<Inventory> addInventoryCouch(@RequestBody InventoryDTO inventoryDTO, HttpSession httpSession){
         Integer id = (Integer) httpSession.getAttribute("couchId");
         Couch couch = couchService.getCouch(id);
-        Inventory inventory = inventoryService.addInventory (inventoryDTO.getName(),inventoryDTO.getPrice(),inventoryDTO.getType(),inventoryDTO.getSize(),couch);
+        Inventory inventory = inventoryService.addInventory(inventoryDTO.getName(),inventoryDTO.getPrice(),inventoryDTO.getType(),inventoryDTO.getSize(),couch,inventoryDTO.getAmount());
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
     @Operation(summary = "добавить инвентарь для user")
@@ -52,7 +53,7 @@ public class InventoryController {
         Login couchLoginId = loginService.getCouchLogin(couch.getId());
         String couchTelegramId = couchLoginId.getTelegramId();
         User user = userService.getUser(id);
-        User user2 = inventoryService.addInventoryToUser(inventory,user);
+        inventoryService.addInventoryToUser(inventory,user);
         Login userLoginId = loginService.getUserLogin(user.getId());
         String userTelegramId = userLoginId.getTelegramId();
         String userMessageText = "Был куплен инвентраь "+inventory.getName();
@@ -114,9 +115,9 @@ public class InventoryController {
     }
     @Operation(summary = "Вывести весь инвентарь пользователя")
     @GetMapping("/userInventory/")
-    public ResponseEntity<Set<Inventory>>getAllInventoryUser(HttpSession httpSession){
+    public ResponseEntity<Set<UserAllInventoryDTO>>getAllInventoryUser(HttpSession httpSession){
         Integer user_id = (Integer) httpSession.getAttribute("userId");
-        Set<Inventory> inventory = inventoryService.getInventoryUser(user_id);
+        Set<UserAllInventoryDTO> inventory = inventoryService.getInventoryUser(user_id);
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
 }

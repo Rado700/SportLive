@@ -1,15 +1,11 @@
 package ru.sportlive.mvp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,6 +28,10 @@ public class Inventory {
     @Setter
     private String size;
 
+    @Getter
+    @Setter
+    private Integer amount;
+
 
     @Getter
     @Setter
@@ -46,7 +46,14 @@ public class Inventory {
     @ManyToMany(mappedBy = "selectedInventory", fetch = FetchType.EAGER)
     private Set<User> user = new HashSet<>();
 
-    public Inventory() {
+    public Inventory(String name, Integer price, String type, String size, Couch couch, Integer amount) {
+        this.name = name;
+        this.price = price;
+        this.type = type;
+        this.size = size;
+        this.couch = couch;
+        this.amount = amount;
+
     }
 
     public Inventory(String name, Integer price, String type, String size, Couch couch) {
@@ -66,5 +73,9 @@ public class Inventory {
 
     public Inventory(Set<User> user) {
         this.user = user;
+    }
+
+    public Inventory() {
+
     }
 }

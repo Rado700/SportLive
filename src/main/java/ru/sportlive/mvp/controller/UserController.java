@@ -11,10 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.CouchUserDTO;
 import ru.sportlive.mvp.dto.input.SportUserDTO;
 import ru.sportlive.mvp.dto.input.UsersDTO;
+import ru.sportlive.mvp.dto.output.CouchInfoTgDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.*;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/user")
@@ -33,6 +37,9 @@ public class UserController {
 
     @Autowired
     TGService tgService;
+
+    @Autowired
+    LoginService loginService;
 
     @PostMapping("/")
     @Operation(summary = "Добавляет нового пользователя")
@@ -132,6 +139,18 @@ public class UserController {
         User user = userService.getUser(userId);
         List<Couch> couches = user.getSelectedCouches();
         return new ResponseEntity<>(couches,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получить всех couches для user по tgId")
+    @GetMapping("/couch/tgId/{tgId}")
+    public ResponseEntity<List<CouchInfoTgDTO>>getCouchesTgId(@PathVariable String tgId) throws NoSuchAlgorithmException {
+        User user = loginService.getLoginByTgId(tgId).getUser();
+        List<Couch> couches = user.getSelectedCouches();
+        List<CouchInfoTgDTO> couchInfoTgDTO = new ArrayList<>();
+        for (Couch couch : couches){
+            couchInfoTgDTO.add(new CouchInfoTgDTO(couch.getId(),couch.getName(),couch.getPhoto(),couch.getLogin().getTelegramId()));
+        }
+        return new ResponseEntity<>(couchInfoTgDTO,HttpStatus.OK);
     }
 
 
