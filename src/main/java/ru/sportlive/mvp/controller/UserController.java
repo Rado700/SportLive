@@ -114,7 +114,7 @@ public class UserController {
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = userService.getUser(userId);
         Couch couch = couchService.getCouch(couch_id);
-        userService.addUserToCouch(user,couch);
+        user = userService.addUserToCouch(user,couch);
         Login login = couch.getLogin();
         String couchTelegramId = login.getTelegramId();
         String couchMessageText = "Был добавлен пользователь "+user.getName();
@@ -151,6 +151,15 @@ public class UserController {
             couchInfoTgDTO.add(new CouchInfoTgDTO(couch.getId(),couch.getName(),couch.getPhoto(),couch.getLogin().getTelegramId()));
         }
         return new ResponseEntity<>(couchInfoTgDTO,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Добавить заметки для пользователя")
+    @PostMapping("/addNotesForUser")
+    public ResponseEntity<Notes>addNotesForUser(@RequestBody String message,HttpSession httpSession){
+        Integer user_id = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(user_id);
+        Notes notes = userService.addNotes(message,user);
+        return new ResponseEntity<>(notes,HttpStatus.OK);
     }
 
 

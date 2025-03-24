@@ -21,12 +21,12 @@
         <button id="info" class="icon btn">🔎</button>
     </div>
 
-    <div id = popup class="popup"></div>
+    <div id=popup class="popup"></div>
 
 
     <div id="balance-modal" class="hidden">
         <div class="modal-content">
-<!--            <span class="close">&times</span>-->
+            <!--            <span class="close">&times</span>-->
             <h2>Пополнить баланс</h2>
             <label for="amount">Введите сумму:</label>
             <input type="number" id="amount" placeholder="Сумма">
@@ -38,12 +38,13 @@
     <div id="changeToCoach" class="hidden">
         <div class="dropdown">
             <label for="getAllCoaches">Мои тренера: </label>
-<!--            <select id="coachForUser" class="form-select">-->
-<!--                <option value="coachForUser" disabled selected hidden></option>-->
-<!--            </select>-->
+            <!--            <select id="coachForUser" class="form-select">-->
+            <!--                <option value="coachForUser" disabled selected hidden></option>-->
+            <!--            </select>-->
             <div id="getAllCoaches"></div>
             <!--<button type="submit" class="btn btn-primary" id ="enterForCoach">Выбрать</button>-->
-            <button type="submit" class="btn btn-secondary" id="change" onclick="change()">Добавить нового тренера</button>
+            <button type="submit" class="btn btn-secondary" id="change" onclick="change()">Добавить нового тренера
+            </button>
         </div>
         <button id="back-to-main-coach">Назад</button>
     </div>
@@ -81,10 +82,10 @@
         </div>
 
         <p>Выбрите тип тренировки</p>
-            <input type="radio" id="allTraining" name="training_type" value="general" onchange="getSchedule()">
-            <label for="allTraining">Общие тренировки</label><br>
-            <input type="radio" id="oneTraining" name="training_type" value="individual" onchange ="getSchedule()">
-            <label for="oneTraining">Индивидуальные тренировки</label><br>
+        <input type="radio" id="allTraining" name="training_type" value="general" onchange="getSchedule()">
+        <label for="allTraining">Общие тренировки</label><br>
+        <input type="radio" id="oneTraining" name="training_type" value="individual" onchange="getSchedule()">
+        <label for="oneTraining">Индивидуальные тренировки</label><br>
 
 
         <div id="calendar-container">
@@ -106,7 +107,7 @@
         </div>
         <div class="calendar" id="calendar"></div>
 
-        <div id="allTime" class = "hidden">
+        <div id="allTime" class="hidden">
             <div id="times-record"></div>
         </div>
 
@@ -130,7 +131,7 @@
             <input type="number" id="height" name="height">
             <label for="weight">Вес:</label>
             <input type="number" id="weight" name="weight">
-            <button type="submit"style="inline-size: revert">Сохранить</button>
+            <button type="submit" style="inline-size: revert">Сохранить</button>
 
         </form>
         <button id="back-to-main-profile" style="inline-size: revert">Назад</button>
@@ -148,31 +149,57 @@
     </div>
 
     <div id="stopwatch-screen" class="hidden">
-        <h1>Секундомер, Таймер, Заметки</h1>
-        <div id="stopwatch-section">
-            <button id="start-stopwatch">Старт</button>
-            <button id="stop-stopwatch">Стоп</button>
-            <div id="stopwatch-display">00:00:00</div>
+        <!-- Modal for Stopwatch and Timer -->
+        <div class="modal fade" id="stopwatchTimerModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <!-- Секундомер -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0">Секундомер</h6>
+                            </div>
+                            <div class="card-body text-center">
+                                <div id="stopwatchDisplay" class="display-5 mb-3">00:00:00</div>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-success" id="startStopwatch">Старт</button>
+                                    <button class="btn btn-danger" id="stopStopwatch">Стоп</button>
+                                    <button class="btn btn-warning" id="resetStopwatch">Сброс</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Таймер -->
+                        <div class="card">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0">Таймер</h6>
+                            </div>
+                            <div class="card-body text-center">
+                                <div id="timerDisplay" class="display-5 mb-3">00:00:00</div>
+                                <div class="mb-3">
+                                    <input type="number" id="timerMinutes" class="form-control text-center"
+                                           placeholder="Минуты" min="1">
+                                </div>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-success" id="startTimer">Старт</button>
+                                    <button class="btn btn-danger" id="stopTimer">Стоп</button>
+                                    <button class="btn btn-warning" id="resetTimer">Сброс</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h1>Заметки</h1>
+                    <div id="notes-section">
+                        <textarea id="notes" placeholder="Заметки..."></textarea>
+                        <button id="save-notes">Сохранить заметки</button>
+                    </div>
+                    <button id="back-to-main-stopwatch">Назад</button>
+                </div>
+            </div>
         </div>
-        <div id="timer-section">
-            <label for="timer-days">Дни:</label>
-            <input type="number" id="timer-days" min="0">
-            <label for="timer-hours">Часы:</label>
-            <input type="number" id="timer-hours" min="0" max="23">
-            <label for="timer-minutes">Минуты:</label>
-            <input type="number" id="timer-minutes" min="0" max="59">
-            <label for="timer-seconds">Секунды:</label>
-            <input type="number" id="timer-seconds" min="0" max="59">
-            <button id="start-timer">Запуск таймера</button>
-            <div id="timer-display">00:00:00:00</div>
-        </div>
-        <div id="notes-section">
-            <textarea id="notes" placeholder="Заметки..."></textarea>
-            <button id="save-notes">Сохранить заметки</button>
-        </div>
-        <button id="back-to-main-stopwatch">Назад</button>
     </div>
 </div>
+
+
 <script src="/js/user.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>

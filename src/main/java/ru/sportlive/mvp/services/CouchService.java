@@ -8,6 +8,7 @@ import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
+import ru.sportlive.mvp.repository.NotesRepository;
 import ru.sportlive.mvp.repository.OrganisationRepository;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 @Transactional
@@ -26,6 +28,9 @@ public class CouchService {
     InventoryRepository inventoryRepository;
     @Autowired
     OrganisationRepository organisationRepository;
+
+    @Autowired
+    NotesRepository notesRepository;
 
 
     public List<Couch> getAllCouches(){
@@ -108,6 +113,13 @@ public class CouchService {
     public Integer getCouchBalance(Integer id){
         Optional<Couch> user = couchRepository.findById(id);
         return user.map(Couch::getBalance).orElse(null);
+    }
+
+    public Notes addNotes(String message,Couch couch){
+        Notes notes = new Notes(message,LocalDateTime.now());
+        notes.setCouch(couch);
+        notesRepository.save(notes);
+        return notes;
     }
 
 }

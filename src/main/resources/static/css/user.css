@@ -578,11 +578,39 @@
         border-radius: 4px;
     }
 
-    #stopwatch-display, #timer-display {
-        font-size: 2em;
-        margin: 10px 0;
-        text-align: center;
+    /*#stopwatch-display, #timer-display {*/
+    /*    font-size: 2em;*/
+    /*    margin: 10px 0;*/
+    /*    text-align: center;*/
+    /*}*/
+
+    /* ТАЙМЕР*/
+
+
+    #notes {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        margin-top: 10px;
+        font-size: 1em;
     }
+
+    .buttonTime {
+        padding: 10px 15px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    #timerMinutes {
+        max-width: 100px;
+        margin: 0 auto;
+    }
+/*конец*/
 
     .back-button {
         margin-top: 20px;

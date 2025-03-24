@@ -4,14 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.UsersDTO;
-import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.Login;
-import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.LoginRepository;
+import ru.sportlive.mvp.repository.NotesRepository;
 import ru.sportlive.mvp.repository.TransactionRepository;
 import ru.sportlive.mvp.repository.UserRepository;
-import ru.sportlive.mvp.models.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 @Transactional
@@ -25,6 +24,9 @@ public class UserService {
 
     @Autowired
     LoginRepository loginRepository;
+
+    @Autowired
+    NotesRepository notesRepository;
 
 
     public List<User> getAllUsers(){
@@ -110,6 +112,13 @@ public class UserService {
         user.addCouch(couch);
         userRepository.save(user);
         return user;
+    }
+
+    public Notes addNotes(String message, User user){
+        Notes notes = new Notes(message, LocalDateTime.now());
+        notes.setUser(user);
+        notesRepository.save(notes);
+        return notes;
     }
 
 

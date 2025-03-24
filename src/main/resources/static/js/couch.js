@@ -34,6 +34,27 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    if (urlParams.get("page") === "withdrawBalanceForCouchScreen"){
+        const modal = new bootstrap.Modal(document.getElementById("cashBack-modal"));
+        modal.show();
+    }
+    if (urlParams.get("page")=== "addScheduleScreen"){
+        const modal = new modal.Modal(document.getElementById("trainingModal"));
+        modal.show();
+    }
+    if (urlParams.get("page")==="scheduleForCouchScreen"){
+        const modal = new bootstrap.Modal(document.getElementById("scheduleForCouch"));
+        modal.show();
+    }
+    if (urlParams.get("page")==="addInventoryForCouchScreen"){
+        const modal = new bootstrap.Modal(document.getElementById("inventoryModal"));
+        modal.show();
+    }
+
+
 // Действие при нажатии на кнопку "Вывод средств"
     document.getElementById('cashBack').addEventListener("click", function () {
         const modal = new bootstrap.Modal(document.getElementById("cashBack-modal"));
@@ -860,6 +881,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('month').value = currentMonth;
     generateCalendarToCouch(currentMonth);
 
+    openTgBot();
+
 });
 
 function exit() {
@@ -870,6 +893,20 @@ function exit() {
                 window.location.href = "/";
             }
         }).catch(error => console.error('Error:', error))
+}
+
+function openTgBot() {
+    document.getElementById("notification").addEventListener("click", function () {
+        fetch("/api/login/hashId/")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.message);
+                }
+                return response.text();
+            }).then(data => {
+            window.location.href = "https://t.me/sportliveapp_bot?start=auth_" + data;
+        })
+    })
 }
 
 

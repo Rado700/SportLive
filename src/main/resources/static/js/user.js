@@ -41,14 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getAllEquipment = document.getElementById('getAllEquipment')
 
-    const stopwatchDisplay = document.getElementById('stopwatch-display');
-    let stopwatchInterval;
-    let stopwatchSeconds = 0;
-
-    const timerDisplay = document.getElementById('timer-display');
-
-    let timerInterval;
-
 
     const showScreen = (screen) => {
         modal.classList.add('hidden')
@@ -688,57 +680,77 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     //ТАЙМЕР
-
     document.getElementById('stopwatch').addEventListener('click', () => {
-        showScreen(stopwatchScreen);
+        showScreen(document.getElementById('stopwatch-screen'));
     });
 
 
-    // Stopwatch functionality
-    document.getElementById('start-stopwatch').addEventListener('click', () => {
-        if (stopwatchInterval) clearInterval(stopwatchInterval);
+    let stopwatchInterval;
+    let stopwatchTime = 0;
+    const stopwatchDisplay = document.getElementById('stopwatchDisplay');
+
+    document.getElementById('startStopwatch').addEventListener('click', function () {
+        if (stopwatchInterval) return;
         stopwatchInterval = setInterval(() => {
-            stopwatchSeconds++;
-            let hours = Math.floor(stopwatchSeconds / 3600);
-            let minutes = Math.floor((stopwatchSeconds % 3600) / 60);
-            let seconds = stopwatchSeconds % 60;
-            stopwatchDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            stopwatchTime++;
+            const hours = Math.floor(stopwatchTime / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((stopwatchTime % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (stopwatchTime % 60).toString().padStart(2, '0');
+            stopwatchDisplay.textContent = `${hours}:${minutes}:${seconds}`;
         }, 1000);
     });
 
-    document.getElementById('stop-stopwatch').addEventListener('click', () => {
+    document.getElementById('stopStopwatch').addEventListener('click', function () {
         clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
     });
 
-    // Timer functionality
-    document.getElementById('start-timer').addEventListener('click', () => {
-        const days = parseInt(document.getElementById('timer-days').value) || 0;
-        const hours = parseInt(document.getElementById('timer-hours').value) || 0;
-        const minutes = parseInt(document.getElementById('timer-minutes').value) || 0;
-        const seconds = parseInt(document.getElementById('timer-seconds').value) || 0;
-        let totalSeconds = (days * 24 * 3600) + (hours * 3600) + (minutes * 60) + seconds;
+    document.getElementById('resetStopwatch').addEventListener('click', function () {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+        stopwatchTime = 0;
+        stopwatchDisplay.textContent = '00:00:00';
+    });
 
-        if (timerInterval) clearInterval(timerInterval);
+    let timerInterval;
+    const timerDisplay = document.getElementById('timerDisplay');
+
+    document.getElementById('startTimer').addEventListener('click', function () {
+        const timerMinutes = parseInt(document.getElementById('timerMinutes').value);
+        if (isNaN(timerMinutes) || timerMinutes <= 0) {
+            alert('Введите действительное количество минут.');
+            return;
+        }
+        let timerTime = timerMinutes * 60;
         timerInterval = setInterval(() => {
-            if (totalSeconds <= 0) {
+            if (timerTime <= 0) {
                 clearInterval(timerInterval);
-                timerDisplay.textContent = "00:00:00:00";
+                timerDisplay.textContent = '00:00:00';
+                alert('Таймер завершен!');
                 return;
             }
-            totalSeconds--;
-            let days = Math.floor(totalSeconds / (24 * 3600));
-            let hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
-            let minutes = Math.floor((totalSeconds % 3600) / 60);
-            let seconds = totalSeconds % 60;
-            timerDisplay.textContent = `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerTime--;
+            const minutes = Math.floor(timerTime / 60).toString().padStart(2, '0');
+            const seconds = (timerTime % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `00:${minutes}:${seconds}`;
         }, 1000);
+    });
+
+    document.getElementById('stopTimer').addEventListener('click', function () {
+        clearInterval(timerInterval);
+    });
+
+    document.getElementById('resetTimer').addEventListener('click', function () {
+        clearInterval(timerInterval);
+        timerDisplay.textContent = '00:00:00';
+        document.getElementById('timerMinutes').value = '';
     });
 
     //....
     document.getElementById('save-notes').addEventListener('click', () => {
         const notes = document.getElementById('notes').value;
         // Send notes to backend
-        fetch('/api/notes', {
+        fetch('/api/user/addNotesForUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -748,7 +760,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 alert('Заметки сохранены');
-                document.getElementById('notes').value = '';
             });
     });
 

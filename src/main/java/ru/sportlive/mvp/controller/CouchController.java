@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.dto.input.CouchOrganisationDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.CouchService;
@@ -215,6 +214,15 @@ public class CouchController {
         Organisation organisation = organisationService.getOrganisation(organisation_id);
         List<Couch>allCouchBySport = sportService.getAllCouchForSportOrganisation(sport, organisation);
         return new ResponseEntity<>(allCouchBySport, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Добавить заметки для тренера")
+    @PostMapping("/addNotesForCouch")
+    public ResponseEntity<Notes>addNotesForCouch(@RequestBody String message, HttpSession httpSession){
+        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couch_id);
+        Notes notes = couchService.addNotes(message,couch);
+        return new ResponseEntity<>(notes,HttpStatus.OK);
     }
 }
 

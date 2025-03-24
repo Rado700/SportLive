@@ -80,6 +80,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "couch_id"))
     private List<Couch> selectedCouches = new ArrayList<>();
 
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user")
+    private List<Notes> addNotes = new ArrayList<>();
+
     public User(String name, String surname, int height, int weight) {
         this.name = name;
         this.surname = surname;

@@ -79,6 +79,14 @@ public class Couch {
     @ManyToMany(mappedBy = "couches",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Organisation>organisations;
 
+
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToMany(mappedBy = "couch")
+    private List<Notes> notes = new ArrayList<>();
+
+
     public void addSportSection(SportSection sportSection){
         this.selectedSportSections.add(sportSection);
     }
@@ -114,5 +122,9 @@ public class Couch {
 
     public CouchInfoDTO getCouchInfo(){
         return new CouchInfoDTO(id,name,balance,experience,photo);
+    }
+
+    public Couch(List<Notes> notes) {
+        this.notes = notes;
     }
 }
