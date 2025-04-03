@@ -61,6 +61,14 @@ public class SportSection {
     @ManyToMany(mappedBy = "selectedSportSections",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Couch>couches;
 
+
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToMany(mappedBy = "sportSection")
+    private List<SeasonTicket> seasonTickets  = new ArrayList<>();
+
+
     public SportSection(Organisation organisation, Sport sport) {
         this.organisation = organisation;
         this.sport = sport;

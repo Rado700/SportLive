@@ -65,6 +65,7 @@
         <button id="back-to-main-equipment">Назад</button>
     </div>
 
+
     <div id="recordForSection" class="hidden">
         <h1>Запись на тренеровку</h1>
         <div class="dropdown">
@@ -87,6 +88,9 @@
         <input type="radio" id="oneTraining" name="training_type" value="individual" onchange="getSchedule()">
         <label for="oneTraining">Индивидуальные тренировки</label><br>
 
+        <div id = "tariffs-container" class="hidden">
+
+        </div>
 
         <div id="calendar-container">
             <label for="month">Выберите месяц:</label>
@@ -105,6 +109,7 @@
                 <option value="11">Декабрь</option>
             </select>
         </div>
+
         <div class="calendar" id="calendar"></div>
 
         <div id="allTime" class="hidden">
@@ -140,11 +145,12 @@
     <div id="info-screen" class="hidden">
         <h1>Информация</h1>
         <p id="profile-info">Ваши данные: <span></span></p>
-        <p id="trainer-info">Данные о тренере: <span></span></p>
-        <p id="trainer-rest">Осталось тренировок с тренером: <span></span></p>
-        <p id="equipment-info">Общее количество инвентаря: <span></span></p>
+        <p id="balance-info">Баланс: <span></span></p>
+        <h4 id="trainer-info">Данные о тренере: <span></span></h4>
+        <p id="trainer-rest">Осталось тренировок: <span></span></p>
+        <h4 id="equipment-info">Общее количество инвентаря: <span></span></h4>
         <button type="submit" class="btn btn-secondary" id="notification">Подключить уведомления</button>
-        <button type="submit" class="btn btn-secondary" id="exit" onclick="exit()">Выход</button>
+        <button type="submit" class="btn btn-danger mt-3" id="exit" onclick="exit()">Выход</button>
         <button id="back-to-main-info">Назад</button>
     </div>
 

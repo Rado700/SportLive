@@ -58,8 +58,10 @@ public class MoneyPaymentController {
                 System.out.println("Сумма не должна быть менее 2");
             }
 
-        return moneyPaymentService.createPaymentLink("4100115951516729", amount/0.92, user_id, "https://sportliveapp.ru");
+        return moneyPaymentService.createPaymentLink("4100115951516729", amount*1.1, user_id, "https://sportliveapp.ru");
     }
+
+
     @Operation(summary = "Уведомления по оплате")
     @PostMapping("/getNotificationForPay/")
     public String getNotificationForPay() throws Exception {

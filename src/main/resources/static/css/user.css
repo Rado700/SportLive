@@ -25,6 +25,7 @@
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         /*text-align: center;*/
+        color: white;
     }
 
     .screen {
@@ -169,6 +170,15 @@
     }
 
     .buttonTime {
+        padding: 10px 15px;
+        margin: 5px 0;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .tariffs{
         padding: 10px 15px;
         margin: 5px 0;
         border: none;
@@ -354,7 +364,7 @@
 
     #profile-screen {
         font-variant: small-caps;
-        background-image: url('../img/scale_1200.jpeg');
+        background-image: url('../img/Фон3.jpg');
         /*background-position-x: center;*/
         /*display: block;*/
         font-size: 10px;
@@ -377,6 +387,11 @@
         margin-bottom: 20px;
     }
 
+    #trainer-rest {
+        color: white;
+    }
+
+
     /* Профиль пользователя */
     #profile-info span {
         display: block;
@@ -394,10 +409,10 @@
         display: block;
         font-size: 16px;
         margin-top: 10px;
-        padding: 10px;
-        background-color: #fff3e0;
-        border-radius: 8px;
-        color: #e64a19;
+        /*padding: 10px;*/
+        /*background-color: #fff3e0;*/
+        /*border-radius: 8px;*/
+        /*color: #e64a19;*/
     }
 
     /* Контейнер для оборудования */
@@ -406,6 +421,7 @@
         background-color: #ffffff;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        color: black;
     }
 
     /* Элемент инвентаря */
@@ -489,7 +505,7 @@
         align-items: center;
         height: 100%;
         background-position: top;
-        color: gainsboro;
+        /*color: gainsboro;*/
     }
 
     .container {
@@ -498,6 +514,8 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        color: white;
+
     }
 
     .screen {
@@ -841,9 +859,9 @@
 
     #profile-screen {
         font-variant: small-caps;
-        background-image: url('../img/фон4 тайсон.jpg');
-        background-position-x: center;
-        background-repeat: round;
+        background-image: url('../img/Фон3.jpg');
+        background-position-x: right;
+        background-repeat: no-repeat;
         /*display: block;*/
         font-size: 10px;
         font-weight: bold;
@@ -861,12 +879,32 @@
         padding-bottom: 13px;
     }
 
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
     #profile-info, #trainer-info, #equipment-info {
         margin-bottom: 20px;
     }
 
+    #trainer-rest {
+        color: white;
+    }
+
     /* Профиль пользователя */
     #profile-info span {
+        display: block;
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #e0f7fa;
+        border-radius: 8px;
+        color: #00796b;
+    }
+
+    #balance-info span{
         display: block;
         font-size: 18px;
         font-weight: bold;
@@ -882,10 +920,10 @@
         display: block;
         font-size: 16px;
         margin-top: 10px;
-        padding: 10px;
-        background-color: #fff3e0;
-        border-radius: 8px;
-        color: #e64a19;
+        /*padding: 10px;*/
+        /*background-color: #fff3e0;*/
+        /*border-radius: 8px;*/
+        /*color: #e64a19;*/
     }
 
     /* Контейнер для оборудования */
@@ -894,21 +932,24 @@
         background-color: #ffffff;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        color:black;
     }
 
     /* Элемент инвентаря */
     .equipment-item {
         border-bottom: 1px solid #ddd;
         padding: 10px 0;
+        margin-top:5px;
     }
 
     .equipment-item:last-child {
         border-bottom: none;
     }
 
-    /* Название инвентаря */
-    .equipment-item h3 {
-        margin: 0;
+
+    .equipment-item h4 {
+        margin-bottom: 3px;
+        margin-top: 3px;
         font-size: 20px;
         color: #333;
     }
@@ -938,9 +979,11 @@
         background-color: #ffffff;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        color: black;
     }
 
     .trainer-container {
+        margin-top: 13px;
         padding: 10px 0;
         display: flex;
         flex-direction: column;

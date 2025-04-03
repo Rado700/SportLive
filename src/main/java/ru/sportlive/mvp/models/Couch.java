@@ -86,6 +86,12 @@ public class Couch {
     @OneToMany(mappedBy = "couch")
     private List<Notes> notes = new ArrayList<>();
 
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToMany(mappedBy = "couch")
+    private List<SeasonTicket> seasonTickets  = new ArrayList<>();
+
 
     public void addSportSection(SportSection sportSection){
         this.selectedSportSections.add(sportSection);

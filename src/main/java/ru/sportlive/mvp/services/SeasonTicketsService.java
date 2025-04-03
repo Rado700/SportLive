@@ -1,0 +1,64 @@
+package ru.sportlive.mvp.services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.sportlive.mvp.dto.input.SeasonTicketInputDTO;
+import ru.sportlive.mvp.dto.input.SportSectionDTO;
+import ru.sportlive.mvp.dto.output.CouchInfoDTO;
+import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
+import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.SeasonTicket;
+import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.repository.CouchRepository;
+import ru.sportlive.mvp.repository.SeasonTicketsRepository;
+import ru.sportlive.mvp.repository.SportSectionRepository;
+
+import java.util.*;
+
+@Transactional
+@Service
+public class SeasonTicketsService {
+
+    @Autowired
+    SeasonTicketsRepository seasonTicketsRepository;
+
+
+    public Map<UUID, List<SeasonTicketDTO>> getAllSeasonTickets(SportSection section, Couch couch){
+        List<SeasonTicket> allSeason = seasonTicketsRepository.findAll();
+        Map<UUID, List<SeasonTicketDTO>> seasonTicketDTOS = new HashMap<>();
+        for (SeasonTicket ticket : allSeason) {
+            if (ticket.getCouch() == couch && ticket.getSportSection() == section) {
+                if (seasonTicketDTOS.containsKey(ticket.getUuid())){
+                    seasonTicketDTOS.get(ticket.getUuid()).add(ticket.getSeasonTicketDTO());
+                } else {
+                    List<SeasonTicketDTO> st = new ArrayList<>();
+                    st.add(ticket.getSeasonTicketDTO());
+                    seasonTicketDTOS.put(ticket.getUuid(),st);
+                }
+            }
+        }
+        return seasonTicketDTOS;
+    }
+
+
+    public SeasonTicket addSeasonTicket(SeasonTicketInputDTO seasonTicketInputDTO, Couch couch, SportSection sportSection){
+        SeasonTicket seasonTicket = new SeasonTicket(
+                seasonTicketInputDTO.getId(),
+                seasonTicketInputDTO.getUuid(),
+                seasonTicketInputDTO.getName(),
+                seasonTicketInputDTO.getDescription(),
+                seasonTicketInputDTO.getSum(),
+                seasonTicketInputDTO.getDayOfWeek(),
+                seasonTicketInputDTO.getTime(),
+                seasonTicketInputDTO.getDays(),
+                couch,
+                sportSection);
+        seasonTicketsRepository.save(seasonTicket);
+        return seasonTicket;
+    }
+
+    public List<SeasonTicket> getTicketsByUUID(UUID uuid){
+        return seasonTicketsRepository.findAllByUuid(uuid);
+    }
+}

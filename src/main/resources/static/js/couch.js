@@ -617,9 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             infoBox3.innerHTML = `
             <h4>Зал:</h4>
-            <p><strong>Осталось тренировок:</strong> ${countBooking}</p>
-           
-          `;
+            <p><strong>Осталось тренировок:</strong> ${countBooking}</p>`;
             return infoBox3;
 
         };

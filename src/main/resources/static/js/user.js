@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const mainScreen = document.getElementById('main-screen');
     const profileScreen = document.getElementById('profile-screen');
@@ -58,22 +57,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(queryString);
 
     if (urlParams.get("page") === 'recordScreen') {
-        openRecordScreenWithData(urlParams.get('couch'),urlParams.get('section'));
+        openRecordScreenWithData(urlParams.get('couch'), urlParams.get('section'));
     }
-    if (urlParams.get("page") === 'scheduleScreen'){
+    if (urlParams.get("page") === 'scheduleScreen') {
         openRecordScreenWithData();
     }
-    if (urlParams.get("page") === 'addBalanceScreen'){
+    if (urlParams.get("page") === 'addBalanceScreen') {
         showScreen(modal);
     }
 
-    function popup(text){
+    function popup(text) {
         const popup = document.getElementById("popup");
         popup.innerHTML = text;
         popup.classList.add("show");
 
         setTimeout(() => {
-            popup.classList.remove("show")},3000)
+            popup.classList.remove("show")
+        }, 3000)
 
     }
 
@@ -275,6 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const equipmentInfo = document.getElementById('equipment-info').querySelector('span');
         const trainerRest = document.getElementById('trainer-rest').querySelector('span')
 
+
+        fetch('/api/booking/getAllBookingUser/')
+            .then(response => response.json())
+            .then(data => {
+                trainerRest.textContent = data.length;
+            })
+
         fetch('/api/user/')
             .then(response => response.json())
             .then(data => {
@@ -292,13 +299,27 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('/api/inventory/userInventory/')
             .then(response => response.json())
             .then(data => {
-                getEquipment(data)
+                let count = 0;
+                data.forEach(item => {
+                    if (item !== null) {
+                        count++;
+                    }
+                })
+                equipmentInfo.innerHTML = '';
+                let getUserInventory = getCountEquipment(count, data);
+                equipmentInfo.appendChild(getUserInventory);
+                document.getElementById('getAllEquipment').addEventListener("click", function () {
+                    getEquipment()
+                })
+
             });
     });
+
 
     function getUserCouch(data) {
         const container = document.getElementById('trainer-info');
         container.innerHTML = '';
+        container.textContent = "Тренера: ";
 
         if (data === 0) {
             container.innerHTML = '<p>Нету тренеров</p>';
@@ -321,48 +342,91 @@ document.addEventListener('DOMContentLoaded', () => {
             newContainer.appendChild(experience);
 
             container.appendChild(newContainer);
+
+
         })
     }
 
-    function getEquipment(getData) {
-        const container = document.getElementById('equipment-info')
-        container.innerHTML = '';
 
-        if (getData.length === 0) {
-            container.innerHTML = '<p>No equipment available</p>';
-            return;
+    document.getElementById('equipment-info').addEventListener("click", function (event) {
+        if (event.target && event.target.id === "getAllEquipment") {
+            getEquipment();
         }
-        getData.forEach(item => {
-            const newElement = document.createElement("div");
-            newElement.classList.add("equipment-item");
+    });
 
-            const inventory = document.createElement("h3");
-            inventory.textContent = 'Инвентарь: ';
-            newElement.appendChild(inventory);
+    function getCountEquipment(count, data) {
+        let infoBox = document.createElement("equipment-info");
+        infoBox.innerHTML = '';
+        infoBox.style.color = 'darkslategrey';
 
-            const name = document.createElement("p");
-            name.textContent = `Наименование - ` + item.name;
-            newElement.appendChild(name);
 
-            const type = document.createElement("p");
-            type.textContent = `Тип - ` + item.type;
-            newElement.appendChild(type);
-
-            const price = document.createElement("p");
-            price.textContent = `Цена - ` + item.price;
-            newElement.appendChild(price);
-
-            const size = document.createElement("p");
-            size.textContent = `Размер - ` + item.size;
-            newElement.appendChild(size);
-
-            const amount = document.createElement("p");
-            amount.textContent = `Количество - ` + item.amount;
-            newElement.appendChild(amount);
-
-            container.appendChild(newElement);
-
+        let firstItemHtml;
+        let firstItem = data.length > 0 ? data[0] : null;
+        data.forEach(data => {
+            firstItemHtml = firstItem ? `<p>${data.name} (${data.amount} шт.)</p>` : "<p>Нет доступного инвентаря</p>";
+            infoBox.innerHTML += `${firstItemHtml}`;
         })
+
+
+        infoBox.innerHTML += `
+        <p><strong><button id="getAllEquipment" class="btn btn-primary">Подробнее⬇</button></strong></p>
+        <div id="showAllEquipment" style="display: none" ></div>`;
+
+        return infoBox;
+
+
+    }
+
+    const getEquipment = () => {
+
+        fetch('/api/inventory/userInventory/')
+            .then(response => response.json())
+            .then(data => {
+
+                const container = document.getElementById('showAllEquipment')
+                container.innerHTML = '<h4>Список инвентаря:</h4>';
+                container.style.display = "block";
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p>No equipment available</p>';
+                    return;
+                }
+                data.forEach(item => {
+                    const newElement = document.createElement("div");
+                    newElement.classList.add("equipment-item");
+
+                    const inventory = document.createElement("h4");
+                    inventory.textContent = 'Инвентарь: ';
+                    newElement.appendChild(inventory);
+
+                    const name = document.createElement("p");
+                    name.textContent = `Наименование - ` + item.name;
+                    newElement.appendChild(name);
+
+                    const type = document.createElement("p");
+                    type.textContent = `Тип - ` + item.type;
+                    newElement.appendChild(type);
+
+                    const price = document.createElement("p");
+                    price.textContent = `Цена - ` + item.price;
+                    newElement.appendChild(price);
+
+                    const size = document.createElement("p");
+                    size.textContent = `Размер - ` + item.size;
+                    newElement.appendChild(size);
+
+                    const amount = document.createElement("p");
+                    amount.textContent = `Количество - ` + item.amount;
+                    newElement.appendChild(amount);
+
+                    container.appendChild(newElement);
+
+                })
+                container.innerHTML += '<button id="closeInventory" class="btn btn-primary">Закрыть список⬆</button>'
+                document.getElementById("closeInventory").addEventListener("click", function () {
+                    container.style.display = 'none';
+                })
+            })
     }
 
     // document.getElementById('info').addEventListener('click', () => {
@@ -439,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Записаться на тренеровку(выбор спортсекций и тренера)
 
-    function openRecordScreenWithData(couchName,couchSection) {
+    function openRecordScreenWithData(couchName, couchSection) {
         showScreen(recordForSection);
 
         const url = "/api/user/"
@@ -490,7 +554,6 @@ document.addEventListener('DOMContentLoaded', () => {
     addActivity.addEventListener('click', () => {
         openRecordScreenWithData();
     })
-
 
 
     // Добавление инвентаря для пользователя
@@ -626,7 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             })
         document.getElementById("getAllEquipment").style.display = 'none';
-        popup("Был куплен инвентарь: "+name)
+        popup("Был куплен инвентарь: " + name)
 
     }
 
@@ -927,6 +990,54 @@ function generateCalendar(month) {
 
 }
 
+function displayTariffs() {
+    const tariffContainer = document.getElementById("tariffs-container");
+    const coach = document.getElementById("coach").value
+    const sportSection = document.getElementById("sports-section").value
+
+    fetch("/ticket/get/" + sportSection + "/" + coach)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("нету такого тарифа")
+            }
+            return response.json()
+        })
+        .then(data => {
+            data.forEach(item => {
+                const tariffs = document.createElement("div");
+                tariffs.classList.add("tariffs");
+                tariffs.display = 'flex';
+
+                const name = item.name || "Не указано";
+                const description = item.description || "Не указано";
+                const days = item.days || "Не указано";
+                const sum = item.sum || "Не указано";
+                let schedule = "";
+                item.date.forEach(date => {
+                    schedule += `${date.dayOfWeek} в ${date.time.slice(0,-3)}, `
+                })
+
+                tariffs.innerHTML += `
+            <p><strong>${name}</strong> </p>
+            <p>${description}</p>
+            <p><strong>Сумма:</strong> ${sum} руб, ${days} дней</p>
+            <p><strong>Расписание:</strong> ${schedule.slice(0,-2)}</p>
+            `
+
+                document.getElementById('tariffs').addEventListener('click', function () {
+                    transactionForCouch(coach, sum);
+                    document.body.removeChild(tariffs);
+
+                })
+
+                tariffContainer.appendChild(tariffs);
+            })
+
+
+        });
+}
+
+
 let buttonEvents = {};
 let userId;
 
@@ -961,6 +1072,16 @@ function getSchedule() {
 
     const bookingTime = document.getElementById('allTime');
     bookingTime.classList.add('hidden');
+
+
+    const tariffContainer = document.getElementById("tariffs-container");
+    if (type === "general") {
+        tariffContainer.classList.remove("hidden");
+        displayTariffs();
+    } else {
+        tariffContainer.classList.add("hidden");
+    }
+
 
     buttonEvents = {}
 
@@ -1049,6 +1170,7 @@ function getSchedule() {
         })
     }
 }
+
 
 function showDetailsBookingTime(dayButton) {
     const coach = document.getElementById("coach").value
