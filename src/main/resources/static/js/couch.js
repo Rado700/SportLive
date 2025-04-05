@@ -291,9 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
     profileTraining.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // const type = document.getElementById("training_type").value;
-        // const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
-        // console.log(modal);
+        const type = document.getElementById("training_type").value;
+        const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
+        console.log(modal);
 
         // Добавить в общее расписание
         if (type === "general") {

@@ -152,18 +152,18 @@ public class LoginService {
     }
 
     public Login addLoginUser (String name, String password,User user) {
-        Login login = new Login(name,hashCoder(password));
+        Login login = new Login(name.toLowerCase(),hashCoder(password));
         login.setUser(user);
         return loginRepository.save(login);
     }
     public Login addLoginCouch (String name, String password,Couch couch){
-        Login login = new Login(name,hashCoder(password));
+        Login login = new Login(name.toLowerCase(),hashCoder(password));
         login.setCouch(couch);
         return loginRepository.save(login);
 
     }
     public Login enterUser (String name, String password) {
-        List<Login> logins = loginRepository.findByLogin(name);
+        List<Login> logins = loginRepository.findByLogin(name.toLowerCase());
         String pass = hashCoder(password);
         for (Login login : logins) {
             if (login.getPassword().equals(pass) && login.getUser() != null) {
@@ -173,7 +173,7 @@ public class LoginService {
         return null;
     }
     public Login enterCouch (String name, String password) {
-        List<Login> logins = loginRepository.findByLogin(name);
+        List<Login> logins = loginRepository.findByLogin(name.toLowerCase());
         String pass = hashCoder(password);
         for (Login login : logins) {
             if (login.getPassword().equals(pass) && login.getCouch() != null) {

@@ -98,7 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return response.text()
                     .then(data => {
-                        window.location.href = data;
+                        if (data.startsWith("https://")) {
+                            window.location.href = data;
+                        }
+                        else {
+                            alert(data);
+                        }
                     })
             })
     }

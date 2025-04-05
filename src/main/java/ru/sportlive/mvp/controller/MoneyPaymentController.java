@@ -55,7 +55,7 @@ public class MoneyPaymentController {
     public String getInvoicePay(@PathVariable Double amount,HttpSession httpSession) throws Exception {
         Integer user_id = (Integer) httpSession.getAttribute("userId");
             if (amount <= 2) {
-                System.out.println("Сумма не должна быть менее 2");
+                return "Сумма не должна быть менее 2";
             }
 
         return moneyPaymentService.createPaymentLink("4100115951516729", amount*1.1, user_id, "https://sportliveapp.ru");
