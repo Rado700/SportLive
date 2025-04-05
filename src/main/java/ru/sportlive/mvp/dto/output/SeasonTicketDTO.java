@@ -22,7 +22,7 @@ public class SeasonTicketDTO {
     @Getter
     private String dayOfWeek;
     @Getter
-    private Time time;
+    private String time;
     @Getter
     private String days;
     @Getter

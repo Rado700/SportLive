@@ -32,7 +32,7 @@ public class SeasonTicketInputDTO {
     private String dayOfWeek;
     @Getter
     @Setter
-    private Time time;
+    private String time;
     @Getter
     @Setter
     private String days;
