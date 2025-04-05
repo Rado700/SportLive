@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.show();
     }
     if (urlParams.get("page")=== "addScheduleScreen"){
-        const modal = new modal.Modal(document.getElementById("trainingModal"));
+        const modal = new bootstrap.Modal(document.getElementById("trainingModal"));
         modal.show();
     }
     if (urlParams.get("page")==="scheduleForCouchScreen"){
@@ -53,6 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = new bootstrap.Modal(document.getElementById("inventoryModal"));
         modal.show();
     }
+
+
 
 
 // Действие при нажатии на кнопку "Вывод средств"
@@ -132,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.classList.remove('inactive-button');
                 this.classList.add('active-button');
             }
-            console.log(this.classList.contains('active-button'));
         });
     });
 
@@ -192,8 +193,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
+
     //Добавить тренировку
     document.getElementById('addTraining').addEventListener('click', function () {
+        const sportSectionSelect = document.getElementById("sportSections");
+        sportSectionSelect.innerHTML = '';
+
         fetch("/api/couch/sport-section/")
             .then(response => {
                 if (!response.ok) {
@@ -286,9 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
     profileTraining.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const type = document.getElementById("training_type").value;
-        const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
-        console.log(modal);
+        // const type = document.getElementById("training_type").value;
+        // const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
+        // console.log(modal);
 
         // Добавить в общее расписание
         if (type === "general") {
@@ -316,14 +321,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         date.setHours(parseInt(hours));
                         date.setMinutes(parseInt(minutes))
                         const profileData = {
-                            place: formData.get('place'),
-                            description: formData.get('description'),
-                            sum: formData.get('sum'),
+                            place: formData.get('place')|| "Не указано",
+                            description: formData.get('description')|| "Не указано",
+                            sum: formData.get('sum')|| 0,
                             typeWorkout: type,
                             date: date,
 
                         };
-                        console.log(date)
+                        console.log(profileData)
                         const sportSectionSelect = document.getElementById("sportSections");
                         const sportSectionId = parseInt(sportSectionSelect.value);
 
@@ -345,16 +350,15 @@ document.addEventListener('DOMContentLoaded', () => {
         //Добавление индивидуальных тренировок
         if (type === "individual") {
 
-            console.log(type);
             const allDate = document.getElementsByName("date");
             allDate.forEach(date => {
 
                 const formData = new FormData(profileTraining);
                 const profileData = {
-                    place: formData.get('place'),
-                    description: formData.get('description'),
+                    place: formData.get('place')|| "Не указано",
+                    description: formData.get('description')|| "Не указано",
                     typeWorkout: type,
-                    sum: formData.get('sum'),
+                    sum: formData.get('sum')|| 0,
                     date: date.value,
 
                 };
@@ -370,12 +374,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     .then(data => {
                         popupShow("Индивидуальная тренировка добавлена!")
                         newData();
+
                     })
                     .catch(error => console.error('Ошибка:', error));
 
             })
-            // const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
-            // modal.hide();
+            const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
+            modal.hide();
         }
     });
 

@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const trainerInfo = document.getElementById('trainer-info').querySelector('span');
         const equipmentInfo = document.getElementById('equipment-info').querySelector('span');
         const trainerRest = document.getElementById('trainer-rest').querySelector('span')
-
+        const balanceInfo = document.getElementById('balance-info').querySelector('span')
 
         fetch('/api/booking/getAllBookingUser/')
             .then(response => response.json())
@@ -288,6 +288,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 profileInfo.textContent = `${data.name} ${data.surname}, ${data.height} cm, ${data.weight} kg`;
             });
 
+        fetch("/api/balance/balanceUser/")
+            .then(response => response.json())
+            .then(data=>{
+                balanceInfo.textContent = `${data.balance}`|| 0 ;
+            })
 
         fetch('/api/user/couch/')
             .then(response => response.json())
