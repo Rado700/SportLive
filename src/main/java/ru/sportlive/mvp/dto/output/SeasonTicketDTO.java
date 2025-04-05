@@ -2,6 +2,8 @@ package ru.sportlive.mvp.dto.output;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.sql.Time;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -20,7 +22,7 @@ public class SeasonTicketDTO {
     @Getter
     private String dayOfWeek;
     @Getter
-    private LocalTime time;
+    private Time time;
     @Getter
     private String days;
     @Getter

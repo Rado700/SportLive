@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
 import ru.sportlive.mvp.dto.output.SportInfoDTO;
 
+import java.sql.Time;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -42,7 +43,7 @@ public class SeasonTicket {
 
     @Getter
     @Setter
-    private LocalTime time;
+    private Time time;
 
     @Getter
     @Setter
@@ -71,7 +72,7 @@ public class SeasonTicket {
         return new SeasonTicketDTO(id,uuid,name,description,sum,dayOfWeek,time,days,sportSection.getSportSectionAllDTO(),couch.getCouchInfo());
     }
 
-    public SeasonTicket(Integer id, UUID uuid, String name, String description, Integer sum, String dayOfWeek, LocalTime time,String days, Couch couch, SportSection sportSection) {
+    public SeasonTicket(Integer id, UUID uuid, String name, String description, Integer sum, String dayOfWeek, Time time,String days, Couch couch, SportSection sportSection) {
         this.id = id;
         this.uuid = uuid;
         this.name = name;

@@ -6,6 +6,7 @@ import lombok.Setter;
 import ru.sportlive.mvp.dto.output.CouchInfoDTO;
 import ru.sportlive.mvp.dto.output.SportSectionGetAllDTO;
 
+import java.sql.Time;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class SeasonTicketInputDTO {
     private String dayOfWeek;
     @Getter
     @Setter
-    private LocalTime time;
+    private Time time;
     @Getter
     @Setter
     private String days;
