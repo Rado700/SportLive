@@ -13,6 +13,9 @@ import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.*;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,8 @@ public class BookingController {
     @Autowired
     TGService tgService;
 
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
     @Operation(summary = "Вывести бронь по id")
     @GetMapping("/{id}")
     public ResponseEntity<Booking>getBooking(Integer id) {
@@ -41,6 +46,7 @@ public class BookingController {
     @Operation(summary = "Добавить бронь",description = "Добавляем бронь по user,добавляем в расписание")
     @PostMapping("/")//TODO:Бронь на (такое то число и время)
     public ResponseEntity<Booking>addBooking(@RequestBody BookingDTO bookingDTO, HttpSession httpSession) throws IOException {
+
         Integer id = (Integer) httpSession.getAttribute("userId");
         Integer loginUserId = (Integer) httpSession.getAttribute("loginUserId");
         Schedule schedule = scheduleService.getSchedule(bookingDTO.getSchedule_id());
@@ -50,11 +56,28 @@ public class BookingController {
         Login userLogin = loginService.getLogin(loginUserId);
         String userTelegramId = userLogin.getTelegramId();
         String couchTelegramId = couchLogin.getTelegramId();
-        Booking booking = bookingService.addBooking(schedule,user);
-        String couchMessageText = "Забронированно время на "+booking.getSchedules().getDate().toLocalDate()+" Забронированно пользователем "+"<b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b>";
-        String userMessageText = "Забронирована тренировка на "+booking.getSchedules().getDate();
+        if (user.getBalance() < schedule.getSum()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Booking booking = bookingService.addBooking(schedule, user);
+        String couchMessageText;
+        if (userTelegramId != null) {
+            couchMessageText = "Забронированно время на " + booking.getSchedules().getDate().format(dateTimeFormatter) + " пользователем " + "<b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";
+        } else {
+            couchMessageText = "Забронированно время на " + booking.getSchedules().getDate().format(dateTimeFormatter) + " пользователем " + user.getName();
+        }
+
+        String userMessageText;
+        if (couchTelegramId != null) {
+            userMessageText = "Забронирована тренировка на " + booking.getSchedules().getDate().format(dateTimeFormatter) + "у тренера <b><a href='tg://user?id=" + couchTelegramId + "'>" + couch.getName() + "</a></b>";
+        }
+        else {
+            userMessageText = "Забронирована тренировка на " + booking.getSchedules().getDate().format(dateTimeFormatter) + "у тренера " + couch.getName();
+
+        }
         tgService.sendMessage(couchTelegramId,couchMessageText);
         tgService.sendMessage(userTelegramId,userMessageText);
+
         return new ResponseEntity<>(booking,HttpStatus.OK);
     }
 
@@ -76,8 +99,20 @@ public class BookingController {
         Login loginCouch = loginService.getCouchLogin(couch.getId());
         String couchTelegramId = loginCouch.getTelegramId();
         String userTelegramId = loginUser.getTelegramId();
-        String messageText = "Бронь снята на "+ schedule.getBookings();
-        String couchMessageText = "Бронь снята на "+ schedule.getBookings()+" пользователем "+user.getName();
+
+        List<Booking> bookingsToRemove = new ArrayList<>();
+        for (Booking book : schedule.getBookings()) {
+            if (book.getUser().equals(user)) {
+                bookingsToRemove.add(book);
+            }
+        }
+        String messageText = "Бронь снята на "+ bookingsToRemove.get(0).getSchedules().getDate().format(dateTimeFormatter);
+        String couchMessageText;
+        if (userTelegramId != null) {
+            couchMessageText = "Бронь снята на " + bookingsToRemove.get(0).getSchedules().getDate().format(dateTimeFormatter) + " пользователем <b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";
+        } else {
+            couchMessageText = "Бронь снята на " + bookingsToRemove.get(0).getSchedules().getDate().format(dateTimeFormatter) + " пользователем " + user.getName();
+        }
         tgService.sendMessage(userTelegramId,messageText);
         tgService.sendMessage(couchTelegramId,couchMessageText);
         bookingService.deleteBookingByScheduleForUser(scheduleId, user);

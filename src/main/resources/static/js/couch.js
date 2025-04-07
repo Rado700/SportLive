@@ -37,24 +37,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
-    if (urlParams.get("page") === "withdrawBalanceForCouchScreen"){
+    if (urlParams.get("page") === "withdrawBalanceForCouchScreen") {
         const modal = new bootstrap.Modal(document.getElementById("cashBack-modal"));
         modal.show();
     }
-    if (urlParams.get("page")=== "addScheduleScreen"){
+    if (urlParams.get("page") === "addScheduleScreen") {
         const modal = new bootstrap.Modal(document.getElementById("trainingModal"));
         modal.show();
     }
-    if (urlParams.get("page")==="scheduleForCouchScreen"){
+    if (urlParams.get("page") === "scheduleForCouchScreen") {
         const modal = new bootstrap.Modal(document.getElementById("scheduleForCouch"));
         modal.show();
     }
-    if (urlParams.get("page")==="addInventoryForCouchScreen"){
+    if (urlParams.get("page") === "addInventoryForCouchScreen") {
         const modal = new bootstrap.Modal(document.getElementById("inventoryModal"));
         modal.show();
     }
-
-
 
 
 // Действие при нажатии на кнопку "Вывод средств"
@@ -193,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-
     //Добавить тренировку
     document.getElementById('addTraining').addEventListener('click', function () {
         const sportSectionSelect = document.getElementById("sportSections");
@@ -321,9 +318,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         date.setHours(parseInt(hours));
                         date.setMinutes(parseInt(minutes))
                         const profileData = {
-                            place: formData.get('place')|| "Не указано",
-                            description: formData.get('description')|| "Не указано",
-                            sum: formData.get('sum')|| 0,
+                            place: formData.get('place') || "Не указано",
+                            description: formData.get('description') || "Не указано",
+                            sum: formData.get('sum') || 0,
                             typeWorkout: type,
                             date: date,
 
@@ -355,10 +352,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const formData = new FormData(profileTraining);
                 const profileData = {
-                    place: formData.get('place')|| "Не указано",
-                    description: formData.get('description')|| "Не указано",
+                    place: formData.get('place') || "Не указано",
+                    description: formData.get('description') || "Не указано",
                     typeWorkout: type,
-                    sum: formData.get('sum')|| 0,
+                    sum: formData.get('sum') || 0,
                     date: date.value,
 
                 };
@@ -388,6 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Вывод расписание для тренера(Индивидуальные,Общие)
 
     document.getElementById('scheduleForCouch').addEventListener('shown.bs.modal', function () {
+        const sportSectionSelect = document.getElementById("sports-section");
+        sportSectionSelect.innerHTML = "";
 
         fetch("/api/couch/sport-section/")
             .then(response => {
@@ -415,9 +414,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const couchTypeButtons = document.querySelectorAll('.schedule-type-btn');
     couchTypeButtons.forEach(button => {
         button.addEventListener('click', function () {
-            // Убираем выделение со всех кнопок
-            couchTypeButtons.forEach(btn => btn.classList.remove('btn-primary', 'text-white'));
-            couchTypeButtons.forEach(btn => btn.classList.add('btn-outline-primary'));
+            couchTypeButtons.forEach(btn => {
+                // Убираем выделение со всех кнопок
+                couchTypeButtons.forEach(btn => btn.classList.remove('btn-primary', 'text-white'));
+                couchTypeButtons.forEach(btn => btn.classList.add('btn-outline-primary'));
+            });
             // Добавляем выделение для выбранной кнопки
             this.classList.remove('btn-outline-primary');
             this.classList.add('btn-primary', 'text-white');
@@ -442,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
             type: formData.get('type'),
             size: formData.get('size'),
             price: formData.get('price'),
-            amount:formData.get('amount'),
+            amount: formData.get('amount'),
         }
 
         fetch('/api/inventory/couch/', {
@@ -500,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 profileDiv.appendChild(size);
 
                 const amount = document.createElement("p");
-                amount.textContent = `Количество: ${profile.amount || 0 }`;
+                amount.textContent = `Количество: ${profile.amount || 0}`;
                 profileDiv.appendChild(amount);
 
 
@@ -654,8 +655,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     let count = 0;
                     trainerInfo.innerHTML = '';
                     data.forEach(countAll => {
-                        if (countAll !== null){
-                            count ++;
+                        if (countAll !== null) {
+                            count++;
 
                         }
                     });
@@ -668,21 +669,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
             fetch('/api/couch/allUserForCouch/')
-                .then(response =>{
-                    if (!response.ok){
+                .then(response => {
+                    if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 }).then(data => {
-                    let count = 0;
-                    data.forEach(countAll => {
-                        if (countAll !== null){
-                            count++;
-                        }
-                    })
-                    const userCountInfo = processUserAll(count);
-                    trainerInfo.appendChild(userCountInfo);
-                    document.getElementById("showAllUsers").addEventListener("click", function() {
+                let count = 0;
+                data.forEach(countAll => {
+                    if (countAll !== null) {
+                        count++;
+                    }
+                })
+                const userCountInfo = processUserAll(count);
+                trainerInfo.appendChild(userCountInfo);
+                document.getElementById("showAllUsers").addEventListener("click", function () {
                     fetchUserList();
                 });
             })
@@ -719,7 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         userListDiv.innerHTML += `<p>${user.name} ${user.surname}</p>`;
                     });
                     userListDiv.innerHTML += '<button class="btn btn-primary mt-3" id="closeUserList">▲ Закрыть список</button>';
-                    document.getElementById("closeUserList").addEventListener("click",function() {
+                    document.getElementById("closeUserList").addEventListener("click", function () {
                         userListDiv.style.display = "none";
                     })
                 })
@@ -1025,9 +1026,6 @@ function getSchedule() {
         }
     }
 
-    const bookingTime = document.getElementById('allTime');
-    bookingTime.classList.add('hidden');
-
 
     if (sportSection !== "" && !isNaN(month) && type !== "") {
         fetch("/api/schedule/couch/sport-section/" + sportSection)
@@ -1057,7 +1055,7 @@ function getSchedule() {
                 if (scheduleDate.getMonth() === month) {
                     const day = scheduleDate.getDate();
                     const dayButton = calendar.querySelector(`#button_${day}`)
-                    let userBase ;
+                    let userBase;
                     if (dayButton && type === scheduleDay.typeWorkout) {
                         dayButton.style.backgroundColor = "#00FFCC";
 
@@ -1079,7 +1077,9 @@ function getSchedule() {
                         })
 
                         const listener = function () {
-                            showDetailsBookingToCouch(scheduleDay, dayButton,userBase);
+                            const timeSlots = document.getElementById("times-record");
+                            timeSlots.innerHTML = '';
+                            showDetailsBookingToCouch(scheduleDay, dayButton, userBase);
                         }
                         const showTime = function () {
                             showDetailsBookingTime(dayButton);
@@ -1125,6 +1125,7 @@ function showDetailsBookingTime(dayButton) {
             return response.json();
         }).then(data => {
         data.forEach(scheduleDay => {
+            let userBase;
             let scheduleDate = new Date(scheduleDay.date);
             if (scheduleDate.getMonth() === month) {
                 let day = scheduleDate.getDate();
@@ -1150,13 +1151,15 @@ function showDetailsBookingTime(dayButton) {
                             if (scheduleDay.id === scheduleId) {
                                 timeButton.style.backgroundColor = 'red';
                                 dayButton.style.backgroundColor = 'red';
+                                userBase = bookingTimes.user;
+
                             }
                         })
                     })
                     const listener = function (event) {
-                        console.log("sssaaaasqwq");
                         event.stopPropagation();
-                        showDetailsBookingToCouch(scheduleDay, timeButton);
+                        showDetailsBookingToCouch(scheduleDay, timeButton, userBase);
+
                     }
                     timeButton.addEventListener("click", listener);
                     timeSlots.appendChild(timeButton);
@@ -1185,10 +1188,7 @@ function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
     const description = scheduleDay.description || "Комментарий отсутствует";
     const place = scheduleDay.place || "Место не указано";
     const sum = scheduleDay.sum || "Сумма не указана";
-    const name = userBase.name || "Имя не указанно";
-    const surname = userBase.surname || "Фамилия не указана";
     const scheduleId = scheduleDay.id;
-
 
 
     infoBox.innerHTML += `
@@ -1198,9 +1198,11 @@ function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
         <p><strong>Комментарий:</strong> ${description}</p>
         
 `;
-    if (dayButton.style.backgroundColor === "red"){
-        infoBox.innerHTML +=` <p><strong>Имя:</strong> ${name}</p>`;
-        infoBox.innerHTML +=` <p><strong>Фамилия:</strong> ${surname}</p>`;
+    if (dayButton.style.backgroundColor === "red") {
+        const name = userBase.name || "Имя не указанно";
+        const surname = userBase.surname || "Фамилия не указана";
+        infoBox.innerHTML += ` <p><strong>Имя:</strong> ${name}</p>`;
+        infoBox.innerHTML += ` <p><strong>Фамилия:</strong> ${surname}</p>`;
         schedule.appendChild(infoBox);
 
     }
@@ -1210,21 +1212,21 @@ function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
 `;
 
 
-        // Отменить бронирование
-        infoBox.querySelector('#bookButtonCancel').addEventListener('click', function () {
-            bookButtonCancel(scheduleId); // Отменить бронирования
-        });
+    // Отменить бронирование
+    infoBox.querySelector('#bookButtonCancel').addEventListener('click', function () {
+        bookButtonCancel(scheduleId, infoBox); // Отменить бронирования
+    });
 
-        // Обработчик на кнопку "Закрыть"
-        infoBox.querySelector('#closeInfoBox').addEventListener('click', function () {
-            schedule.removeChild(infoBox); // Удаляем окно
-        });
+    // Обработчик на кнопку "Закрыть"
+    infoBox.querySelector('#closeInfoBox').addEventListener('click', function () {
+        schedule.removeChild(infoBox); // Удаляем окно
+    });
 
 
     const rect = dayButton.getBoundingClientRect();
 
-        infoBox.style.top = `${rect.bottom + schedule.scrollTop}px`;
-        infoBox.style.left = `${rect.left + schedule.scrollLeft}px`;
+    infoBox.style.top = `${rect.bottom + schedule.scrollTop}px`;
+    infoBox.style.left = `${rect.left + schedule.scrollLeft}px`;
 
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
@@ -1232,36 +1234,40 @@ function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
     const infoBoxWidth = infoBox.offsetWidth;
 
     // Устанавливаем окно ровно по центру экрана
-    let left = (screenWidth - infoBoxWidth) / 2;
-    let top = (screenHeight - infoBoxHeight) / 2;
-
-    // Проверяем, выходит ли окно за нижнюю границу экрана
-    if (top + infoBoxHeight > screenHeight) {
-        top = screenHeight - infoBoxHeight - 10; // Отступ 10px от края
-    }
-
-    // Применяем вычисленные координаты
-    infoBox.style.top = `${top}px`;
-    infoBox.style.left = `${left}px`;
+    // let left = (screenWidth - infoBoxWidth) / 2;
+    // let top = (screenHeight - infoBoxHeight) / 2;
+    //
+    //
+    // // Проверяем, выходит ли окно за нижнюю границу экрана
+    // if (top + infoBoxHeight > screenHeight) {
+    //     top = screenHeight - infoBoxHeight - 10; // Отступ 10px от края
+    // }
+    //
+    // // Применяем вычисленные координаты
+    // infoBox.style.top = `${top}px`;
+    // infoBox.style.left = `${left}px`;
 
 
     schedule.appendChild(infoBox);
-    console.log('ssssss');
 
-    // document.body.appendChild(infoBox);
 }
 
-function bookButtonCancel(scheduleId) {
-    fetch("/api/schedule/" + scheduleId, {
-        method: "DELETE",
-        headers: {'Content-Type': 'application/json'},
+async function bookButtonCancel(scheduleId, infoBox) {
+    try {
+        fetch("/api/schedule/" + scheduleId, {
+            method: "DELETE",
+            headers: {'Content-Type': 'application/json'},
 
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error(response.message);
-        }
-    })
-
+        }).then(response => {
+            getSchedule();
+            infoBox.innerHTML ="";
+            if (!response.ok) {
+                throw new Error("Ошибка при отмене бронирования");
+            }
+        })
+    } catch (error) {
+        console.error("Ошибка отмены:", error)
+    }
 }
 
 document.addEventListener("click", (event) => {

@@ -295,9 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fetch("/api/balance/balanceUser/")
             .then(response => response.json())
-            .then(data=>{
-                balanceInfo.textContent = `${data.balance}`|| 0 ;
-            })
+            .then(data => {
+                    const balance = data.balance != null ? data.balance : 0;
+                    balanceInfo.textContent = `${balance}`;
+
+            });
 
         fetch('/api/user/couch/')
             .then(response => response.json())
@@ -1374,6 +1376,7 @@ function bookTraining(scheduleId) {
         })
         .catch(error => {
             console.error("Ошибка при бронировании:", error);
+            alert("Не хватает баланса")
         });
 }
 
