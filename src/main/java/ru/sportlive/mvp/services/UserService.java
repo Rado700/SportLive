@@ -1,9 +1,11 @@
 package ru.sportlive.mvp.services;
 
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.UsersDTO;
+import ru.sportlive.mvp.dto.output.NotesDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.LoginRepository;
 import ru.sportlive.mvp.repository.NotesRepository;
@@ -11,6 +13,7 @@ import ru.sportlive.mvp.repository.TransactionRepository;
 import ru.sportlive.mvp.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Transactional
@@ -121,5 +124,13 @@ public class UserService {
         return notes;
     }
 
+    public List<NotesDTO> getAllNotesForUser(User user) {
+        List<NotesDTO>findAll = new ArrayList<>();
+        List<Notes> notes = notesRepository.findAllByUserOrderByDateTimeDesc(user);
+        for (Notes note:notes) {
+            findAll.add(note.notesDTO());
+        }
+        return findAll;
+    }
 
 }

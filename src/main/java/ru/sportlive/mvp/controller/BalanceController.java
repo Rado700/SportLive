@@ -131,8 +131,14 @@ public class BalanceController {
         List<Transaction>getTransaction = new ArrayList<>();
         getTransaction.add(transaction1);
         getTransaction.add(transaction2);
-        String messageText = "Перевод от <b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b> ,было пополнено средств на сумму "+userPayDTO.getSum();
-        tgService.sendMessage(couchTelegramId,messageText, "https://sportliveapp.ru/account?page=balance", "Посмотреть баланс");
+//        String messageText = "Перевод от <b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b> ,было пополнено средств на сумму "+userPayDTO.getSum();
+        if (couchTelegramId != null && userTelegramId != null) {
+            String messageText = "Перевод от <b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b> ,было пополнено средств на сумму " + userPayDTO.getSum();
+            tgService.sendMessage(couchTelegramId, messageText, "https://sportliveapp.ru/account?page=allInfo", "Посмотреть баланс");
+        } else {
+            System.out.println("❌ Невозможно отправить сообщение — отсутствует Telegram ID (user или coach).");
+        }
+//        tgService.sendMessage(couchTelegramId,messageText, "https://sportliveapp.ru/account?page=allInfo", "Посмотреть баланс");
         return new ResponseEntity<>(getTransaction,HttpStatus.OK);
     }
 

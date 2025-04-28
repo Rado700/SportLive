@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sportlive.mvp.dto.input.CouchDTO;
+import ru.sportlive.mvp.dto.output.NotesDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
@@ -17,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Transactional
@@ -120,6 +122,15 @@ public class CouchService {
         notes.setCouch(couch);
         notesRepository.save(notes);
         return notes;
+    }
+
+    public List<NotesDTO> getAllNotesForCouch(Couch couch) {
+        List<NotesDTO>findAll = new ArrayList<>();
+        List<Notes> notes = notesRepository.findAllByCouchOrderByDateTimeDesc(couch);
+        for (Notes note:notes) {
+            findAll.add(note.notesDTO());
+        }
+        return findAll;
     }
 
 }

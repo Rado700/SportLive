@@ -14,9 +14,6 @@ import java.util.UUID;
 public class SeasonTicketInputDTO {
     @Getter
     @Setter
-    private Integer id;
-    @Getter
-    @Setter
     private UUID uuid;
     @Getter
     @Setter
@@ -35,11 +32,9 @@ public class SeasonTicketInputDTO {
     private String time;
     @Getter
     @Setter
-    private String days;
+    private Integer days;
     @Getter
     @Setter
     private Integer sectionId;
-    @Getter
-    @Setter
-    private Integer couchId;
+
 }

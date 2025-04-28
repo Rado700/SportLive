@@ -16,7 +16,7 @@
     </div>
 
     <div id="bottom-nav">
-        <button id="stopwatch" class="icon btn">⏱</button>
+        <button id="notesButton" class="icon btn">📝</button>
         <button id="profile" class="icon btn">👤</button>
         <button id="info" class="icon btn">🔎</button>
     </div>
@@ -50,15 +50,14 @@
     </div>
 
     <div id="recordForEquipment" class="hidden">
-
         <div class="dropdown">
             <label for="coachForInventory">Выберите тренера:</label>
-            <select id="coachForInventory" class="form-select">
+            <select id="coachForInventory" class="form-select" style="width: 100%">
                 <option value="couch" disabled selected hidden>Тренер</option>
             </select>
 
-            <div id="getAllEquipment" class="form-select" style="display: none">
-                <div>Выбрать инвентарь:</div>
+            <div id="getAllEquipments" class="form-select" style="display: none; background-color: azure">
+                <div style="color: black">Выбрать инвентарь:</div>
                 <div id="equipmentList"></div>
             </div>
         </div>
@@ -88,7 +87,7 @@
         <input type="radio" id="oneTraining" name="training_type" value="individual" onchange="getSchedule()">
         <label for="oneTraining">Индивидуальные тренировки</label><br>
 
-        <div id = "tariffs-container" class="hidden">
+        <div id="tariffs-container" class="hidden">
 
         </div>
 
@@ -154,51 +153,24 @@
         <button id="back-to-main-info">Назад</button>
     </div>
 
-    <div id="stopwatch-screen" class="hidden">
+    <div id="notes-screen" class="hidden">
         <!-- Modal for Stopwatch and Timer -->
-        <div class="modal fade" id="stopwatchTimerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <!-- Секундомер -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-secondary text-white">
-                                <h6 class="mb-0">Секундомер</h6>
-                            </div>
-                            <div class="card-body text-center">
-                                <div id="stopwatchDisplay" class="display-5 mb-3">00:00:00</div>
-                                <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-success" id="startStopwatch">Старт</button>
-                                    <button class="btn btn-danger" id="stopStopwatch">Стоп</button>
-                                    <button class="btn btn-warning" id="resetStopwatch">Сброс</button>
-                                </div>
-                            </div>
+                        <h1>Заметки</h1>
+                        <div id="notes-section">
+                            <textarea id="notes" placeholder="Заметки..."></textarea>
+                            <button id="save-notes">Сохранить заметки</button>
                         </div>
-                        <!-- Таймер -->
-                        <div class="card">
-                            <div class="card-header bg-secondary text-white">
-                                <h6 class="mb-0">Таймер</h6>
-                            </div>
-                            <div class="card-body text-center">
-                                <div id="timerDisplay" class="display-5 mb-3">00:00:00</div>
-                                <div class="mb-3">
-                                    <input type="number" id="timerMinutes" class="form-control text-center"
-                                           placeholder="Минуты" min="1">
-                                </div>
-                                <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-success" id="startTimer">Старт</button>
-                                    <button class="btn btn-danger" id="stopTimer">Стоп</button>
-                                    <button class="btn btn-warning" id="resetTimer">Сброс</button>
-                                </div>
-                            </div>
-                        </div>
+
+                        <button id="show-notes">Показать все заметки</button>
+                        <button id="hide-notes" style="display: none;">Свернуть заметки</button>
+                        <div id="all-notes" class="mt-3"></div>
+
+                        <button id="back-to-main-notes">Назад</button>
                     </div>
-                    <h1>Заметки</h1>
-                    <div id="notes-section">
-                        <textarea id="notes" placeholder="Заметки..."></textarea>
-                        <button id="save-notes">Сохранить заметки</button>
-                    </div>
-                    <button id="back-to-main-stopwatch">Назад</button>
                 </div>
             </div>
         </div>

@@ -42,7 +42,6 @@ getAllOrganisation.addEventListener('change', function () {
             }
         )
     }
-
     fetch(url) //открываем url
         .then(response => {
             if (!response.ok) {

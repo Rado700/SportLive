@@ -33,20 +33,6 @@ public class ScheduleController {
     @Autowired
     LoginService loginService;
 
-    @GetMapping("/getExercises/")
-    public ResponseEntity<Object> getExercises(HttpSession httpSession) {
-        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
-        List<String> exercise = Collections.singletonList(scheduleService.getExercise(couch_id));
-        return new ResponseEntity<>(exercise, HttpStatus.OK);
-    }
-
-    @PostMapping("/addExercise/")
-    public ResponseEntity<Object> addExercise(HttpSession httpSession,@RequestBody ScheduleAddExerciseDTO exercise) {
-        Integer schedule = (Integer) httpSession.getAttribute("scheduleId");
-        scheduleService.addExercise(schedule, exercise);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @Operation(summary = "Вывести расписание по id")
     @GetMapping("/{id}")
     public ResponseEntity<Schedule> getSchedule(@PathVariable Integer id) {

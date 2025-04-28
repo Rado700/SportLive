@@ -537,6 +537,7 @@
     .btn-success {
         background-color: #28a745;
         border-color: #28a745;
+        margin-left: 25px
     }
 
     .btn-danger {
@@ -703,6 +704,31 @@
     cursor: pointer;
     font-size: 14px;
 }
+
+#notes {
+    width: 99%;
+    height: 155px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1em;
+    background-color: gainsboro;
+}
+.tariffs{
+    padding: 10px 15px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: cadetblue;
+}
+#tariffContainer{
+    padding-top: 25px;
+}
+
 
 
 

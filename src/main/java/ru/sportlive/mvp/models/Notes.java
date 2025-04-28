@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.sportlive.mvp.dto.output.NotesDTO;
 
 import java.time.LocalDateTime;
 
@@ -45,5 +46,9 @@ public class Notes {
 
     public Notes() {
 
+    }
+
+    public NotesDTO notesDTO(){
+        return new NotesDTO(id,notes,dateTime);
     }
 }

@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const trainingScreen = document.getElementById('trainingScreen');
 
     const profileInventory = document.getElementById('profile-inventory');
-    const inventoryScreen = document.getElementById('inventoryScreen');
 
     // const infoScreen = document.getElementById('info-screen');
     // const statistics = document.getElementById('statistics');
@@ -64,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         confirmCashBack.onclick = function () {
-            let amounts = document.getElementById("amounts").value;
-
+            // let amounts = document.getElementById("amounts").value;
+            alert("Вывод временно не работает")
             // fetch("/yoomoney/getInvoicePay/" + amounts, {
             //     method: "GET",
             //     headers: {'Content-type': 'application/json'}
@@ -134,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
 
     // Добавление времени
     document.getElementById('nextTimes').addEventListener('click', function () {
@@ -209,6 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 option.value = sportSection.id;
                 option.textContent = sportSection.name;
                 sportSectionSelect.appendChild(option);
+
+                const sportSectionSelectForTariffs = document.getElementById("sportSectionsForTariffs");
+                const option2 = document.createElement("option");
+                option2.value = sportSection.id;
+                option2.textContent = sportSection.name;
+                sportSectionSelectForTariffs.appendChild(option2);
             })
             // showScreen(trainingScreen);
         })
@@ -288,9 +294,12 @@ document.addEventListener('DOMContentLoaded', () => {
     profileTraining.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        if (!profileTraining.checkValidity()) {
+            profileTraining.reportValidity();
+            return;
+        }
+
         const type = document.getElementById("training_type").value;
-        const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
-        console.log(modal);
 
         // Добавить в общее расписание
         if (type === "general") {
@@ -312,19 +321,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentSelectedDays.includes(i.getDay())) {
                     const allTime = document.getElementsByName("time");
                     allTime.forEach(time => {
-                        const [hours, minutes] = time.value.split(":") // ["11", "22"]
+                        const [hours, minutes] = time.value.split(":"); // ["11", "22"]
                         const formData = new FormData(profileTraining);
-                        let date = new Date(i);
-                        date.setHours(parseInt(hours));
-                        date.setMinutes(parseInt(minutes))
-                        const profileData = {
-                            place: formData.get('place') || "Не указано",
-                            description: formData.get('description') || "Не указано",
-                            sum: formData.get('sum') || 0,
-                            typeWorkout: type,
-                            date: date,
 
+                        const today = new Date(i); // или любая дата, которую вы хотите
+                        if (new Date() <= today){
+
+                        const yyyy = today.getFullYear();
+                        const MM = String(today.getMonth() + 1).padStart(2, "0");
+                        const dd = String(today.getDate()).padStart(2, "0");
+                        const HH = String(hours).padStart(2, "0");
+                        const mm = String(minutes).padStart(2, "0");
+
+                        // Собираем локальное время в ISO 8601 без таймзоны
+                        const dateString = `${yyyy}-${MM}-${dd}T${HH}:${mm}:00`;
+
+                        const profileData = {
+                            place: formData.get("place") || "Не указано",
+                            description: formData.get("description") || "Не указано",
+                            sum: formData.get("sum") || 0,
+                            typeWorkout: type,
+                            date: dateString,
                         };
+
                         console.log(profileData)
                         const sportSectionSelect = document.getElementById("sportSections");
                         const sportSectionId = parseInt(sportSectionSelect.value);
@@ -340,6 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 newData();
                             })
                             .catch(error => console.error('Ошибка:', error));
+
+                        }
                     })
                 }
             }
@@ -363,6 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sportSectionSelect = document.getElementById("sportSections");
                 const sportSectionId = parseInt(sportSectionSelect.value);
 
+
                 fetch('/api/schedule/' + sportSectionId, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -376,10 +398,116 @@ document.addEventListener('DOMContentLoaded', () => {
                     .catch(error => console.error('Ошибка:', error));
 
             })
-            const modal = new bootstrap.Modal(document.getElementById('trainingModal'));
-            modal.hide();
+
         }
+        const modalElement = document.getElementById('trainingModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal.hide();
+
     });
+
+    //Добавить тариф
+    function generateUUID() {
+        return crypto.randomUUID();
+    }
+
+    // Генерация при открытии модального окна
+    const seasonModal = document.getElementById('seasonTicketModal');
+    seasonModal.addEventListener('show.bs.modal', () => {
+        document.getElementById('seasonUuid').value = generateUUID();
+    });
+
+    // Обработка отправки формы
+    document.getElementById('seasonTicketForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        document.querySelectorAll('[name="tariffTime"]').forEach(tariffTime =>{
+
+            const sportSection = document.getElementById("sportSectionsForTariffs").value;
+
+            const form = new FormData(this);
+            const ticketData = Object.fromEntries(form.entries());
+            ticketData.sectionId = parseInt(sportSection);
+            ticketData.dayOfWeek = tariffTime.querySelector('[name="day"]').value;
+            ticketData.time = tariffTime.querySelector('[name="time"]').value;
+            console.log(ticketData)
+            // Отправка на сервер (замени URL)
+            fetch('/api/seasonTickets/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ticketData)
+            }).then(response => {
+                if (response.ok) {
+                    alert('Абонемент успешно добавлен!');
+                    this.reset();
+                    selectedDays.clear();
+                    document.querySelectorAll('.day-btn').forEach(btn => {
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-outline-secondary');
+                    });
+                    bootstrap.Modal.getInstance(seasonModal).hide();
+                } else {
+                    alert('Ошибка при сохранении.');
+                }
+            });
+        })
+
+
+    });
+
+    document.getElementById("nextTimeTariff").addEventListener('click', function () {
+        const container = document.getElementById('allTimesTariff');
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'd-flex mb-2';
+        wrapper.name = 'tariffTime';
+
+        const select = document.createElement('select');
+        select.className = 'form-select';
+        select.name = 'day';
+        select.innerHTML = `
+            <option value="Понедельник">Понедельник</option>
+            <option value="Вторник">Вторник</option>
+            <option value="Среда">Среда</option>
+            <option value="Четверг">Четверг</option>
+            <option value="Пятница">Пятница</option>
+            <option value="Суббота">Суббота</option>
+            <option value="Воскресенье">Воскресенье</option>
+        `;
+
+        const input = document.createElement('input');
+        input.type = 'time';
+        input.className = 'form-control';
+        input.name = 'time';
+        input.required = true;
+
+
+        // Создаем кнопку крестика для удаления
+        const deleteButton = document.createElement("button");
+        deleteButton.setAttribute("type", "button"); // Кнопка без отправки формы
+        deleteButton.innerHTML = "&times;"; // Символ крестика
+        deleteButton.style.backgroundColor = "transparent"; // Прозрачный фон
+        deleteButton.style.border = "none"; // Убираем границу
+        deleteButton.style.fontSize = "20px"; // Размер текста крестика
+        deleteButton.style.cursor = "pointer"; // Изменение курсора при наведении
+        deleteButton.style.margin = "0px";
+        deleteButton.style.padding = "0px 0px 0px 7px";
+        deleteButton.style.width = '25px';
+
+        // Добавляем обработчик для удаления input и крестика
+        deleteButton.addEventListener("click", function () {
+            container.removeChild(wrapper);
+        });
+
+        wrapper.appendChild(select);
+        wrapper.appendChild(input);
+        wrapper.appendChild(deleteButton);
+        container.appendChild(wrapper);
+
+    })
+
 
 
     // Вывод расписание для тренера(Индивидуальные,Общие)
@@ -409,6 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentMonth = new Date().getMonth();
         document.getElementById('month').value = currentMonth;
         generateCalendarToCouch(currentMonth);
+        tariffsForCouch();
     });
 
     const couchTypeButtons = document.querySelectorAll('.schedule-type-btn');
@@ -451,8 +580,16 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(profileDate)
         }).then(response => response.json())
-            .then(data => alert('Инвентарь добавлен: ' + JSON.stringify(data)))
+            .then(data => popupShow("Добавлен инвентарь: " + profileDate.name))
             .catch(error => console.error('Ошибка:', error));
+
+        // Закрыть модалку программно
+        const inventoryModal = bootstrap.Modal.getInstance(document.getElementById('inventoryModal'));
+        if (inventoryModal) {
+            inventoryModal.hide();
+        }
+
+        profileInventory.reset();
 
     });
 
@@ -597,7 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             const name = data.name || "Имя отсутствует";
-            const balance = data.balance || "Баланс 0";
+            const balance = data.balance || 0;
             const experience = data.experience || "Стаж не указано"
             const login = data.login?.login || "Login не найден";
 
@@ -781,39 +918,103 @@ document.addEventListener('DOMContentLoaded', () => {
     // });
 
 
-    document.getElementById('addExercises').addEventListener('click', function () {
-        let exerciseInputs = '';
-        for (let i = 1; i <= 5; i++) {
-            exerciseInputs += `
-            <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
-            <input type="text" class="form-control mb-3" id="exercise${i}" name="exercise${i}" placeholder="Введите название упражнения">
-        `;
-        }
-        document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
-    });
+    // document.getElementById('addExercises').addEventListener('click', function () {
+    //     let exerciseInputs = '';
+    //     for (let i = 1; i <= 5; i++) {
+    //         exerciseInputs += `
+    //         <label for="exercise${i}" class="form-label">Упражнение ${i}</label>
+    //         <input type="text" class="form-control mb-3" id="exercise${i}" name="exercise${i}" placeholder="Введите название упражнения">
+    //     `;
+    //     }
+    //     document.getElementById('exerciseInputs').innerHTML = exerciseInputs;
+    //
+    // });
 
-// Добавление упражнений
-    document.getElementById('exerciseForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Останавливаем стандартное поведение формы
+// Добавление заметок
 
-        const exercises = [];
-        for (let i = 1; i <= 5; i++) {
-            exercises.push(document.getElementById('exercise' + i).value);
-        }
-
-        fetch('/api/schedule/addExercise/', {
+    document.getElementById('save-notes').addEventListener('click', () => {
+        const notes = document.getElementById('notes').value;
+        // notes = notes.replace(/\n/g, ' ');
+        const formattedText = notes.replace(/\\n/g, '\n').replace(/\n/g, '\n');
+        // Send notes to backend
+        fetch('/api/couch/addNotesForCouch', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({exercises: exercises})
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({notes:formattedText})
         })
             .then(response => response.json())
             .then(data => {
-                alert('Упражнения добавлены: ' + JSON.stringify(data));
-                const modal = bootstrap.Modal.getInstance(document.getElementById('exerciseModal'));
-                modal.hide();
-            })
-            .catch(error => console.error('Ошибка:', error));
+                alert('Заметки сохранены');
+                document.getElementById("notes").value = '';
+            });
     });
+
+    document.getElementById('show-notes').addEventListener('click', () => {
+        fetch('/api/couch/getCouchNotes')
+            .then(response => response.json())
+            .then(data => {
+                const notesContainer = document.getElementById('all-notes');
+                notesContainer.innerHTML = ''; // очищаем перед добавлением
+
+                if (data.length === 0) {
+                    notesContainer.innerHTML = '<p>Заметок пока нет.</p>';
+                    return;
+                }
+
+                const sortedNotes = data.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+                const lastNotes = sortedNotes.slice(0, 3);
+                const remainingNotes = sortedNotes.slice(3);
+
+                // Отображаем последние 3
+                lastNotes.forEach(note => {
+                    const noteElement = document.createElement('div');
+                    noteElement.className = 'note-card';
+                    noteElement.innerHTML = `
+                    <small>${new Date(note.localDateTime).toLocaleString()}</small>
+                    <p style="white-space: pre-line;">${note.text || note.notes}</p>
+                `;
+                    notesContainer.appendChild(noteElement);
+                });
+
+                // Если есть еще заметки, добавляем кнопку "Показать все"
+                if (remainingNotes.length > 0) {
+                    const showAllBtn = document.createElement('button');
+                    showAllBtn.textContent = 'Показать все';
+                    showAllBtn.id = 'show-all-btn';
+                    showAllBtn.addEventListener('click', () => {
+                        remainingNotes.forEach(note => {
+                            const noteElement = document.createElement('div');
+                            noteElement.className = 'note-card';
+                            noteElement.innerHTML = `
+                            <small>${new Date(note.dateTime).toLocaleString()}</small>
+                            <p style="white-space: pre-line">${note.text || note.notes}</p>
+                        `;
+                            notesContainer.appendChild(noteElement);
+                        });
+                        showAllBtn.remove(); // убираем кнопку после показа всех
+                    });
+                    notesContainer.appendChild(showAllBtn);
+                }
+
+                document.getElementById('show-notes').style.display = 'none';
+                document.getElementById('hide-notes').style.display = 'block';
+            })
+            .catch(err => {
+                console.error('Ошибка при загрузке заметок:', err);
+                alert('Ошибка при загрузке заметок');
+            });
+    });
+
+    document.getElementById('hide-notes').addEventListener('click', () => {
+        const notesContainer = document.getElementById('all-notes');
+        notesContainer.innerHTML = '';
+        document.getElementById('show-notes').style.display = 'block';
+        document.getElementById('hide-notes').style.display = 'none';
+    });
+
+
 
 
 // Таймер
@@ -1082,6 +1283,8 @@ function getSchedule() {
                             showDetailsBookingToCouch(scheduleDay, dayButton, userBase);
                         }
                         const showTime = function () {
+                            const infoBoxes = document.querySelectorAll("div.info-box");
+                            infoBoxes.forEach(box => box.remove());
                             showDetailsBookingTime(dayButton);
                         }
                         if (countTrainingsDay[day] === 1) {
@@ -1260,7 +1463,7 @@ async function bookButtonCancel(scheduleId, infoBox) {
 
         }).then(response => {
             getSchedule();
-            infoBox.innerHTML ="";
+            infoBox.innerHTML = "";
             if (!response.ok) {
                 throw new Error("Ошибка при отмене бронирования");
             }
@@ -1281,3 +1484,83 @@ document.addEventListener("click", (event) => {
     });
 
 })
+
+function closeConfirmationModal() {
+    const hidden = document.getElementById("confirmationModal")
+    $("#confirmationModal").modal('hide');
+}
+
+function tariffsForCouch() {
+    const tariffContainer = document.getElementById("tariffContainer");
+    const sportSection = document.getElementById("sports-section").value
+    tariffContainer.innerHTML = "";
+    console.log(sportSection);
+    let sportSectionId;
+
+    fetch("/api/couch/sport-section/")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.message);
+            }
+            return response.json();
+        }).then(data => {
+        data.forEach(sportSection => {
+            sportSectionId = sportSection.id;
+        })
+        fetch("/api/seasonTickets/ticket/get/" + sportSectionId)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("нету такого тарифа")
+            }
+            return response.json()
+        })
+        .then(data => {
+            data.forEach(item => {
+                const tariffs = document.createElement("div");
+                tariffs.classList.add("tariffs");
+                tariffs.display = 'flex';
+                const ticketId = item.id;
+                console.log(ticketId);
+                const name = item.name || "Не указано";
+                const description = item.description || "Не указано";
+                const days = item.days || "Не указано";
+                const sum = item.sum || "Не указано";
+                let schedule = "";
+                item.date.forEach(date => {
+                    schedule += `${date.dayOfWeek} в ${date.time.slice(0, -2)}, `
+                })
+                const uuid = item.uuid;
+
+                tariffs.innerHTML += `
+            <p><strong>${name}</strong> </p>
+            <p>${description}</p>
+            <p><strong>Сумма:</strong> ${sum} руб, ${days} дней</p>
+            <p><strong>Расписание:</strong> ${schedule.slice(0, -2)}</p>
+            <button class="btn btn-success deleteGeneral">Удалить</button>
+            `
+
+                tariffs.querySelector('.deleteGeneral').addEventListener('click', function () {
+                    if (confirm("Подтверждаете удаление?")){
+                        // метод где будет вызываться пост запрос и передавать туда item.uuid
+                        fetch("/api/seasonTickets/deleteTicket"+ticketId, {
+                            method:'DELETE',
+                            headers: {'Content-Type': 'application/json'},
+                        })
+                            .then(response =>{
+                                if (!response.ok){
+                                    throw new Error(response.message);
+                                }
+                                return response;
+                            })
+                        tariffs.remove();
+                    }
+                })
+
+                tariffContainer.appendChild(tariffs);
+            })
+
+
+        });
+    })
+
+}

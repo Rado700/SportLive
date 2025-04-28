@@ -46,7 +46,6 @@ public class BookingController {
     @Operation(summary = "Добавить бронь",description = "Добавляем бронь по user,добавляем в расписание")
     @PostMapping("/")//TODO:Бронь на (такое то число и время)
     public ResponseEntity<Booking>addBooking(@RequestBody BookingDTO bookingDTO, HttpSession httpSession) throws IOException {
-
         Integer id = (Integer) httpSession.getAttribute("userId");
         Integer loginUserId = (Integer) httpSession.getAttribute("loginUserId");
         Schedule schedule = scheduleService.getSchedule(bookingDTO.getSchedule_id());
@@ -56,23 +55,23 @@ public class BookingController {
         Login userLogin = loginService.getLogin(loginUserId);
         String userTelegramId = userLogin.getTelegramId();
         String couchTelegramId = couchLogin.getTelegramId();
-        if (user.getBalance() < schedule.getSum()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (user.getBalance() < schedule.getSum() || schedule.getSum() == null || schedule.getSum() == 0){
+            return new ResponseEntity<>(null,HttpStatus.PAYMENT_REQUIRED);
         }
         Booking booking = bookingService.addBooking(schedule, user);
         String couchMessageText;
         if (userTelegramId != null) {
-            couchMessageText = "Забронированно время на " + booking.getSchedules().getDate().format(dateTimeFormatter) + " пользователем " + "<b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";
+            couchMessageText = "Забронированно время на <b>" + booking.getSchedules().getDate().format(dateTimeFormatter) + "</b> пользователем " + "<b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";
         } else {
-            couchMessageText = "Забронированно время на " + booking.getSchedules().getDate().format(dateTimeFormatter) + " пользователем " + user.getName();
+            couchMessageText = "Забронированно время на <b>" + booking.getSchedules().getDate().format(dateTimeFormatter) + "</b> пользователем " + user.getName();
         }
 
         String userMessageText;
         if (couchTelegramId != null) {
-            userMessageText = "Забронирована тренировка на " + booking.getSchedules().getDate().format(dateTimeFormatter) + "у тренера <b><a href='tg://user?id=" + couchTelegramId + "'>" + couch.getName() + "</a></b>";
+            userMessageText = "Забронирована тренировка на <b>" + booking.getSchedules().getDate().format(dateTimeFormatter) + "</b> у тренера <b><a href='tg://user?id=" + couchTelegramId + "'>" + couch.getName() + "</a></b>";
         }
         else {
-            userMessageText = "Забронирована тренировка на " + booking.getSchedules().getDate().format(dateTimeFormatter) + "у тренера " + couch.getName();
+            userMessageText = "Забронирована тренировка на <b>" + booking.getSchedules().getDate().format(dateTimeFormatter) + "</b> у тренера " + couch.getName();
 
         }
         tgService.sendMessage(couchTelegramId,couchMessageText);

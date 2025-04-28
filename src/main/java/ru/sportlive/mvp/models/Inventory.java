@@ -27,7 +27,6 @@ public class Inventory {
     @Getter
     @Setter
     private String size;
-
     @Getter
     @Setter
     private Integer amount;

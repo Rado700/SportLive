@@ -30,6 +30,12 @@ document.getElementById('register').addEventListener('click', function () {
     const name = document.getElementById('name').value;
     const password = document.getElementById('password').value;
 
+    if (name === '' || password === '') {
+        alert('Заполните все поля!');
+        return;
+    }
+
+
     fetch(url, {
         method: 'POST',
         headers: {
@@ -67,6 +73,7 @@ document.getElementById('enter').addEventListener('click', function () {
     const url = "/api/login/" + selectedUserType + "/enter/";
     const name = document.getElementById('name').value;
     const password = document.getElementById('password').value;
+
 
     fetch(url, {
         method: 'POST',

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainScreen = document.getElementById('main-screen');
     const profileScreen = document.getElementById('profile-screen');
     const infoScreen = document.getElementById('info-screen');
-    const stopwatchScreen = document.getElementById('stopwatch-screen');
+    const notesScreen = document.getElementById('notes-screen');
     const recordForSection = document.getElementById('recordForSection');
     const recordForEquipment = document.getElementById('recordForEquipment');
     const chooseTrainer = document.getElementById('choose-trainer');
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mainScreen.classList.add('hidden');
         profileScreen.classList.add('hidden');
         infoScreen.classList.add('hidden');
-        stopwatchScreen.classList.add('hidden');
+        notesScreen.classList.add('hidden');
         recordForSection.classList.add('hidden');
         recordForEquipment.classList.add('hidden');
         changeToCoach.classList.add('hidden');
@@ -65,6 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (urlParams.get("page") === 'addBalanceScreen') {
         showScreen(modal);
     }
+    if (urlParams.get("page") === 'allInfo') {
+        showScreen(infoScreen);
+    }
+
 
     function popup(text) {
         const popup = document.getElementById("popup");
@@ -100,8 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     .then(data => {
                         if (data.startsWith("https://")) {
                             window.location.href = data;
-                        }
-                        else {
+                        } else {
                             alert(data);
                         }
                     })
@@ -296,8 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch("/api/balance/balanceUser/")
             .then(response => response.json())
             .then(data => {
-                    const balance = data.balance != null ? data.balance : 0;
-                    balanceInfo.textContent = `${balance}`;
+                const balance = data !== null ? data : 0;
+                balanceInfo.textContent = `${balance}`;
 
             });
 
@@ -390,7 +393,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const getEquipment = () => {
-
         fetch('/api/inventory/userInventory/')
             .then(response => response.json())
             .then(data => {
@@ -572,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addEquipment.addEventListener('click', () => {
         const container = document.getElementById("equipmentList");
-        document.getElementById("getAllEquipment").style.display = 'none';
+        document.getElementById("getAllEquipments").style.display = 'none';
         container.innerHTML = '';
         showScreen(recordForEquipment)
 
@@ -619,11 +621,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayEquipment(equipmentList) {
         const container = document.getElementById("equipmentList");
-        document.getElementById("getAllEquipment").style.display = 'block';
+        document.getElementById("getAllEquipments").style.display = 'block';
         container.innerHTML = '';
 
         if (equipmentList.length === 0) {
-            container.innerHTML = '<p>No equipment available.</p>';
+            container.innerHTML = '<p>Нет в наличий инвентаря.</p>';
             return;
         }
 
@@ -648,61 +650,65 @@ document.addEventListener('DOMContentLoaded', () => {
             equipmentDiv.appendChild(price);
 
             const amount = document.createElement("p");
-            amount.textContent = `Amount: ${equipment.amount} Кол-во`;
+            amount.textContent = `Amount: ${equipment.amount} Шт`;
             equipmentDiv.appendChild(amount);
 
 
             const selectButton = document.createElement("button");
             selectButton.textContent = "Выбрать";
-            selectButton.addEventListener("click", () => selectEquipment(equipment.id, equipment.price, equipment.name));
+            if (equipment.amount > 0) {
+                selectButton.addEventListener("click", () => selectEquipment(equipment.id, equipment.price, equipment.name));
+            } else {
+                selectButton.style.display = "none";
+            }
+
             equipmentDiv.appendChild(selectButton);
 
             container.appendChild(equipmentDiv);
 
         });
 
-        document.getElementById("getAllEquipment").style.display = "block";
+        document.getElementById("getAllEquipments").style.display = "block";
     }
 
     function selectEquipment(id, price, name) {
         const couch_id = coachForInventory.value;
-        console.log(couch_id);
-        fetch("api/balance/transfer/user/couch/" + couch_id, {
+        const url = "api/inventory/user/" + id
+        fetch(url, {
             method: "POST",
-            headers: {"Content-type": "application/json"},
-            body: JSON.stringify({sum: price})
+            headers: {"Content-type": "application/json"}
+        }).then(async response => {
+            if (response.status === 402) {
+                // Недостаточно средств
+                alert("Недостаточно средств для покупки");
+                throw new Error("Недостаточно средств для покупки");
+            } else if (!response.ok) {
+                throw new Error("Ошибка при покупки");
+            }
+            return response.json();
         })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        alert(text);
-                        throw new Error(text);
-                    });
-                }
-                return response.json();
-            })
             .then(data => {
-                console.log("Selected equipment ID:", id);
-                const url = "api/inventory/user/" + id
-                fetch(url, {
+                fetch("api/balance/transfer/user/couch/" + couch_id, {
                     method: "POST",
-                    headers: {"Content-type": "application/json"}
-                }).then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            alert(text);
-                            throw new Error(text);
-                        })
-                    }
-                    alert("Было куплено " + name + " сумма перевода " + price);
-
-                    return response.json();
-
+                    headers: {"Content-type": "application/json"},
+                    body: JSON.stringify({sum: price})
                 })
-            })
-        document.getElementById("getAllEquipment").style.display = 'none';
-        popup("Был куплен инвентарь: " + name)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.message);
+                        }
+                        popup("Был куплен инвентарь: " + name);
+                        setTimeout(() => {
+                            window.location.href = 'account?';
+                        }, 1000); // немного подождём, чтобы юзер успел увидеть popup
 
+                        return response.json();
+                    }).then(date => {
+                }).catch(error => {
+                    console.error("Ошибка при переводе:", error);
+                })
+
+            })
     }
 
 
@@ -755,71 +761,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     //ТАЙМЕР
-    document.getElementById('stopwatch').addEventListener('click', () => {
-        showScreen(document.getElementById('stopwatch-screen'));
+    document.getElementById('notesButton').addEventListener('click', () => {
+        showScreen(document.getElementById('notes-screen'));
     });
 
-
-    let stopwatchInterval;
-    let stopwatchTime = 0;
-    const stopwatchDisplay = document.getElementById('stopwatchDisplay');
-
-    document.getElementById('startStopwatch').addEventListener('click', function () {
-        if (stopwatchInterval) return;
-        stopwatchInterval = setInterval(() => {
-            stopwatchTime++;
-            const hours = Math.floor(stopwatchTime / 3600).toString().padStart(2, '0');
-            const minutes = Math.floor((stopwatchTime % 3600) / 60).toString().padStart(2, '0');
-            const seconds = (stopwatchTime % 60).toString().padStart(2, '0');
-            stopwatchDisplay.textContent = `${hours}:${minutes}:${seconds}`;
-        }, 1000);
-    });
-
-    document.getElementById('stopStopwatch').addEventListener('click', function () {
-        clearInterval(stopwatchInterval);
-        stopwatchInterval = null;
-    });
-
-    document.getElementById('resetStopwatch').addEventListener('click', function () {
-        clearInterval(stopwatchInterval);
-        stopwatchInterval = null;
-        stopwatchTime = 0;
-        stopwatchDisplay.textContent = '00:00:00';
-    });
-
-    let timerInterval;
-    const timerDisplay = document.getElementById('timerDisplay');
-
-    document.getElementById('startTimer').addEventListener('click', function () {
-        const timerMinutes = parseInt(document.getElementById('timerMinutes').value);
-        if (isNaN(timerMinutes) || timerMinutes <= 0) {
-            alert('Введите действительное количество минут.');
-            return;
-        }
-        let timerTime = timerMinutes * 60;
-        timerInterval = setInterval(() => {
-            if (timerTime <= 0) {
-                clearInterval(timerInterval);
-                timerDisplay.textContent = '00:00:00';
-                alert('Таймер завершен!');
-                return;
-            }
-            timerTime--;
-            const minutes = Math.floor(timerTime / 60).toString().padStart(2, '0');
-            const seconds = (timerTime % 60).toString().padStart(2, '0');
-            timerDisplay.textContent = `00:${minutes}:${seconds}`;
-        }, 1000);
-    });
-
-    document.getElementById('stopTimer').addEventListener('click', function () {
-        clearInterval(timerInterval);
-    });
-
-    document.getElementById('resetTimer').addEventListener('click', function () {
-        clearInterval(timerInterval);
-        timerDisplay.textContent = '00:00:00';
-        document.getElementById('timerMinutes').value = '';
-    });
 
     //....
     document.getElementById('save-notes').addEventListener('click', () => {
@@ -830,12 +775,76 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({notes})
+            body: JSON.stringify({notes:notes})
         })
             .then(response => response.json())
             .then(data => {
                 alert('Заметки сохранены');
+                document.getElementById('notes').value = '';
             });
+    });
+
+    document.getElementById('show-notes').addEventListener('click', () => {
+        fetch('/api/user/getUserNotes')
+            .then(response => response.json())
+            .then(data => {
+                const notesContainer = document.getElementById('all-notes');
+                notesContainer.innerHTML = ''; // очищаем перед добавлением
+
+                if (data.length === 0) {
+                    notesContainer.innerHTML = '<p>Заметок пока нет.</p>';
+                    return;
+                }
+
+                const sortedNotes = data.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+                const lastNotes = sortedNotes.slice(0, 3);
+                const remainingNotes = sortedNotes.slice(3);
+
+                // Отображаем последние 3
+                lastNotes.forEach(note => {
+                    const noteElement = document.createElement('div');
+                    noteElement.className = 'note-card';
+                    noteElement.innerHTML = `
+                    <small>${new Date(note.localDateTime).toLocaleString()}</small>
+                    <p style="white-space: pre-line">${note.text || note.notes}</p>
+                `;
+                    notesContainer.appendChild(noteElement);
+                });
+
+                // Если есть еще заметки, добавляем кнопку "Показать все"
+                if (remainingNotes.length > 0) {
+                    const showAllBtn = document.createElement('button');
+                    showAllBtn.textContent = 'Показать все';
+                    showAllBtn.id = 'show-all-btn';
+                    showAllBtn.addEventListener('click', () => {
+                        remainingNotes.forEach(note => {
+                            const noteElement = document.createElement('div');
+                            noteElement.className = 'note-card';
+                            noteElement.innerHTML = `
+                            <small>${new Date(note.dateTime).toLocaleString()}</small>
+                            <p style="white-space: pre-line">${note.text || note.notes}</p>
+                        `;
+                            notesContainer.appendChild(noteElement);
+                        });
+                        showAllBtn.remove(); // убираем кнопку после показа всех
+                    });
+                    notesContainer.appendChild(showAllBtn);
+                }
+
+                document.getElementById('show-notes').style.display = 'none';
+                document.getElementById('hide-notes').style.display = 'block';
+            })
+            .catch(err => {
+                console.error('Ошибка при загрузке заметок:', err);
+                alert('Ошибка при загрузке заметок');
+            });
+    });
+
+    document.getElementById('hide-notes').addEventListener('click', () => {
+        const notesContainer = document.getElementById('all-notes');
+        notesContainer.innerHTML = '';
+        document.getElementById('show-notes').style.display = 'block';
+        document.getElementById('hide-notes').style.display = 'none';
     });
 
 
@@ -848,13 +857,12 @@ document.addEventListener('DOMContentLoaded', () => {
         showScreen(mainScreen);
     });
 
-    document.getElementById('back-to-main-stopwatch').addEventListener('click', () => {
+    document.getElementById('back-to-main-notes').addEventListener('click', () => {
         showScreen(mainScreen);
     });
 
     document.getElementById('back-to-main-record').addEventListener('click', () => {
         showScreen(mainScreen);
-        document.body.removeChild(infoBox);
     });
 
     document.getElementById('back-to-main-coach').addEventListener('click', () => {
@@ -1007,7 +1015,9 @@ function displayTariffs() {
     const coach = document.getElementById("coach").value
     const sportSection = document.getElementById("sports-section").value
 
-    fetch("/ticket/get/" + sportSection + "/" + coach)
+    tariffContainer.innerHTML = "";
+
+    fetch("/api/seasonTickets/ticket/get/" + sportSection + "/" + coach)
         .then(response => {
             if (!response.ok) {
                 throw new Error("нету такого тарифа")
@@ -1020,26 +1030,40 @@ function displayTariffs() {
                 tariffs.classList.add("tariffs");
                 tariffs.display = 'flex';
 
+
                 const name = item.name || "Не указано";
                 const description = item.description || "Не указано";
                 const days = item.days || "Не указано";
                 const sum = item.sum || "Не указано";
                 let schedule = "";
                 item.date.forEach(date => {
-                    schedule += `${date.dayOfWeek} в ${date.time.slice(0,-3)}, `
+                    schedule += `${date.dayOfWeek} в ${date.time.slice(0, -3)}, `
                 })
+                const uuid = item.uuid;
 
                 tariffs.innerHTML += `
             <p><strong>${name}</strong> </p>
             <p>${description}</p>
             <p><strong>Сумма:</strong> ${sum} руб, ${days} дней</p>
-            <p><strong>Расписание:</strong> ${schedule.slice(0,-2)}</p>
+            <p><strong>Расписание:</strong> ${schedule.slice(0, -2)}</p>
+            <button class="btn btn-success saveGeneral">Забронировать</button>
             `
 
-                document.getElementById('tariffs').addEventListener('click', function () {
-                    transactionForCouch(coach, sum);
-                    document.body.removeChild(tariffs);
-
+                tariffs.querySelector('.saveGeneral').addEventListener('click', function () {
+                    if (confirm("Подтверждаете бронирование?")){
+                        // метод где будет вызываться пост запрос и передавать туда item.uuid
+                        fetch("/api/seasonTickets/book/"+uuid, {
+                            method:'POST',
+                            headers: {'Content-Type': 'application/json'},
+                        })
+                            .then(response =>{
+                                if (!response.ok){
+                                    throw new Error(response.message);
+                                }
+                                return response;
+                            })
+                        transactionForCouch(coach, sum);
+                    }
                 })
 
                 tariffContainer.appendChild(tariffs);
@@ -1085,7 +1109,6 @@ function getSchedule() {
     const bookingTime = document.getElementById('allTime');
     bookingTime.classList.add('hidden');
 
-
     const tariffContainer = document.getElementById("tariffs-container");
     if (type === "general") {
         tariffContainer.classList.remove("hidden");
@@ -1130,7 +1153,6 @@ function getSchedule() {
                     if (dayButton && type === scheduleDay.typeWorkout) {
                         dayButton.style.backgroundColor = "#00FFCC";
 
-                        console.log(userId)
                         fetch("/api/user/")
                             .then(response => {
                                 if (!response.ok) {
@@ -1163,9 +1185,13 @@ function getSchedule() {
                         })
 
                         const listener = function () {
+                            const timeSlots = document.getElementById("times-record");
+                            timeSlots.innerHTML = '';
                             showDetailsBooking(scheduleDay, dayButton);
                         }
                         const showTime = function () {
+                            const timeSlots = document.getElementById("times-record");
+                            timeSlots.innerHTML = '';
                             showDetailsBookingTime(dayButton);
                         }
                         if (countTrainingsDay[day] === 1) {
@@ -1191,7 +1217,6 @@ function showDetailsBookingTime(dayButton) {
     const bookingTime = document.getElementById('allTime');
     const timeSlots = document.getElementById("times-record");
     timeSlots.innerHTML = '';
-
 
     let type = "";
     const radios = document.getElementsByName("training_type");
@@ -1237,6 +1262,7 @@ function showDetailsBookingTime(dayButton) {
                             if (scheduleDay.id === scheduleId) {
                                 if (bookingUserId === userId) {
                                     dayButton.style.backgroundColor = 'yellow';
+                                    timeButton.style.backgroundColor = 'yellow';
                                 }
                             }
                         })
@@ -1290,7 +1316,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
 
         // Отменить бронирование
         document.getElementById('bookButtonCancel').addEventListener('click', function () {
-            bookButtonCancel(scheduleId); // Отменить бронирования
+            bookButtonCancel(scheduleId, infoBox); // Отменить бронирования
         });
 
     } else if (dayButton.style.backgroundColor === "red") {
@@ -1308,10 +1334,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
 
         // Обработчик на кнопку "Забронировать"
         document.getElementById('bookButton').addEventListener('click', function () {
-            bookTraining(scheduleId);// Функция бронирования
-            transactionForCouch(coach, sum);
-            document.body.removeChild(infoBox);
-
+            bookTraining(scheduleId, infoBox);
         });
     }
 
@@ -1328,12 +1351,14 @@ function showDetailsBooking(scheduleDay, dayButton) {
     });
 }
 
-function bookButtonCancel(scheduleId) {
+function bookButtonCancel(scheduleId, infoBox) {
     fetch("/api/booking/schedule/" + scheduleId, {
         method: "DELETE",
         headers: {'Content-Type': 'application/json'},
 
     }).then(response => {
+        getSchedule();
+        document.body.removeChild(infoBox);
         if (!response.ok) {
             throw new Error(response.message);
         }
@@ -1354,10 +1379,12 @@ function transactionForCouch(couchId, sum) {
         return response.json();
     }).then(date => {
         alert("Деньги успешно переведены")
-    })
+    }).catch(error => {
+        console.error("Ошибка при переводе:", error);
+    });
 }
 
-function bookTraining(scheduleId) {
+function bookTraining(scheduleId, infoBox) {
     fetch("/api/booking/", {
         method: "POST",
         headers: {
@@ -1365,18 +1392,33 @@ function bookTraining(scheduleId) {
         },
         body: JSON.stringify({schedule_id: scheduleId})
     })
-        .then(response => {
-            if (!response.ok) {
+        .then(async response => {
+            if (response.status === 402) {
+                // Недостаточно средств
+                throw new Error("Недостаточно средств для бронирования");
+            } else if (!response.ok) {
                 throw new Error("Ошибка при бронировании");
             }
             return response.json();
         })
         .then(data => {
+            getSchedule();
+            const timeSlots = document.getElementById("times-record");
+            timeSlots.innerHTML = '';
+            if (infoBox && document.body.contains(infoBox)) {
+                document.body.removeChild(infoBox);
+            }
             alert("Бронь успешно добавлена!");
+            transactionForCouch(coach, sum);
+
         })
         .catch(error => {
             console.error("Ошибка при бронировании:", error);
             alert("Не хватает баланса")
+
+            if (infoBox && document.body.contains(infoBox)) {
+                document.body.removeChild(infoBox);
+            }
         });
 }
 

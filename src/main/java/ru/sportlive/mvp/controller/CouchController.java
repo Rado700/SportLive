@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sportlive.mvp.dto.input.CouchOrganisationDTO;
+import ru.sportlive.mvp.dto.output.NotesDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.OrganisationService;
@@ -218,12 +219,22 @@ public class CouchController {
 
     @Operation(summary = "Добавить заметки для тренера")
     @PostMapping("/addNotesForCouch")
-    public ResponseEntity<Notes>addNotesForCouch(@RequestBody String message, HttpSession httpSession){
+    public ResponseEntity<Notes>addNotesForCouch(@RequestBody NotesDTO message, HttpSession httpSession){
         Integer couch_id = (Integer) httpSession.getAttribute("couchId");
         Couch couch = couchService.getCouch(couch_id);
-        Notes notes = couchService.addNotes(message,couch);
+        Notes notes = couchService.addNotes(message.getNotes(),couch);
         return new ResponseEntity<>(notes,HttpStatus.OK);
     }
+
+    @Operation(summary = "Получить все заметки тренера по дате")
+    @GetMapping("/getCouchNotes")
+    public ResponseEntity<List<NotesDTO>> getUserNotes(HttpSession httpSession) {
+        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couch_id);
+        List<NotesDTO> notes = couchService.getAllNotesForCouch(couch);
+        return new ResponseEntity<>(notes, HttpStatus.OK);
+    }
+
 }
 
 

@@ -45,19 +45,35 @@ public class InventoryController {
         return new ResponseEntity<>(inventory, HttpStatus.OK);
     }
     @Operation(summary = "добавить инвентарь для user")
-    @PostMapping("/user/{inventory_id}")//TODO:Был добавлен такой то инвентарь
-    public ResponseEntity <Inventory>addInventoryUser(@PathVariable Integer inventory_id, HttpSession httpSession) throws IOException {
+    @PostMapping("/user/{inventory_id}")
+    public ResponseEntity<Inventory>addInventoryUser(@PathVariable Integer inventory_id, HttpSession httpSession) throws IOException {
         Inventory inventory = inventoryService.getInventory(inventory_id);
         Integer id = (Integer) httpSession.getAttribute("userId");
         Couch couch = inventory.getCouch();
         Login couchLoginId = loginService.getCouchLogin(couch.getId());
         String couchTelegramId = couchLoginId.getTelegramId();
         User user = userService.getUser(id);
+        if (user.getBalance() < inventory.getPrice()){
+            return new ResponseEntity<>(null,HttpStatus.PAYMENT_REQUIRED);
+        }
+        if (inventory.getAmount() == null || inventory.getAmount() == 0){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
         inventoryService.addInventoryToUser(inventory,user);
         Login userLoginId = loginService.getUserLogin(user.getId());
         String userTelegramId = userLoginId.getTelegramId();
-        String userMessageText = "Был куплен инвентраь "+inventory.getName();
-        String couchMessageText = "Был куплен инвентарь для "+"<b><a href='tg://user?id="+userTelegramId+"'>"+ user.getName()+"</a></b>";
+        String userMessageText;
+        if (userTelegramId != null) {
+            userMessageText = "Был куплен инвентраь " + inventory.getName();
+        }else {
+            userMessageText = null;
+        }
+        String couchMessageText;
+        if (couchTelegramId != null) {
+            couchMessageText = "Был куплен инвентарь для " + "<b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";
+        }else {
+            couchMessageText = "Был куплен инвентарь для <b>"+ user.getName() + "</b>";
+        }
         tgService.sendMessage(couchTelegramId,couchMessageText);
         tgService.sendMessage(userTelegramId,userMessageText);
         return new ResponseEntity<>(inventory,HttpStatus.OK);

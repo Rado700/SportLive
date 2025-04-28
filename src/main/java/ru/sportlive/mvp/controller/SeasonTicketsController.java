@@ -1,6 +1,7 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,17 +11,17 @@ import ru.sportlive.mvp.dto.input.BookingDTO;
 import ru.sportlive.mvp.dto.input.SeasonTicketInputDTO;
 import ru.sportlive.mvp.dto.input.SportSectionDTO;
 import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
-import ru.sportlive.mvp.models.Booking;
-import ru.sportlive.mvp.models.Couch;
-import ru.sportlive.mvp.models.SeasonTicket;
-import ru.sportlive.mvp.models.SportSection;
-import ru.sportlive.mvp.services.CouchService;
-import ru.sportlive.mvp.services.SeasonTicketsService;
-import ru.sportlive.mvp.services.SportSectionService;
+import ru.sportlive.mvp.models.*;
+import ru.sportlive.mvp.services.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @RestController
+@RequestMapping("/api/seasonTickets")
 public class SeasonTicketsController {
     @Autowired
     SportSectionService sectionService;
@@ -30,6 +31,41 @@ public class SeasonTicketsController {
 
     @Autowired
     SeasonTicketsService seasonTicketsService;
+
+    @Autowired
+    BookingService bookingService;
+
+    @Autowired
+    ScheduleService scheduleService;
+
+    @Autowired
+    UserService userService;
+
+    private static final Map<String, DayOfWeek> RUSSIAN_DAY_OF_WEEK = Map.of(
+            "Понедельник", DayOfWeek.MONDAY,
+            "Вторник", DayOfWeek.TUESDAY,
+            "Среда", DayOfWeek.WEDNESDAY,
+            "Четверг", DayOfWeek.THURSDAY,
+            "Пятница", DayOfWeek.FRIDAY,
+            "Суббота", DayOfWeek.SATURDAY,
+            "Воскресенье", DayOfWeek.SUNDAY
+    );
+
+
+    @Operation(summary = "Добавление абонемента")
+    @PostMapping("/add")
+    public ResponseEntity<SeasonTicketDTO> addSeasonTicket(HttpSession httpSession, @RequestBody SeasonTicketInputDTO dto) {
+        Integer couchId = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couchId);
+        SportSection section = sectionService.getSportSection(dto.getSectionId());
+        if (couch != null && section != null){
+            SeasonTicket seasonTicket = seasonTicketsService.addSeasonTicket(dto,couch,section);
+            return new ResponseEntity<>(seasonTicket.getSeasonTicketDTO(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @Operation(summary = "Вывести все тарифы")
     @GetMapping("/ticket/get/{sportSectionId}/{couchId}")
@@ -60,31 +96,89 @@ public class SeasonTicketsController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @Operation(summary = "Добавить тарифы",description = "Добавляем тарифы для user ")
-    @PostMapping("/")
-    public ResponseEntity<SeasonTicketDTO> getSeasonTicket (@RequestBody SeasonTicketInputDTO seasonTicketInputDTO){
-
-        Integer couchId = seasonTicketInputDTO.getCouchId();
-        Couch couch = couchService.getCouch(couchId);
-        Integer sportSectionId = seasonTicketInputDTO.getSectionId();
-        SportSection section = sectionService.getSportSection(sportSectionId);
-        if (couch != null && section != null){
-            SeasonTicket seasonTicket = seasonTicketsService.addSeasonTicket(seasonTicketInputDTO,couch,section);
-            return new ResponseEntity<>(seasonTicket.getSeasonTicketDTO(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @Operation(summary = "Удаление абонимента по id")
+    @DeleteMapping("/deleteTicket{ticketId}")
+    public ResponseEntity<SeasonTicket>deleteTicket(@PathVariable Integer ticketId){
+        SeasonTicket seasonTicket = seasonTicketsService.deleteTicket(ticketId);
+        return new ResponseEntity<>(seasonTicket,HttpStatus.OK);
     }
+
 
     @Operation(summary = "Бронирование абонимента")
     @PostMapping("/book/{uuid}")
-    public ResponseEntity<SeasonTicket> booking(@PathVariable UUID uuid){
+    public ResponseEntity<SeasonTicket> booking(@PathVariable UUID uuid, HttpSession httpSession){
         List<SeasonTicket> ticketsByUUID = seasonTicketsService.getTicketsByUUID(uuid);
+        Integer userId = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(userId);
         if (ticketsByUUID.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        LocalDateTime localDateTimeNow = LocalDateTime.now();
+        LocalDateTime finishDateTime = localDateTimeNow.plusDays(ticketsByUUID.get(0).getDays());
 
+        List<LocalDateTime> matchingDates = new ArrayList<>();
+        for (SeasonTicket ticket:ticketsByUUID) {
+
+            String dayOfWeekRussian = ticket.getDayOfWeek();
+            DayOfWeek targetDay = RUSSIAN_DAY_OF_WEEK.get(dayOfWeekRussian);
+            if (targetDay == null) {
+                System.out.println("Неизвестный день недели: " + ticket.getDayOfWeek());
+                continue;
+            }
+            LocalTime targetTime = LocalTime.parse(ticket.getTime());
+
+            for (LocalDate date = localDateTimeNow.toLocalDate();
+                 !date.isAfter(finishDateTime.toLocalDate());
+                 date = date.plusDays(1)) {
+
+                if (date.getDayOfWeek().equals(targetDay)) {
+                    LocalDateTime matchingDateTime = LocalDateTime.of(date, targetTime);
+                    matchingDates.add(matchingDateTime);
+                }
+            }
+        }
+        for (LocalDateTime date : matchingDates){
+            Schedule currentSchedule = scheduleService.getScheduleByDateTime(date, ticketsByUUID.get(0).getCouch());
+            if (currentSchedule != null) {
+               Booking booking = bookingService.addBooking(currentSchedule, user);
+                if (booking == null) {
+                    System.out.println("Не удалось создать бронирование на " + date);
+                }
+            } else {
+                System.out.println("Расписание не найдено для даты: " + date);
+            }
+        }
         return  new ResponseEntity<>(HttpStatus.OK);
+    }
+    @Operation(summary = "Вывести все тарифы для тренера")
+    @GetMapping("/ticket/get/{sportSectionId}")
+    public ResponseEntity< List<Map<String, Object>>> getSeasonTicket (@PathVariable Integer sportSectionId, HttpSession httpSession){
+        SportSection section = sectionService.getSportSection(sportSectionId);
+        Integer couchId = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couchId);
+        Map<UUID, List<SeasonTicketDTO>> allSeasonTickets = seasonTicketsService.getAllSeasonTickets(section, couch);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (UUID uuid : allSeasonTickets.keySet()) {
+            Map<String, Object> item =new HashMap<>();
+            item.put("id",allSeasonTickets.get(uuid).get(0).getId());
+            item.put("name", allSeasonTickets.get(uuid).get(0).getName());
+            item.put("description", allSeasonTickets.get(uuid).get(0).getDescription());
+            item.put("sum", allSeasonTickets.get(uuid).get(0).getSum());
+            item.put("uuid", allSeasonTickets.get(uuid).get(0).getUuid() );
+            item.put("couch", allSeasonTickets.get(uuid).get(0).getCouch());
+            item.put("days", allSeasonTickets.get(uuid).get(0).getDays());
+            item.put("section", allSeasonTickets.get(uuid).get(0).getSection());
+            List<Object> date = new ArrayList<>();
+            for (SeasonTicketDTO dto : allSeasonTickets.get(uuid)){
+                Map<String, Object> dateInfo = new HashMap<>();
+                dateInfo.put("dayOfWeek", dto.getDayOfWeek());
+                dateInfo.put("time", dto.getTime());
+                date.add(dateInfo);
+            }
+            item.put("date", date);
+            result.add(item);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

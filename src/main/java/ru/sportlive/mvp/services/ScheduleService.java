@@ -76,15 +76,15 @@ public class ScheduleService {
         return schedule;
     }
 
-        public String getExercise(Integer id){
-        Optional<Schedule> exercise = scheduleRepository.findById(id);
-        return exercise.map(Schedule::getExercise).orElse(null);
-    }
 
-        public void addExercise(Integer schedule_id, ScheduleAddExerciseDTO exercise){
-        Schedule schedule = scheduleRepository.findById(schedule_id).orElse(null);
-        schedule.setExercise(String.valueOf(exercise));
-        scheduleRepository.save(schedule);
+    public Schedule getScheduleByDateTime(LocalDateTime date, Couch couch) {
+        Set<Schedule> couchSchedule = couch.getSchedules();
+        // TODO бежишь по каждому скедьюлу и проверяешь, если время совпадает, то возвращаешь этот скедьюл
+        for (Schedule scheduleTime : couchSchedule) {
+            if(scheduleTime.getDate().equals(date)){
+                return scheduleTime;
+            }
+        }
+        return null;
     }
-
 }

@@ -26,12 +26,12 @@ public class InventoryService {
     @Autowired
     UserRepository userRepository;
 
-    public Inventory getInventory(Integer id){
+    public Inventory getInventory(Integer id) {
         return inventoryRepository.findById(id).orElse(null);
     }
 
-    public Inventory addInventory(String name, Integer price, String type, String size, Couch couch_id,Integer amount){
-        Inventory inventory = new Inventory(name,price,type,size,couch_id,amount);
+    public Inventory addInventory(String name, Integer price, String type, String size, Couch couch_id, Integer amount) {
+        Inventory inventory = new Inventory(name, price, type, size, couch_id, amount);
         inventoryRepository.save(inventory);
         return inventory;
     }
@@ -62,17 +62,17 @@ public class InventoryService {
         return inventory;
     }
 
-    public List<Inventory> getAllInventory(){
+    public List<Inventory> getAllInventory() {
         return inventoryRepository.findAll();
     }
 
 
-    public List<Inventory> getInventoryCouch(Integer id){
+    public List<Inventory> getInventoryCouch(Integer id) {
         Optional<Couch> couch = couchRepository.findById(id);
         return couch.map(Couch::getInventory).orElse(null);
     }
 
-    public Inventory updateToInventory(Inventory inventory, InventoryDTO inventoryDTO){
+    public Inventory updateToInventory(Inventory inventory, InventoryDTO inventoryDTO) {
         inventory.setName(inventoryDTO.getName());
         inventory.setPrice(inventoryDTO.getPrice());
         inventory.setType(inventoryDTO.getType());
@@ -80,30 +80,31 @@ public class InventoryService {
         inventoryRepository.save(inventory);
         return inventory;
     }
-    public User addInventoryToUser(Inventory getInventory, User user) {
+
+    public void addInventoryToUser(Inventory getInventory, User user) {
         if (getInventory.getAmount() > 0) {
             user.addInventoryToUser(getInventory);
-            getInventory.setAmount(getInventory.getAmount()-1);
+            getInventory.setAmount(getInventory.getAmount() - 1);
         }
-       userRepository.save(user);
-       return user;
+        userRepository.save(user);
+        inventoryRepository.save(getInventory);
     }
 
-    public Set<UserAllInventoryDTO>getInventoryUser(Integer user_id){
-        Optional<User>user = userRepository.findById(user_id);
-        List<Inventory> inventories =  user.map(User::getSelectedInventory).orElse(null);
-        if (inventories == null){
+    public Set<UserAllInventoryDTO> getInventoryUser(Integer user_id) {
+        Optional<User> user = userRepository.findById(user_id);
+        List<Inventory> inventories = user.map(User::getSelectedInventory).orElse(null);
+        if (inventories == null) {
             return null;
         }
         List<Integer> tackedInventory = new ArrayList<>();
-        Set<UserAllInventoryDTO>inventoryAllPay = new HashSet<>();
-        for (Inventory inventory : inventories){
-            if (tackedInventory.contains(inventory.getId())){
+        Set<UserAllInventoryDTO> inventoryAllPay = new HashSet<>();
+        for (Inventory inventory : inventories) {
+            if (tackedInventory.contains(inventory.getId())) {
                 continue;
             }
             UserAllInventoryDTO userAllInventory = new UserAllInventoryDTO(
                     inventory.getId(), inventory.getName(),
-                    inventory.getPrice(),inventory.getType(),inventory.getSize(),
+                    inventory.getPrice(), inventory.getType(), inventory.getSize(),
                     Collections.frequency(inventories, inventory)
             );
             tackedInventory.add(inventory.getId());

@@ -23,6 +23,10 @@ public class SeasonTicketsService {
     @Autowired
     SeasonTicketsRepository seasonTicketsRepository;
 
+    public SeasonTicket deleteTicket (Integer id){
+        seasonTicketsRepository.findById(id).ifPresent(seasonTicket -> seasonTicketsRepository.delete(seasonTicket));
+        return null;
+    }
 
     public Map<UUID, List<SeasonTicketDTO>> getAllSeasonTickets(SportSection section, Couch couch){
         List<SeasonTicket> allSeason = seasonTicketsRepository.findAll();
@@ -44,7 +48,6 @@ public class SeasonTicketsService {
 
     public SeasonTicket addSeasonTicket(SeasonTicketInputDTO seasonTicketInputDTO, Couch couch, SportSection sportSection){
         SeasonTicket seasonTicket = new SeasonTicket(
-                seasonTicketInputDTO.getId(),
                 seasonTicketInputDTO.getUuid(),
                 seasonTicketInputDTO.getName(),
                 seasonTicketInputDTO.getDescription(),

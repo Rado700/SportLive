@@ -24,10 +24,10 @@ public class SeasonTicketDTO {
     @Getter
     private String time;
     @Getter
-    private String days;
-    @Getter
-    private SportSectionGetAllDTO section;
+    private Integer days;
     @Getter
     private CouchInfoDTO couch;
+    @Getter
+    private SportSectionGetAllDTO section;
 
 }

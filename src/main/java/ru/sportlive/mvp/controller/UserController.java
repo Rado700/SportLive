@@ -12,6 +12,7 @@ import ru.sportlive.mvp.dto.input.CouchUserDTO;
 import ru.sportlive.mvp.dto.input.SportUserDTO;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.dto.output.CouchInfoTgDTO;
+import ru.sportlive.mvp.dto.output.NotesDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.*;
 
@@ -155,11 +156,20 @@ public class UserController {
 
     @Operation(summary = "Добавить заметки для пользователя")
     @PostMapping("/addNotesForUser")
-    public ResponseEntity<Notes>addNotesForUser(@RequestBody String message,HttpSession httpSession){
+    public ResponseEntity<Notes>addNotesForUser(@RequestBody NotesDTO message,HttpSession httpSession){
         Integer user_id = (Integer) httpSession.getAttribute("userId");
         User user = userService.getUser(user_id);
-        Notes notes = userService.addNotes(message,user);
+        Notes notes = userService.addNotes(message.getNotes(),user);
         return new ResponseEntity<>(notes,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Получить все заметки пользователя по дате")
+    @GetMapping("/getUserNotes")
+    public ResponseEntity<List<NotesDTO>> getUserNotes(HttpSession httpSession) {
+        Integer user_id = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(user_id);
+        List<NotesDTO> notes = userService.getAllNotesForUser(user);
+        return new ResponseEntity<>(notes, HttpStatus.OK);
     }
 
 

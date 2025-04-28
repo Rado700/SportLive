@@ -47,7 +47,7 @@ public class SeasonTicket {
 
     @Getter
     @Setter
-    private String days;
+    private Integer days;
 
     @Getter
     @Setter
@@ -69,11 +69,10 @@ public class SeasonTicket {
     }
 
     public SeasonTicketDTO getSeasonTicketDTO() {
-        return new SeasonTicketDTO(id,uuid,name,description,sum,dayOfWeek,time,days,sportSection.getSportSectionAllDTO(),couch.getCouchInfo());
+        return new SeasonTicketDTO(id,uuid,name,description,sum,dayOfWeek,time,days,couch.getCouchInfo(),sportSection.getSportSectionAllDTO());
     }
 
-    public SeasonTicket(Integer id, UUID uuid, String name, String description, Integer sum, String dayOfWeek, String time,String days, Couch couch, SportSection sportSection) {
-        this.id = id;
+    public SeasonTicket(UUID uuid, String name, String description, Integer sum, String dayOfWeek, String time,Integer days, Couch couch, SportSection sportSection) {
         this.uuid = uuid;
         this.name = name;
         this.description = description;
