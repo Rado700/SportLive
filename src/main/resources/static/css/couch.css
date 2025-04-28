@@ -202,6 +202,7 @@
     .btn-success {
         background-color: #28a745;
         border-color: #28a745;
+        margin-left: 25px
     }
 
     .btn-danger {
@@ -706,12 +707,13 @@
 }
 
 #notes {
-    width: 99%;
-    height: 155px;
+    width: 115%;
+    height: 170px;
     padding: 10px;
     border: none;
     border-radius: 10px;
     margin-top: 10px;
+    margin-left: -15px;
     margin-bottom: 10px;
     font-size: 1em;
     background-color: gainsboro;

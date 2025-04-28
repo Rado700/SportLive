@@ -1037,7 +1037,7 @@ function displayTariffs() {
                 const sum = item.sum || "Не указано";
                 let schedule = "";
                 item.date.forEach(date => {
-                    schedule += `${date.dayOfWeek} в ${date.time.slice(0, -3)}, `
+                    schedule += `${date.dayOfWeek} в ${date.time}, `
                 })
                 const uuid = item.uuid;
 

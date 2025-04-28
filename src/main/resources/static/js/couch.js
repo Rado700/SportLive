@@ -1527,7 +1527,7 @@ function tariffsForCouch() {
                 const sum = item.sum || "Не указано";
                 let schedule = "";
                 item.date.forEach(date => {
-                    schedule += `${date.dayOfWeek} в ${date.time.slice(0, -2)}, `
+                    schedule += `${date.dayOfWeek} в ${date.time}, `
                 })
                 const uuid = item.uuid;
 
