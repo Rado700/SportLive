@@ -1299,6 +1299,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
     const sum = scheduleDay.sum || "Сумма не указана";
     const scheduleId = scheduleDay.id;
 
+    const timeFirst = new Date(scheduleDay.date).toLocaleTimeString(this.time (- 2).hours);
 
     infoBox.innerHTML = `
         <p><strong>Время:</strong> ${time}</p>
@@ -1324,7 +1325,13 @@ function showDetailsBooking(scheduleDay, dayButton) {
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
         `
         document.body.appendChild(infoBox);
-    } else {
+    } else if (timeFirst + 2 === time){
+        infoBox.innerHTML += `
+        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
+        `
+        document.body.appendChild(infoBox);
+    }
+    else {
         infoBox.innerHTML += `
         <button id="bookButton" style="width: 95%">Забронировать</button>
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
@@ -1334,7 +1341,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
 
         // Обработчик на кнопку "Забронировать"
         document.getElementById('bookButton').addEventListener('click', function () {
-            bookTraining(scheduleId, infoBox);
+            bookTraining(scheduleId, infoBox,sum,coach);
         });
     }
 
@@ -1354,7 +1361,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
 function bookButtonCancel(scheduleId, infoBox) {
     fetch("/api/booking/schedule/" + scheduleId, {
         method: "DELETE",
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type':'application/json'},
 
     }).then(response => {
         getSchedule();
@@ -1384,7 +1391,7 @@ function transactionForCouch(couchId, sum) {
     });
 }
 
-function bookTraining(scheduleId, infoBox) {
+function bookTraining(scheduleId, infoBox,sum,coach) {
     fetch("/api/booking/", {
         method: "POST",
         headers: {
@@ -1399,6 +1406,8 @@ function bookTraining(scheduleId, infoBox) {
             } else if (!response.ok) {
                 throw new Error("Ошибка при бронировании");
             }
+            alert("Бронь успешно добавлена!");
+            transactionForCouch(coach, sum);
             return response.json();
         })
         .then(data => {
@@ -1408,9 +1417,6 @@ function bookTraining(scheduleId, infoBox) {
             if (infoBox && document.body.contains(infoBox)) {
                 document.body.removeChild(infoBox);
             }
-            alert("Бронь успешно добавлена!");
-            transactionForCouch(coach, sum);
-
         })
         .catch(error => {
             console.error("Ошибка при бронировании:", error);

@@ -17,7 +17,6 @@ import java.net.URL;
 @Transactional
 public class TGService {
 
-
     public String sendMessage(String chatId, String message) throws IOException {
         if (chatId == null){
             return null;
@@ -29,7 +28,7 @@ public class TGService {
         URL url = new URL(API_URL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+        conn.setRequestProperty("Content-type","application/x-www-form-urlencoded");
 
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String inputLine;

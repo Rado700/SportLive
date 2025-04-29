@@ -19,6 +19,10 @@ public class Booking {
 
     @Getter
     @Setter
+    private Integer price;
+
+    @Getter
+    @Setter
     @JsonBackReference
     @ManyToOne()
     @JoinColumn(name = "user_id",unique = false)
@@ -33,7 +37,6 @@ public class Booking {
 //    ))
 //    private Couch couch;
 
-
     @Getter
     @Setter
     @JsonBackReference
@@ -42,6 +45,13 @@ public class Booking {
 
 
     public Booking(User user, Schedule schedules) {
+        this.user = user;
+        this.schedules = schedules;
+        this.price = schedules.getSum();
+    }
+
+    public Booking(Integer price, User user, Schedule schedules) {
+        this.price = price;
         this.user = user;
         this.schedules = schedules;
     }

@@ -42,6 +42,14 @@ public class BookingService {
         }
         return booking;
     }
+    public Booking addBooking(Schedule schedule, User user,Integer price){
+        Booking booking = null;
+        if (schedule.getBookings().isEmpty()) {
+            booking = new Booking(price,user, schedule);
+            bookingRepository.save(booking);
+        }
+        return booking;
+    }
 
     public Booking deleteBooking (Integer id){
         Booking booking = getBooking(id);

@@ -440,9 +440,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(ticketData)
             }).then(response => {
                 if (response.ok) {
-                    alert('Абонемент успешно добавлен!');
                     this.reset();
                     selectedDays.clear();
+                    popupShow("Абонемент успешно добавлен!");
                     document.querySelectorAll('.day-btn').forEach(btn => {
                         btn.classList.remove('btn-primary');
                         btn.classList.add('btn-outline-secondary');
@@ -1551,6 +1551,7 @@ function tariffsForCouch() {
                                     throw new Error(response.message);
                                 }
                                 return response;
+
                             })
                         tariffs.remove();
                     }

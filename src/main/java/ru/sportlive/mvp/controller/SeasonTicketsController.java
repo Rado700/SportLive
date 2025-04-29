@@ -104,7 +104,7 @@ public class SeasonTicketsController {
     }
 
 
-    @Operation(summary = "Бронирование абонимента")
+    @Operation(summary = "Бронирование тарифа")
     @PostMapping("/book/{uuid}")
     public ResponseEntity<SeasonTicket> booking(@PathVariable UUID uuid, HttpSession httpSession){
         List<SeasonTicket> ticketsByUUID = seasonTicketsService.getTicketsByUUID(uuid);
@@ -113,7 +113,6 @@ public class SeasonTicketsController {
         if (ticketsByUUID.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         LocalDateTime localDateTimeNow = LocalDateTime.now();
         LocalDateTime finishDateTime = localDateTimeNow.plusDays(ticketsByUUID.get(0).getDays());
 
@@ -138,10 +137,14 @@ public class SeasonTicketsController {
                 }
             }
         }
+        Integer sum = ticketsByUUID.get(0).getSum();
+        int size = matchingDates.size();
+        Integer matchingPrice = sum/size;
+
         for (LocalDateTime date : matchingDates){
             Schedule currentSchedule = scheduleService.getScheduleByDateTime(date, ticketsByUUID.get(0).getCouch());
             if (currentSchedule != null) {
-               Booking booking = bookingService.addBooking(currentSchedule, user);
+               Booking booking = bookingService.addBooking(currentSchedule, user,matchingPrice);
                 if (booking == null) {
                     System.out.println("Не удалось создать бронирование на " + date);
                 }
@@ -151,6 +154,7 @@ public class SeasonTicketsController {
         }
         return  new ResponseEntity<>(HttpStatus.OK);
     }
+
     @Operation(summary = "Вывести все тарифы для тренера")
     @GetMapping("/ticket/get/{sportSectionId}")
     public ResponseEntity< List<Map<String, Object>>> getSeasonTicket (@PathVariable Integer sportSectionId, HttpSession httpSession){

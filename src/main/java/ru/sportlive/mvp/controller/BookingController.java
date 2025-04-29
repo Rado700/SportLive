@@ -34,6 +34,8 @@ public class BookingController {
     LoginService loginService;
     @Autowired
     TGService tgService;
+    @Autowired
+    TransactionService transactionService;
 
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
@@ -98,14 +100,18 @@ public class BookingController {
         Login loginCouch = loginService.getCouchLogin(couch.getId());
         String couchTelegramId = loginCouch.getTelegramId();
         String userTelegramId = loginUser.getTelegramId();
+        Integer refund = 0;
 
         List<Booking> bookingsToRemove = new ArrayList<>();
         for (Booking book : schedule.getBookings()) {
             if (book.getUser().equals(user)) {
+                if (book.getPrice() != null && book.getPrice() != 0) {
+                    refund += book.getPrice();
+                }
                 bookingsToRemove.add(book);
             }
         }
-        String messageText = "Бронь снята на "+ bookingsToRemove.get(0).getSchedules().getDate().format(dateTimeFormatter);
+        String messageText = "Бронь снята на "+ bookingsToRemove.get(0).getSchedules().getDate().format(dateTimeFormatter)+", "+refund+ " рублей возвращено на баланс";
         String couchMessageText;
         if (userTelegramId != null) {
             couchMessageText = "Бронь снята на " + bookingsToRemove.get(0).getSchedules().getDate().format(dateTimeFormatter) + " пользователем <b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";
@@ -115,6 +121,8 @@ public class BookingController {
         tgService.sendMessage(userTelegramId,messageText);
         tgService.sendMessage(couchTelegramId,couchMessageText);
         bookingService.deleteBookingByScheduleForUser(scheduleId, user);
+        transactionService.addTransaction(loginUser,refund,"refund");
+        userService.deposit(refund.doubleValue(), user);
 
         return ResponseEntity.ok().build();
     }
@@ -169,6 +177,8 @@ public class BookingController {
         List<Schedule>scheduleList = bookingService.getAllSchedulesCouchByUser(bookingUser,couch);
         return new ResponseEntity<>(scheduleList.stream().map(Schedule::getScheduleDateUser).collect(Collectors.toList()),HttpStatus.OK);
     }
+
+
 
 }
 
