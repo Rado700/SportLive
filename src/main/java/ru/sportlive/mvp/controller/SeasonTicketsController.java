@@ -66,6 +66,20 @@ public class SeasonTicketsController {
         }
     }
 
+//    @Operation(summary = "Вывести для пользователя по uuid")
+//    @GetMapping("/ticket/get/{uuid}")
+//    public ResponseEntity<List<Map<String,Object>>>getTicketForUser(@PathVariable UUID uuid, HttpSession httpSession){
+//        Integer userId = (Integer) httpSession.getAttribute("userId");
+//        User user = userService.getUser(userId);
+//        Map<UUID,List<Object>> getAllTicketForUser =  seasonTicketsService.getAllSeasonTicketForUser(uuid,user);
+//        List<Map<String,Object>>result = new ArrayList<>();
+//        for (UUID uuid:getAllTicketForUser) {
+//            Map<String,Object> item = new HashMap<>();
+//            item.put("id",getAllTicketForUser.get(uuid).get(0).getId);
+//            result.add(item);
+//        }
+//        return new ResponseEntity<>(result,HttpStatus.OK);
+//    }
 
     @Operation(summary = "Вывести все тарифы")
     @GetMapping("/ticket/get/{sportSectionId}/{couchId}")

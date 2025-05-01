@@ -74,8 +74,8 @@ public class LoginController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Couch couch = couchService.addCouches();
-        httpSession.setAttribute("couchId", couch.getId());
         Login login = loginService.addLoginCouch(loginDTO.getName(), loginDTO.getPassword(), couch);
+        httpSession.setAttribute("couchId", couch.getId());
         httpSession.setAttribute("loginCouchId", login.getId());
 
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1215,8 +1215,6 @@ function getSchedule() {
         type = "general"
     }
 
-    const timeSlots = document.getElementById("times-record");
-    timeSlots.innerHTML = '';
 
     const dayButtons = document.getElementsByName("dayButton");
 

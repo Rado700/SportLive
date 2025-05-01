@@ -10,6 +10,7 @@ import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.SeasonTicket;
 import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.SeasonTicketsRepository;
 import ru.sportlive.mvp.repository.SportSectionRepository;
@@ -27,6 +28,18 @@ public class SeasonTicketsService {
         seasonTicketsRepository.findById(id).ifPresent(seasonTicket -> seasonTicketsRepository.delete(seasonTicket));
         return null;
     }
+//    public Map<UUID, List<SeasonTicketDTO>> getAllSeasonTicketForUser(UUID uuid, User user){
+//        List<SeasonTicket>allSeasonTicket = seasonTicketsRepository.findAll();
+//        Map<UUID, List<SeasonTicketDTO>> seasonTicketDTOS = new HashMap<>();
+//        for (SeasonTicket seasonTicket : allSeasonTicket) {
+//            if (allSeasonTicket.get(0).getUuid() == uuid) {
+//                List<SeasonTicketDTO>getAllIdSeasonTicket = new ArrayList<>();
+//                getAllIdSeasonTicket.add(seasonTicket.getSeasonTicketDTO());
+//                seasonTicketDTOS.put(seasonTicket.getUuid(),getAllIdSeasonTicket);
+//            }
+//        }
+//        return seasonTicketDTOS;
+//    }
 
     public Map<UUID, List<SeasonTicketDTO>> getAllSeasonTickets(SportSection section, Couch couch){
         List<SeasonTicket> allSeason = seasonTicketsRepository.findAll();

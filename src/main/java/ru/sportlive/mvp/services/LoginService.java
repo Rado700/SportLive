@@ -200,7 +200,7 @@ public class LoginService {
         return login.getTelegramId();
     }
     public Boolean isLoginOccupiedCouch(String login){
-        List<Login> byLogin = loginRepository.findByLogin(login);
+        List<Login> byLogin = loginRepository.findByLogin(login.toLowerCase());
         for (Login logins:byLogin) {
             if (logins.getCouch() != null){
                 return true;
@@ -210,7 +210,7 @@ public class LoginService {
     }
 
     public Boolean isLoginOccupiedUser(String login) {
-        List<Login> byLogin = loginRepository.findByLogin(login);
+        List<Login> byLogin = loginRepository.findByLogin(login.toLowerCase());
         for (Login logins : byLogin) {
             if (logins.getUser() != null) {
                 return true;

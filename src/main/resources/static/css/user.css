@@ -542,9 +542,9 @@
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        /*display: flex;*/
+        /*justify-content: center;*/
+        /*align-items: center;*/
         height: 100%;
         background-position: top;
         /*color: gainsboro;*/
@@ -552,7 +552,7 @@
 
     .container {
         /*max-inline-size: 600px;*/
-        /*inline-size: 100%;*/
+        inline-size: 100%;
         padding-top: 10px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

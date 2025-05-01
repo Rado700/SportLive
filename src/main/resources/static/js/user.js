@@ -1185,13 +1185,13 @@ function getSchedule() {
                         })
 
                         const listener = function () {
-                            const timeSlots = document.getElementById("times-record");
-                            timeSlots.innerHTML = '';
+                            const allTime = document.getElementById("times-record");
+                            allTime.innerHTML = '';
                             showDetailsBooking(scheduleDay, dayButton);
                         }
                         const showTime = function () {
-                            const timeSlots = document.getElementById("times-record");
-                            timeSlots.innerHTML = '';
+                            const infoBoxes = document.querySelectorAll("div.info-box");
+                            infoBoxes.forEach(box => box.remove());
                             showDetailsBookingTime(dayButton);
                         }
                         if (countTrainingsDay[day] === 1) {
@@ -1299,7 +1299,16 @@ function showDetailsBooking(scheduleDay, dayButton) {
     const sum = scheduleDay.sum || "Сумма не указана";
     const scheduleId = scheduleDay.id;
 
-    const timeFirst = new Date(scheduleDay.date).toLocaleTimeString(this.time (- 2).hours);
+    const trainingTime = new Date(scheduleDay.date);
+    const now = new Date();
+    const msDiff = trainingTime - now;
+    let hoursDiff = msDiff / (2000 * 60 * 60);
+    hoursDiff = Math.round(hoursDiff * 10) / 100;
+
+    console.log(trainingTime);
+    console.log(now);
+    console.log(msDiff);
+    console.log(hoursDiff);
 
     infoBox.innerHTML = `
         <p><strong>Время:</strong> ${time}</p>
@@ -1309,29 +1318,30 @@ function showDetailsBooking(scheduleDay, dayButton) {
 
 
     if (dayButton.style.backgroundColor === "yellow") {
-        infoBox.innerHTML += `
-        <button id="bookButtonCancel" style="width: 95%">Отменить</button>
-        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
-        `
+        if (hoursDiff > 2) {
+            infoBox.innerHTML += `
+                <button id="bookButtonCancel" style="width: 95%">Отменить</button>`;
+        } else {
+            infoBox.innerHTML += `
+                <p style="color: red"><strong>Отмена менее чем за 2 часа невозможна</strong></p>`;
+        }
+
+        infoBox.innerHTML += `<button id="closeInfoBox" style="width: 95%">Закрыть</button>`;
         document.body.appendChild(infoBox);
 
-        // Отменить бронирование
-        document.getElementById('bookButtonCancel').addEventListener('click', function () {
-            bookButtonCancel(scheduleId, infoBox); // Отменить бронирования
-        });
+        if (hoursDiff > 2) {
+            document.getElementById('bookButtonCancel').addEventListener('click', function () {
+                bookButtonCancel(scheduleId, infoBox);
+            });
+        }
 
     } else if (dayButton.style.backgroundColor === "red") {
         infoBox.innerHTML += `
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
         `
         document.body.appendChild(infoBox);
-    } else if (timeFirst + 2 === time){
-        infoBox.innerHTML += `
-        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
-        `
-        document.body.appendChild(infoBox);
-    }
-    else {
+
+    }else {
         infoBox.innerHTML += `
         <button id="bookButton" style="width: 95%">Забронировать</button>
         <button id="closeInfoBox" style="width: 95%">Закрыть</button>
@@ -1363,7 +1373,9 @@ function bookButtonCancel(scheduleId, infoBox) {
         method: "DELETE",
         headers: {'Content-Type':'application/json'},
 
-    }).then(response => {
+    })
+
+        .then(response => {
         getSchedule();
         document.body.removeChild(infoBox);
         if (!response.ok) {
