@@ -158,7 +158,7 @@ public class SeasonTicketsController {
         for (LocalDateTime date : matchingDates){
             Schedule currentSchedule = scheduleService.getScheduleByDateTime(date, ticketsByUUID.get(0).getCouch());
             if (currentSchedule != null) {
-               Booking booking = bookingService.addBooking(currentSchedule, user,matchingPrice);
+                Booking booking = bookingService.addBooking(currentSchedule, user,matchingPrice);
                 if (booking == null) {
                     System.out.println("Не удалось создать бронирование на " + date);
                 }

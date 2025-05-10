@@ -36,7 +36,7 @@ public class BookingService {
 
     public Booking addBooking(Schedule schedule, User user){
         Booking booking = null;
-        if (schedule.getBookings().isEmpty()) {
+        if (schedule.getBookings().isEmpty() || schedule.getTypeWorkout().equals("individual")) {
             booking = new Booking(user, schedule);
             bookingRepository.save(booking);
         }
@@ -44,7 +44,7 @@ public class BookingService {
     }
     public Booking addBooking(Schedule schedule, User user,Integer price){
         Booking booking = null;
-        if (schedule.getBookings().isEmpty()) {
+        if (schedule.getBookings().isEmpty() || Objects.equals(schedule.getTypeWorkout(), "general")) {
             booking = new Booking(price,user, schedule);
             bookingRepository.save(booking);
         }
@@ -104,8 +104,7 @@ public class BookingService {
             List<Booking> bookings2 = schedule.getBookings();
             System.out.println("Бронирования для расписания: "+ bookings2);
             if (bookings2 != null && !bookings2.isEmpty()) {
-                Booking booking = bookings2.get(0);
-                bookings.add(booking);
+                bookings.addAll(bookings2);
             }
         }
         return bookings;

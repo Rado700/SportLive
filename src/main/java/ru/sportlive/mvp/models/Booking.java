@@ -65,8 +65,8 @@ public class Booking {
         if (schedules != null && schedules.getCouch() != null) {
             couchInfoDTO = schedules.getCouch().getCouchInfo();
         }
-
         return new BookingUserCouchDTO(id,couchInfoDTO,user.getUserInfo(),schedules);
     }
+
 
 }

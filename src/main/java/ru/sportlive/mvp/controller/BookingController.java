@@ -61,6 +61,9 @@ public class BookingController {
             return new ResponseEntity<>(null,HttpStatus.PAYMENT_REQUIRED);
         }
         Booking booking = bookingService.addBooking(schedule, user);
+        if (booking == null){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
         String couchMessageText;
         if (userTelegramId != null) {
             couchMessageText = "Забронированно время на <b>" + booking.getSchedules().getDate().format(dateTimeFormatter) + "</b> пользователем " + "<b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";

@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentSelectedDays.push(parseInt(day.getAttribute("data-day")))
                 }
             })
-            const dayOfNow = new Date(document.getElementById("startDate").value);
+            const dayOfNow = new Date.now(document.getElementById("startDate").value);
             const dayOfEnd = new Date(document.getElementById("endDate").value);
             console.log(currentSelectedDays)
 
@@ -1254,7 +1254,7 @@ function getSchedule() {
                 if (scheduleDate.getMonth() === month) {
                     const day = scheduleDate.getDate();
                     const dayButton = calendar.querySelector(`#button_${day}`)
-                    let userBase;
+                    let userBase = [];
                     if (dayButton && type === scheduleDay.typeWorkout) {
                         dayButton.style.backgroundColor = "#00FFCC";
 
@@ -1268,13 +1268,14 @@ function getSchedule() {
                             }).then(data => {
                             data.forEach(bookingTimes => {
                                 const scheduleId = bookingTimes.schedule_id;
-                                userBase = bookingTimes.user;
                                 if (scheduleDay.id === scheduleId) {
-                                    dayButton.style.backgroundColor = 'red';
+                                    dayButton.style.backgroundColor = 'yellow';
+                                    userBase.push(bookingTimes.user);
+
                                 }
                             })
                         })
-
+                        console.log(scheduleDay);
                         const listener = function () {
                             const timeSlots = document.getElementById("times-record");
                             timeSlots.innerHTML = '';
@@ -1326,7 +1327,7 @@ function showDetailsBookingTime(dayButton) {
             return response.json();
         }).then(data => {
         data.forEach(scheduleDay => {
-            let userBase;
+            let userBase = [];
             let scheduleDate = new Date(scheduleDay.date);
             if (scheduleDate.getMonth() === month) {
                 let day = scheduleDate.getDate();
@@ -1350,10 +1351,9 @@ function showDetailsBookingTime(dayButton) {
                         data.forEach(bookingTimes => {
                             const scheduleId = bookingTimes.schedule_id;
                             if (scheduleDay.id === scheduleId) {
-                                timeButton.style.backgroundColor = 'red';
-                                dayButton.style.backgroundColor = 'red';
-                                userBase = bookingTimes.user;
-
+                                timeButton.style.backgroundColor = 'yellow';
+                                dayButton.style.backgroundColor = 'yellow';
+                                userBase.push(bookingTimes.user);
                             }
                         })
                     })
@@ -1374,12 +1374,11 @@ function showDetailsBookingTime(dayButton) {
 function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
 
     const schedule = document.getElementById("scheduleForCouch");
-    console.log("Данные для отображения:", scheduleDay);
     // Создаем или показываем окно с информацией
     const infoBoxes = document.querySelectorAll("div.info-box");
     infoBoxes.forEach(box => box.remove());
 
-
+    console.log(userBase);
     let infoBox = document.createElement('div');
     infoBox.classList.add('info-box');
     infoBox.display = 'flex';
@@ -1396,21 +1395,21 @@ function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
         <p><strong>Время:</strong> ${time}</p>
         <p><strong>Место:</strong> ${place}</p>
         <p><strong>Сумма:</strong> ${sum}</p>
-        <p><strong>Комментарий:</strong> ${description}</p>
-        
-`;
-    if (dayButton.style.backgroundColor === "red") {
-        const name = userBase.name || "Имя не указанно";
-        const surname = userBase.surname || "Фамилия не указана";
-        infoBox.innerHTML += ` <p><strong>Имя:</strong> ${name}</p>`;
-        infoBox.innerHTML += ` <p><strong>Фамилия:</strong> ${surname}</p>`;
+        <p><strong>Комментарий:</strong> ${description}</p>`;
+
+
+    if (dayButton.style.backgroundColor === "yellow") {
+        let fio = "";
+        userBase.forEach(userData=> {
+            fio += `${userData.surname || "Фамилия не указана"} ${userData.name || "Имя не указанно"}, `
+        })
+        infoBox.innerHTML += `<p><strong>Записанные:</strong><br>${fio.slice(0, -2).replaceAll(', ', '<br>')}</p>`;
         schedule.appendChild(infoBox);
 
     }
     infoBox.innerHTML += `
         <button id="bookButtonCancel" style="width: 95%" class="btn btn-primary">Отменить</button>
-        <button id="closeInfoBox" style="width: 95%" class="btn btn-primary">Закрыть</button>
-`;
+        <button id="closeInfoBox" style="width: 95%" class="btn btn-primary">Закрыть</button>`;
 
 
     // Отменить бронирование

@@ -674,43 +674,44 @@ document.addEventListener('DOMContentLoaded', () => {
     function selectEquipment(id, price, name) {
         const couch_id = coachForInventory.value;
         const url = "api/inventory/user/" + id
-        fetch(url, {
-            method: "POST",
-            headers: {"Content-type": "application/json"}
-        }).then(async response => {
-            if (response.status === 402) {
-                // Недостаточно средств
-                alert("Недостаточно средств для покупки");
-                throw new Error("Недостаточно средств для покупки");
-            } else if (!response.ok) {
-                throw new Error("Ошибка при покупки");
-            }
-            return response.json();
-        })
-            .then(data => {
-                fetch("api/balance/transfer/user/couch/" + couch_id, {
-                    method: "POST",
-                    headers: {"Content-type": "application/json"},
-                    body: JSON.stringify({sum: price})
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(response.message);
-                        }
-                        popup("Был куплен инвентарь: " + name);
-                        setTimeout(() => {
-                            window.location.href = 'account?';
-                        }, 1000); // немного подождём, чтобы юзер успел увидеть popup
-
-                        return response.json();
-                    }).then(date => {
-                }).catch(error => {
-                    console.error("Ошибка при переводе:", error);
-                })
-
+        if (confirm("Подтверждаете покупку?")) {
+            fetch(url, {
+                method: "POST",
+                headers: {"Content-type": "application/json"}
+            }).then(async response => {
+                if (response.status === 402) {
+                    // Недостаточно средств
+                    alert("Недостаточно средств для покупки");
+                    throw new Error("Недостаточно средств для покупки");
+                } else if (!response.ok) {
+                    throw new Error("Ошибка при покупки");
+                }
+                return response.json();
             })
-    }
+                .then(data => {
+                    fetch("api/balance/transfer/user/couch/" + couch_id, {
+                        method: "POST",
+                        headers: {"Content-type": "application/json"},
+                        body: JSON.stringify({sum: price})
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.message);
+                            }
+                            popup("Был куплен инвентарь: " + name);
+                            setTimeout(() => {
+                                window.location.href = 'account?';
+                            }, 1000); // немного подождём, чтобы юзер успел увидеть popup
 
+                            return response.json();
+                        }).then(date => {
+                    }).catch(error => {
+                        console.error("Ошибка при переводе:", error);
+                    })
+
+                })
+        }
+    }
 
     //Обновление данных у пользователя
 
@@ -775,7 +776,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({notes:notes})
+            body: JSON.stringify({notes: notes})
         })
             .then(response => response.json())
             .then(data => {
@@ -1050,14 +1051,14 @@ function displayTariffs() {
             `
 
                 tariffs.querySelector('.saveGeneral').addEventListener('click', function () {
-                    if (confirm("Подтверждаете бронирование?")){
+                    if (confirm("Подтверждаете бронирование?")) {
                         // метод где будет вызываться пост запрос и передавать туда item.uuid
-                        fetch("/api/seasonTickets/book/"+uuid, {
-                            method:'POST',
+                        fetch("/api/seasonTickets/book/" + uuid, {
+                            method: 'POST',
                             headers: {'Content-Type': 'application/json'},
                         })
-                            .then(response =>{
-                                if (!response.ok){
+                            .then(response => {
+                                if (!response.ok) {
                                     throw new Error(response.message);
                                 }
                                 return response;
@@ -1176,9 +1177,9 @@ function getSchedule() {
                                 const bookingUserId = bookingTimes.bookingUserCouch.user.id
                                 if (scheduleDay.id === scheduleId) {
                                     if (bookingUserId === userId) {
-                                        dayButton.style.backgroundColor = 'yellow';
+                                        dayButton.style.backgroundColor = 'green';
                                     } else {
-                                        dayButton.style.backgroundColor = 'red';
+                                        dayButton.style.backgroundColor = 'yellow';
                                     }
                                 }
                             })
@@ -1261,8 +1262,8 @@ function showDetailsBookingTime(dayButton) {
                             const bookingUserId = bookingTimes.bookingUserCouch.user.id
                             if (scheduleDay.id === scheduleId) {
                                 if (bookingUserId === userId) {
-                                    dayButton.style.backgroundColor = 'yellow';
-                                    timeButton.style.backgroundColor = 'yellow';
+                                    dayButton.style.backgroundColor = 'green';
+                                    timeButton.style.backgroundColor = 'green';
                                 }
                             }
                         })
@@ -1305,84 +1306,127 @@ function showDetailsBooking(scheduleDay, dayButton) {
     let hoursDiff = msDiff / (2000 * 60 * 60);
     hoursDiff = Math.round(hoursDiff * 10) / 100;
 
-    console.log(trainingTime);
-    console.log(now);
-    console.log(msDiff);
-    console.log(hoursDiff);
 
-    infoBox.innerHTML = `
+    if (trainingTime < now) {
+        // Тренировка уже прошла
+        infoBox.innerHTML = `
+            <p><strong>Время:</strong> ${time}</p>
+            <p><strong>Место:</strong> ${place}</p>
+            <p><strong>Сумма:</strong> ${sum}</p>
+            <p><strong>Комментарий:</strong> ${description}</p>
+            <p style="color:red;"><strong>Тренировка уже завершена</strong></p>
+            <button id="closeInfoBox" style="width: 95%">Закрыть</button>
+        `;
+
+
+        document.body.appendChild(infoBox);
+        document.getElementById('closeInfoBox').addEventListener('click', function () {
+            document.body.removeChild(infoBox);
+        });
+
+        // Позиционируем окно рядом с кнопкой дня
+        const rect = dayButton.getBoundingClientRect();
+        infoBox.style.top = `${rect.bottom + window.scrollY}px`;
+        infoBox.style.left = `${rect.left + window.scrollX}px`;
+
+        return;
+    }
+
+
+    fetch("/api/booking/")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.message);
+            }
+            return response.json()
+
+        }).then(data => {
+        let count = 0;
+        data.forEach(bookingTimes => {
+            const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
+            if (scheduleDay.id === scheduleId) {
+                count++;
+            }
+        })
+        console.log(count);
+
+
+        infoBox.innerHTML = `
         <p><strong>Время:</strong> ${time}</p>
         <p><strong>Место:</strong> ${place}</p>
         <p><strong>Сумма:</strong> ${sum}</p>
         <p><strong>Комментарий:</strong> ${description}</p>`;
 
 
-    if (dayButton.style.backgroundColor === "yellow") {
-        if (hoursDiff > 2) {
+        if (dayButton.style.backgroundColor === "green") {
+            if (hoursDiff > 2) {
+                infoBox.innerHTML += `<button id="bookButtonCancel" style="width: 95%">Отменить</button>`;
+            } else {
+                infoBox.innerHTML += `<p style="color: red"><strong>Отмена менее чем за 2 часа невозможна</strong></p>`;
+            }
+            infoBox.innerHTML += `<button id="closeInfoBox" style="width: 95%">Закрыть</button>`;
+        } else if (dayButton.style.backgroundColor === "yellow" && scheduleDay.typeWorkout === "individual") {
+            if (count <= 1) {
+                infoBox.innerHTML += `
+                <button id="bookButton" style="width: 95%">Забронировать</button>
+                <button id="closeInfoBox" style="width: 95%">Закрыть</button>`;
+            } else {
+                infoBox.innerHTML += `<p style="color:red"><strong>Нет свободных мест</strong></p>
+                                  <button id="closeInfoBox" style="width: 95%">Закрыть</button>`;
+            }
+        }else {
             infoBox.innerHTML += `
-                <button id="bookButtonCancel" style="width: 95%">Отменить</button>`;
-        } else {
-            infoBox.innerHTML += `
-                <p style="color: red"><strong>Отмена менее чем за 2 часа невозможна</strong></p>`;
+            <button id="bookButton" style="width: 95%">Забронировать</button>
+            <button id="closeInfoBox" style="width: 95%">Закрыть</button>`;
         }
 
-        infoBox.innerHTML += `<button id="closeInfoBox" style="width: 95%">Закрыть</button>`;
+        // Добавляем окно
         document.body.appendChild(infoBox);
 
-        if (hoursDiff > 2) {
-            document.getElementById('bookButtonCancel').addEventListener('click', function () {
+        // Обработчики
+        const cancelBtn = document.getElementById('bookButtonCancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function () {
                 bookButtonCancel(scheduleId, infoBox);
             });
         }
 
-    } else if (dayButton.style.backgroundColor === "red") {
-        infoBox.innerHTML += `
-        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
-        `
-        document.body.appendChild(infoBox);
+        const bookBtn = document.getElementById('bookButton');
+        if (bookBtn) {
+            bookBtn.addEventListener('click', function () {
+                bookTraining(scheduleId, infoBox, sum, coach);
+            });
+        }
 
-    }else {
-        infoBox.innerHTML += `
-        <button id="bookButton" style="width: 95%">Забронировать</button>
-        <button id="closeInfoBox" style="width: 95%">Закрыть</button>
-        `
-
-        document.body.appendChild(infoBox);
-
-        // Обработчик на кнопку "Забронировать"
-        document.getElementById('bookButton').addEventListener('click', function () {
-            bookTraining(scheduleId, infoBox,sum,coach);
-        });
-    }
-
+        const closeBtn = document.getElementById('closeInfoBox');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                document.body.removeChild(infoBox);
+            });
+        }
+    });
     // Позиционируем окно рядом с кнопкой дня
     const rect = dayButton.getBoundingClientRect();
     infoBox.style.top = `${rect.bottom + window.scrollY}px`;
     infoBox.style.left = `${rect.left + window.scrollX}px`;
 
 
-    // Обработчик на кнопку "Закрыть"
-    document.getElementById('closeInfoBox').addEventListener('click', function () {
-        document.body.removeChild(infoBox); // Удаляем окно
-
-    });
 }
 
 function bookButtonCancel(scheduleId, infoBox) {
     fetch("/api/booking/schedule/" + scheduleId, {
         method: "DELETE",
-        headers: {'Content-Type':'application/json'},
+        headers: {'Content-Type': 'application/json'},
 
     })
-
         .then(response => {
-        getSchedule();
-        document.body.removeChild(infoBox);
-        if (!response.ok) {
-            throw new Error(response.message);
-        }
-        return response.json();
-    })
+            getSchedule();
+            document.body.removeChild(infoBox);
+            if (!response.ok) {
+                throw new Error(response.message);
+            }
+            return response.json();
+        })
 
 }
 
@@ -1403,7 +1447,8 @@ function transactionForCouch(couchId, sum) {
     });
 }
 
-function bookTraining(scheduleId, infoBox,sum,coach) {
+function bookTraining(scheduleId, infoBox, sum, coach) {
+
     fetch("/api/booking/", {
         method: "POST",
         headers: {
@@ -1415,6 +1460,7 @@ function bookTraining(scheduleId, infoBox,sum,coach) {
             if (response.status === 402) {
                 // Недостаточно средств
                 throw new Error("Недостаточно средств для бронирования");
+
             } else if (!response.ok) {
                 throw new Error("Ошибка при бронировании");
             }
@@ -1433,7 +1479,6 @@ function bookTraining(scheduleId, infoBox,sum,coach) {
         .catch(error => {
             console.error("Ошибка при бронировании:", error);
             alert("Не хватает баланса")
-
             if (infoBox && document.body.contains(infoBox)) {
                 document.body.removeChild(infoBox);
             }
