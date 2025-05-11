@@ -40,7 +40,7 @@
         /*cursor: pointer;*/
         font-size: 24px;
         /*padding: 10px;*/
-        background-color: darkgray;
+        background-color: darkcyan;
         /*border-radius:17px;*/
     }
 
@@ -146,6 +146,7 @@
         background-color: #fff3e0;
         border-radius: 8px;
         color: #e64a19;
+
     }
 
     #profile-info {
@@ -379,7 +380,7 @@
         /*cursor: pointer;*/
         font-size: 24px;
         /*padding: 10px;*/
-        background-color: darkgray;
+        background-color: steelblue;
         /*border-radius:17px;*/
     }
 

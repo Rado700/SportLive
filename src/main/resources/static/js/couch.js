@@ -190,6 +190,15 @@ document.addEventListener('DOMContentLoaded', () => {
         addTime.appendChild(timeContainer);
     });
 
+    function setSportSection(data){
+        const sportSectionSelect = document.getElementById("sportSections");
+        const option = document.createElement("div");
+        data.forEach(item => {
+            option.value = item.id;
+            option.textContent = item.name;
+            sportSectionSelect.appendChild(option);
+        })
+    }
 
     //Добавить тренировку
     document.getElementById('addTraining').addEventListener('click', function () {
@@ -203,19 +212,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return response.json();
             }).then(data => {
-            data.forEach(sportSection => {
-                const sportSectionSelect = document.getElementById("sportSections");
-                const option = document.createElement("option");
-                option.value = sportSection.id;
-                option.textContent = sportSection.name;
-                sportSectionSelect.appendChild(option);
+                setSportSection(data);
 
                 const sportSectionSelectForTariffs = document.getElementById("sportSectionsForTariffs");
                 const option2 = document.createElement("option");
                 option2.value = sportSection.id;
                 option2.textContent = sportSection.name;
                 sportSectionSelectForTariffs.appendChild(option2);
-            })
+
             // showScreen(trainingScreen);
         })
 
@@ -1381,7 +1385,7 @@ function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
     console.log(userBase);
     let infoBox = document.createElement('div');
     infoBox.classList.add('info-box');
-    infoBox.display = 'flex';
+    // infoBox.style.display = 'flex';
 
 
     const time = new Date(scheduleDay.date).toLocaleTimeString(this.time);
@@ -1424,29 +1428,34 @@ function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {
 
 
     const rect = dayButton.getBoundingClientRect();
+    const scheduleRect = schedule.getBoundingClientRect();
 
-    infoBox.style.top = `${rect.bottom + schedule.scrollTop}px`;
-    infoBox.style.left = `${rect.left + schedule.scrollLeft}px`;
+// Привязываем infoBox к #schedule
+    schedule.appendChild(infoBox);
+    infoBox.style.position = 'absolute';
 
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-    const infoBoxHeight = infoBox.offsetHeight;
+// Получаем координаты кнопки относительно schedule
+    const scrollTop = schedule.scrollTop;
+    const scrollLeft = schedule.scrollLeft;
+
+    let top = rect.bottom - scheduleRect.top + scrollTop ; // 4px отступ вниз
+    let left = rect.left - scheduleRect.left + scrollLeft;
+
+// Ширина окна
     const infoBoxWidth = infoBox.offsetWidth;
+    const scheduleWidth = schedule.clientWidth;
 
-    // Устанавливаем окно ровно по центру экрана
-    // let left = (screenWidth - infoBoxWidth) / 2;
-    // let top = (screenHeight - infoBoxHeight) / 2;
-    //
-    //
-    // // Проверяем, выходит ли окно за нижнюю границу экрана
-    // if (top + infoBoxHeight > screenHeight) {
-    //     top = screenHeight - infoBoxHeight - 10; // Отступ 10px от края
-    // }
-    //
-    // // Применяем вычисленные координаты
-    // infoBox.style.top = `${top}px`;
-    // infoBox.style.left = `${left}px`;
+// Проверяем, выходит ли за правую границу
+    if (left + infoBoxWidth > scheduleWidth) {
+        left = rect.right - scheduleRect.left + scrollLeft - infoBoxWidth;
+        if (left < 0) left = 0;
+        infoBox.style.borderRadius = '15px 0 15px 15px'; // левое скругление
+    } else {
+        infoBox.style.borderRadius = '0 15px 15px 15px'; // правое скругление
+    }
 
+    infoBox.style.top = `${top}px`;
+    infoBox.style.left = `${left}px`;
 
     schedule.appendChild(infoBox);
 
