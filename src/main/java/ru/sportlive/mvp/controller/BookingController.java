@@ -125,7 +125,8 @@ public class BookingController {
         tgService.sendMessage(couchTelegramId,couchMessageText);
         bookingService.deleteBookingByScheduleForUser(scheduleId, user);
         transactionService.addTransaction(loginUser,refund,"refund");
-        userService.deposit(refund.doubleValue(), user);
+        userService.deposit(refund, user);
+        couchService.withdraw(refund,couch);
 
         return ResponseEntity.ok().build();
     }

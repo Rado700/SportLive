@@ -1047,8 +1047,7 @@ function displayTariffs() {
             <p>${description}</p>
             <p><strong>Сумма:</strong> ${sum} руб, ${days} дней</p>
             <p><strong>Расписание:</strong> ${schedule.slice(0, -2)}</p>
-            <button class="btn btn-success saveGeneral">Забронировать</button>
-            `
+            <button class="btn btn-success saveGeneral">Забронировать</button>`
 
                 tariffs.querySelector('.saveGeneral').addEventListener('click', function () {
                     if (confirm("Подтверждаете бронирование?")) {
@@ -1057,21 +1056,27 @@ function displayTariffs() {
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
                         })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(response.message);
+                            .then(async response => {
+                                getSchedule();
+                                if (response.status === 402) {
+                                    // Недостаточно средств
+                                    alert("Недостаточно средств для бронирования!");
+                                    throw new Error("Недостаточно средств для бронирования");
+
+                                } else if (!response.ok) {
+                                    throw new Error("Ошибка при бронировании");
                                 }
-                                return response;
+                                alert("Бронь успешно добавлена!");
+                                transactionForCouch(coach, sum);
+                                return response.json();
                             })
-                        transactionForCouch(coach, sum);
                     }
                 })
 
                 tariffContainer.appendChild(tariffs);
             })
 
-
-        });
+        })
 }
 
 
@@ -1174,7 +1179,7 @@ function getSchedule() {
                             }).then(data => {
                             data.forEach(bookingTimes => {
                                 const scheduleId = bookingTimes.bookingUserCouch.schedule_id;
-                                const bookingUserId = bookingTimes.bookingUserCouch.user.id
+                                const bookingUserId = bookingTimes.bookingUserCouch.user.id;
                                 if (scheduleDay.id === scheduleId) {
                                     if (bookingUserId === userId) {
                                         dayButton.style.backgroundColor = 'green';
@@ -1457,6 +1462,7 @@ function bookTraining(scheduleId, infoBox, sum, coach) {
         body: JSON.stringify({schedule_id: scheduleId})
     })
         .then(async response => {
+            getSchedule();
             if (response.status === 402) {
                 // Недостаточно средств
                 throw new Error("Недостаточно средств для бронирования");
@@ -1467,9 +1473,9 @@ function bookTraining(scheduleId, infoBox, sum, coach) {
             alert("Бронь успешно добавлена!");
             transactionForCouch(coach, sum);
             return response.json();
+
         })
         .then(data => {
-            getSchedule();
             const timeSlots = document.getElementById("times-record");
             timeSlots.innerHTML = '';
             if (infoBox && document.body.contains(infoBox)) {

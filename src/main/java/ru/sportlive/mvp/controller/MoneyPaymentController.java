@@ -72,7 +72,7 @@ public class MoneyPaymentController {
     public ResponseEntity<Object> getConformationDTO(
             @RequestParam String notification_type,
             @RequestParam String operation_id,
-            @RequestParam Double amount,
+            @RequestParam Integer amount,
             @RequestParam String currency,
             @RequestParam String datetime,
             @RequestParam String sender,

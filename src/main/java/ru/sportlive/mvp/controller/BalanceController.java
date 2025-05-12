@@ -42,7 +42,7 @@ public class BalanceController {
             return new ResponseEntity<>("Пользователь не авторизован",HttpStatus.UNAUTHORIZED);
         }
         User user = userService.getUser(user_id);
-        user = userService.deposit(userPayDTO.getSum().doubleValue(), user);
+        user = userService.deposit(userPayDTO.getSum(), user);
         Integer login_id = (Integer) httpSession.getAttribute("loginUserId");
         Login login = loginService.getLogin(login_id);
         transactionService.addTransaction(login,userPayDTO.getSum(),"deposit");
@@ -187,7 +187,7 @@ public class BalanceController {
         if (user == null){
             return new ResponseEntity<>("Выберите пользователя",HttpStatus.NOT_FOUND);
         }
-        user = userService.deposit(userPayDTO.getSum().doubleValue(),user);
+        user = userService.deposit(userPayDTO.getSum(),user);
         Transaction transaction1 = transactionService.addTransaction(couch.getLogin(),userPayDTO.getSum(),"Пополнения средств от "+couch.getName());
         Transaction transaction2 = transactionService.addTransaction(user.getLogin(),userPayDTO.getSum(),"Перевод средств пользователю"+user.getName());
         List<Transaction>getTransaction = new ArrayList<>();

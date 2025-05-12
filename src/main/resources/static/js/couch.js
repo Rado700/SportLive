@@ -190,15 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addTime.appendChild(timeContainer);
     });
 
-    function setSportSection(data){
-        const sportSectionSelect = document.getElementById("sportSections");
-        const option = document.createElement("div");
-        data.forEach(item => {
-            option.value = item.id;
-            option.textContent = item.name;
-            sportSectionSelect.appendChild(option);
-        })
-    }
 
     //Добавить тренировку
     document.getElementById('addTraining').addEventListener('click', function () {
@@ -212,14 +203,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return response.json();
             }).then(data => {
-                setSportSection(data);
+            data.forEach(sportSection => {
+                const sportSectionSelect = document.getElementById("sportSections");
+                const option = document.createElement("option");
+                option.value = sportSection.id;
+                option.textContent = sportSection.name;
+                sportSectionSelect.appendChild(option);
 
                 const sportSectionSelectForTariffs = document.getElementById("sportSectionsForTariffs");
                 const option2 = document.createElement("option");
                 option2.value = sportSection.id;
                 option2.textContent = sportSection.name;
                 sportSectionSelectForTariffs.appendChild(option2);
-
+            })
             // showScreen(trainingScreen);
         })
 
@@ -315,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentSelectedDays.push(parseInt(day.getAttribute("data-day")))
                 }
             })
-            const dayOfNow = new Date.now(document.getElementById("startDate").value);
+            const dayOfNow = new Date(document.getElementById("startDate").value);
             const dayOfEnd = new Date(document.getElementById("endDate").value);
             console.log(currentSelectedDays)
 
@@ -425,38 +421,33 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('seasonTicketForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
-        document.querySelectorAll('[name="tariffTime"]').forEach(tariffTime =>{
+        const form = new FormData(this);
+        const baseData = Object.fromEntries(form.entries());
+        baseData.sectionId = parseInt(document.getElementById("sportSectionsForTariffs").value);
 
-            const sportSection = document.getElementById("sportSectionsForTariffs").value;
-
-            const form = new FormData(this);
-            const ticketData = Object.fromEntries(form.entries());
-            ticketData.sectionId = parseInt(sportSection);
+        document.querySelectorAll('.tariffTime').forEach(tariffTime => {
+            const ticketData = { ...baseData };
             ticketData.dayOfWeek = tariffTime.querySelector('[name="day"]').value;
             ticketData.time = tariffTime.querySelector('[name="time"]').value;
-            console.log(ticketData)
-            // Отправка на сервер (замени URL)
+
             fetch('/api/seasonTickets/add', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(ticketData)
             }).then(response => {
                 if (response.ok) {
-                    this.reset();
-                    selectedDays.clear();
                     popupShow("Абонемент успешно добавлен!");
+                    bootstrap.Modal.getInstance(seasonModal).hide();
+                    this.reset();
                     document.querySelectorAll('.day-btn').forEach(btn => {
                         btn.classList.remove('btn-primary');
                         btn.classList.add('btn-outline-secondary');
                     });
-                    bootstrap.Modal.getInstance(seasonModal).hide();
                 } else {
                     alert('Ошибка при сохранении.');
                 }
             });
-        })
+        });
 
 
     });
@@ -465,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('allTimesTariff');
 
         const wrapper = document.createElement('div');
-        wrapper.className = 'd-flex mb-2';
+        wrapper.className = 'd-flex mb-2 tariffTime';
         wrapper.name = 'tariffTime';
 
         const select = document.createElement('select');
@@ -1210,6 +1201,10 @@ function getSchedule() {
     const infoBoxes = document.querySelectorAll("div.info-box");
     infoBoxes.forEach(box => box.remove());
 
+    const allTimeForSchedule = document.getElementById('allTimeForSchedule');
+    allTimeForSchedule.classList.remove('hidden');
+
+
     let type;
     let individual = document.getElementById("individual-btn");
     let general = document.getElementById("general-btn");
@@ -1309,7 +1304,7 @@ function showDetailsBookingTime(dayButton) {
 
     const sportSection = document.getElementById("sports-section").value
     const month = parseInt(document.getElementById('month').value)
-    const bookingTime = document.getElementById('allTime');
+    const allTimeForSchedule = document.getElementById('allTimeForSchedule');
     const timeSlots = document.getElementById("times-record");
     timeSlots.innerHTML = '';
 
@@ -1372,7 +1367,7 @@ function showDetailsBookingTime(dayButton) {
             }
         })
     });
-
+    allTimeForSchedule.classList.remove('hidden');
 }
 
 function showDetailsBookingToCouch(scheduleDay, dayButton, userBase) {

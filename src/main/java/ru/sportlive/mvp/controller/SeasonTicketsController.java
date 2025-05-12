@@ -127,6 +127,7 @@ public class SeasonTicketsController {
         if (ticketsByUUID.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         LocalDateTime localDateTimeNow = LocalDateTime.now();
         LocalDateTime finishDateTime = localDateTimeNow.plusDays(ticketsByUUID.get(0).getDays());
 
@@ -154,6 +155,11 @@ public class SeasonTicketsController {
         Integer sum = ticketsByUUID.get(0).getSum();
         int size = matchingDates.size();
         Integer matchingPrice = sum/size;
+
+        if (user.getBalance() < sum || sum == 0){
+            return new ResponseEntity<>(null,HttpStatus.PAYMENT_REQUIRED);
+        }
+
 
         for (LocalDateTime date : matchingDates){
             Schedule currentSchedule = scheduleService.getScheduleByDateTime(date, ticketsByUUID.get(0).getCouch());
