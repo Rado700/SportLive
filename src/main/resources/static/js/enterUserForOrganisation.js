@@ -95,6 +95,7 @@ function closeConfirmationModal(){
 function next() {
     const couchId = getAllCouch.value;
     const sportId = getAllSportForOrganisation.value;
+    const sports = getAllSportForOrganisation.value;
     const organisationId = getAllOrganisation.value;
 
     const firstName = document.getElementById("firstName").value
@@ -142,7 +143,7 @@ function next() {
                             throw new Error("Нет такого тренера")
                         }
                         sportSections = true;
-                        window.location.href = '/account';
+                        window.location.href = `/account?sport=${sports}`;
                         return response;
                     })
             })
@@ -165,7 +166,7 @@ function next() {
                     throw new Error("Нет такого тренера")
                 }
                 couchSections = true;
-                window.location.href = '/account';
+                window.location.href = `/account?sport=${sports}`;
                 return response;
             })
     }else {

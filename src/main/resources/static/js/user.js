@@ -53,6 +53,39 @@ document.addEventListener('DOMContentLoaded', () => {
         screen.classList.remove('hidden');
     };
 
+    const params = new URLSearchParams(window.location.search);
+    const sports = params.get("sport");
+
+
+    fetch("/api/sport-section/"+sports)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Неверная организация")
+            }
+            return response.json();
+        }).then(data =>{
+        let sportSection ='';
+        sportSection = data.name;
+
+        if (sports) {
+            const body = document.body;
+            switch (sportSection) {
+                case "Фитнес":
+                    body.style.backgroundImage = "url('../img/фитнес4.jpg')";
+                    break;
+                case "Бокс":
+                    body.style.backgroundImage = "url('../img/boks-sila-udar3.jpg')";
+                    break;
+                // Добавьте остальные ID
+                default:
+                    body.style.backgroundImage = "url('../img/Общий фон.jpg')";
+            }
+
+        }
+    });
+
+
+
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 

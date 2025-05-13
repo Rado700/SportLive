@@ -105,7 +105,9 @@ function next() {
     const getAllSportForOrganisation = document.getElementById("sportType");
     const getAllOrganisation = document.getElementById("organisationType");
     const sportId = getAllSportForOrganisation.value;
+    const sports = getAllSportForOrganisation.value;
     const organisationId = getAllOrganisation.value;
+
 
     const couchName = document.getElementById("name").value;
     const couchExperience = document.getElementById("experience").value;
@@ -186,7 +188,7 @@ function next() {
                 throw new Error("Неверная организация")
             }
             organisations = true;
-            window.location.href = '/couches';
+            window.location.href = `/couches?sport=${sports}`;
             return response;
         })
             .catch(error => console.error(error));
