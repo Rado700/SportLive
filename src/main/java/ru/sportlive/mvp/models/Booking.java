@@ -19,7 +19,7 @@ public class Booking {
 
     @Getter
     @Setter
-    private Integer price;
+    private Double price;
 
     @Getter
     @Setter
@@ -50,7 +50,7 @@ public class Booking {
         this.price = schedules.getSum();
     }
 
-    public Booking(Integer price, User user, Schedule schedules) {
+    public Booking(Double price, User user, Schedule schedules) {
         this.price = price;
         this.user = user;
         this.schedules = schedules;

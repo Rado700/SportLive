@@ -21,7 +21,7 @@ public class TransactionService {
         return transactionRepository.findById(id).orElse(null);
     }
 
-    public Transaction addTransaction(Login login, Integer summa, String type) {
+    public Transaction addTransaction(Login login, Double summa, String type) {
         LocalDateTime date = LocalDateTime.now();
         Transaction transaction = new Transaction(summa, type, date,login);
         transactionRepository.save(transaction);

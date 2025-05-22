@@ -96,23 +96,23 @@ public class CouchService {
         return couchRepository.save(couch);
     }
 
-    public Couch deposit(Integer amount, Couch couch){
-        int dep = couch.getBalance();
+    public Couch deposit(Double amount, Couch couch){
+        Double dep = couch.getBalance();
         dep += amount;
         couch.setBalance(dep);
         couchRepository.save(couch);
         return couch;
     }
 
-    public Couch withdraw (Integer amount, Couch couch){
-        int dep =couch.getBalance();
+    public Couch withdraw (Double amount, Couch couch){
+        Double dep =couch.getBalance();
         dep -= amount;
         couch.setBalance(dep);
         couchRepository.save(couch);
         return couch;
     }
 
-    public Integer getCouchBalance(Integer id){
+    public Double getCouchBalance(Integer id){
         Optional<Couch> user = couchRepository.findById(id);
         return user.map(Couch::getBalance).orElse(null);
     }

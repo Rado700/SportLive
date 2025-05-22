@@ -35,7 +35,7 @@ public class User {
     private int weight;
     @Getter
     @Setter
-    private int balance;
+    private Double balance;
 
 
     @Getter
@@ -91,7 +91,7 @@ public class User {
         this.surname = surname;
         this.height = height;
         this.weight = weight;
-        this.balance = 0;
+        this.balance = 0.0;
     }
 
     public User() {

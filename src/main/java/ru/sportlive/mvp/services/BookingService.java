@@ -42,7 +42,7 @@ public class BookingService {
         }
         return booking;
     }
-    public Booking addBooking(Schedule schedule, User user,Integer price){
+    public Booking addBooking(Schedule schedule, User user,Double price){
         Booking booking = null;
         if (schedule.getBookings().isEmpty() || Objects.equals(schedule.getTypeWorkout(), "general")) {
             booking = new Booking(price,user, schedule);

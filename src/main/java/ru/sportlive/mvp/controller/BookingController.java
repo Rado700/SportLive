@@ -103,7 +103,7 @@ public class BookingController {
         Login loginCouch = loginService.getCouchLogin(couch.getId());
         String couchTelegramId = loginCouch.getTelegramId();
         String userTelegramId = loginUser.getTelegramId();
-        Integer refund = 0;
+        Double refund = 0.0;
 
         List<Booking> bookingsToRemove = new ArrayList<>();
         for (Booking book : schedule.getBookings()) {

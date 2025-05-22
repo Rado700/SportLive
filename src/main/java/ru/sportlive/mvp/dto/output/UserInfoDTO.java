@@ -23,10 +23,10 @@ public class UserInfoDTO {
 
     @Getter
     @Setter
-    private Integer balance;
+    private Double balance;
 
 
-    public UserInfoDTO(Integer id, String name, String surname, int height, int weight,Integer balance) {
+    public UserInfoDTO(Integer id, String name, String surname, int height, int weight,Double balance) {
         this.id = id;
         this.name = name;
         this.surname = surname;

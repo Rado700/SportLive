@@ -17,7 +17,7 @@ public class CouchInfoDTO {
     private String name;
     @Getter
     @Setter
-    private Integer balance;
+    private Double balance;
 
     @Getter
     @Setter
@@ -27,13 +27,13 @@ public class CouchInfoDTO {
     @Setter
     private String photo;
 
-    public CouchInfoDTO(Integer id, String name,Integer balance) {
+    public CouchInfoDTO(Integer id, String name,Double balance) {
         this.id = id;
         this.name = name;
         this.balance = balance;
     }
 
-    public CouchInfoDTO(Integer id,String name, Integer balance, String experience, String photo) {
+    public CouchInfoDTO(Integer id,String name, Double balance, String experience, String photo) {
         this.id = id;
         this.name = name;
         this.balance = balance;

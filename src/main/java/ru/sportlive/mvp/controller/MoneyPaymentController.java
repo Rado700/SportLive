@@ -72,7 +72,7 @@ public class MoneyPaymentController {
     public ResponseEntity<Object> getConformationDTO(
             @RequestParam String notification_type,
             @RequestParam String operation_id,
-            @RequestParam Integer amount,
+            @RequestParam Double amount,
             @RequestParam String currency,
             @RequestParam String datetime,
             @RequestParam String sender,
@@ -97,13 +97,10 @@ public class MoneyPaymentController {
                 .load();
         // Ваш код для хеширования и обработки
         String notification_secret = dotenv.get("SHA1_KEY");  // Ваш секретный ключ
-        System.out.println(notification_secret);
         String dataForHash = String.join("&", notification_type, operation_id, String.format("%.2f", amount), currency, datetime, sender, codepro ? "true" : "false", notification_secret, label);
-        System.out.println(dataForHash);
+
         String calculatedHash = DigestUtils.sha1Hex(dataForHash);
 
-        System.out.println(calculatedHash);
-        System.out.println(sha1_hash);
 
         if (!calculatedHash.equals(sha1_hash)) {
             return new ResponseEntity<>("Invalid sha1_hash", HttpStatus.BAD_REQUEST);
@@ -114,7 +111,7 @@ public class MoneyPaymentController {
         user = userService.deposit(amount, user);
         System.out.println(user.getBalance());
         Login login = loginService.getUserLogin(user_id);
-        transactionService.addTransaction(login, amount.intValue(), "deposit");
+        transactionService.addTransaction(login, amount, "deposit");
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

@@ -37,7 +37,7 @@ public class Schedule implements Comparable<Schedule> {
 
     @Getter
     @Setter
-    private Integer sum;
+    private Double sum;
 
 
     @Getter
@@ -66,7 +66,7 @@ public class Schedule implements Comparable<Schedule> {
     }
 
 
-    public Schedule(String place, String description, LocalDateTime date, Couch couch, SportSection sportSection, String typeWorkout, Integer sum) {
+    public Schedule(String place, String description, LocalDateTime date, Couch couch, SportSection sportSection, String typeWorkout, Double sum) {
         this.place = place;
         this.description = description;
         this.date = date;

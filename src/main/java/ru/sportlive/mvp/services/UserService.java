@@ -36,21 +36,21 @@ public class UserService {
       return userRepository.findAll();
     }
 
-    public User deposit(Integer amount, User user){
-        int dep =user.getBalance();
+    public User deposit(Double amount, User user){
+        Double dep =user.getBalance();
         dep += amount;
         user.setBalance(dep);
         userRepository.save(user);
         return user;
     }
-    public User withdraw (Integer amount, User user){
-        int balance = user.getBalance();
+    public User withdraw (Double amount, User user){
+        Double balance = user.getBalance();
         balance -= amount;
         user.setBalance(balance);
         userRepository.save(user);
         return user;
     }
-    public Integer getUserBalance(Integer id){
+    public Double getUserBalance(Integer id){
         Optional<User> user = userRepository.findById(id);
         return user.map(User::getBalance).orElse(null);
     }

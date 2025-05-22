@@ -69,15 +69,15 @@ public class BalanceController {
     }
     @Operation(summary = "Выводит баланс пользователя по id")
     @GetMapping("/{userId}")
-    public ResponseEntity<Integer> getUserBalance(@PathVariable Integer userId) {
-        Integer userBalance = userService.getUserBalance(userId);
+    public ResponseEntity<Double> getUserBalance(@PathVariable Integer userId) {
+        Double userBalance = userService.getUserBalance(userId);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
     @Operation(summary = "Выводит баланс пользователя")
     @GetMapping("/balanceUser/")
-    public ResponseEntity<Integer> getUserBalance(HttpSession httpSession) {
+    public ResponseEntity<Double> getUserBalance(HttpSession httpSession) {
         Integer user_id = (Integer) httpSession.getAttribute("userId");
-        Integer userBalance = userService.getUserBalance(user_id);
+        Double userBalance = userService.getUserBalance(user_id);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 

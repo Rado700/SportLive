@@ -28,7 +28,7 @@ public class Couch {
 
     @Getter
     @Setter
-    private int balance;
+    private Double balance;
 
     @Getter
     @Setter
@@ -123,7 +123,7 @@ public class Couch {
         this.name = name;
         this.selectedSportSections = selectedSportSections;
         this.experience = experience;
-        this.balance = 0;
+        this.balance = 0.0;
     }
 
     public CouchInfoDTO getCouchInfo(){

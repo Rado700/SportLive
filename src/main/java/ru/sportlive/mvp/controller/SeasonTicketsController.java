@@ -154,7 +154,7 @@ public class SeasonTicketsController {
         }
         Integer sum = ticketsByUUID.get(0).getSum();
         int size = matchingDates.size();
-        Integer matchingPrice = sum/size;
+        Double matchingPrice = Double.valueOf(sum)/size;
 
         if (user.getBalance() < sum || sum == 0){
             return new ResponseEntity<>(null,HttpStatus.PAYMENT_REQUIRED);

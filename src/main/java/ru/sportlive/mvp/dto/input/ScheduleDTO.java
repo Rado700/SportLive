@@ -11,9 +11,9 @@ public class ScheduleDTO {
     private String description;
     private LocalDateTime date;
     private String typeWorkout;
-    private Integer sum;
+    private Double sum;
 
-    public ScheduleDTO(String place, String description, LocalDateTime date, String typeWorkout, Integer sum) {
+    public ScheduleDTO(String place, String description, LocalDateTime date, String typeWorkout, Double sum) {
         this.place = place;
         this.description = description;
         this.date = date;
@@ -53,11 +53,11 @@ public class ScheduleDTO {
         this.typeWorkout = typeWorkout;
     }
 
-    public Integer getSum() {
+    public Double getSum() {
         return sum;
     }
 
-    public void setSum(Integer sum) {
+    public void setSum(Double sum) {
         this.sum = sum;
     }
 }

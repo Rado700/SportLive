@@ -3,13 +3,13 @@ package ru.sportlive.mvp.dto.input;
 import ru.sportlive.mvp.models.User;
 
 public class UserPayDTO {
-    private Integer sum;
+    private Double sum;
 
-    public Integer getSum() {
+    public Double getSum() {
         return sum;
     }
 
-    public void setSum(Integer sum) {
+    public void setSum(Double sum) {
         this.sum = sum;
     }
 }

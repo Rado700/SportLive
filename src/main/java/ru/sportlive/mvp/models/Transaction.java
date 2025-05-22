@@ -19,7 +19,7 @@ public class Transaction {
     private Integer id;
     @Getter
     @Setter
-    private Integer summa;
+    private Double summa;
     @Getter
     @Setter
     private String type;
@@ -37,7 +37,7 @@ public class Transaction {
     private Login login;
 
 
-    public Transaction(Integer summa, String type, LocalDateTime date, Login login) {
+    public Transaction(Double summa, String type, LocalDateTime date, Login login) {
         this.summa = summa;
         this.type = type;
         this.localDateTime = date;
