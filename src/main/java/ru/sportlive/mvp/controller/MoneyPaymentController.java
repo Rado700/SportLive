@@ -57,8 +57,8 @@ public class MoneyPaymentController {
             if (amount <= 2) {
                 return "Сумма не должна быть менее 2";
             }
-
-        return moneyPaymentService.createPaymentLink("4100115951516729", amount*1.1, user_id, "https://sportliveapp.ru");
+        String label = user_id + "_" + amount;
+        return moneyPaymentService.createPaymentLink("4100115951516729", amount*1.07, label, "https://sportliveapp.ru");
     }
 
 
@@ -80,11 +80,15 @@ public class MoneyPaymentController {
             @RequestParam String label,
             @RequestParam String sha1_hash
     ) {
-        Integer user_id;
+        String[] label_data = label.split("_");
+        int user_id;
+        Double real_amount;
         try {
-            user_id = Integer.valueOf(label);
+            user_id = Integer.parseInt(label_data[0]);
+            real_amount = Double.valueOf(label_data[1]);
         }catch (Exception e){
             user_id = 1;
+            real_amount = amount;
         }
 
 //        datetime = datetime.withOffsetSameInstant(ZoneOffset.ofHours(3));
@@ -108,10 +112,9 @@ public class MoneyPaymentController {
 
         // Если хэш совпал, продолжаем обработку
         User user = userService.getUser(user_id);
-        user = userService.deposit(amount, user);
-        System.out.println(user.getBalance());
+        user = userService.deposit(real_amount, user);
         Login login = loginService.getUserLogin(user_id);
-        transactionService.addTransaction(login, amount, "deposit");
+        transactionService.addTransaction(login, real_amount, "deposit");
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
