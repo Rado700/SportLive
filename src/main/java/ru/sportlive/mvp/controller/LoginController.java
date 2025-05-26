@@ -16,6 +16,8 @@ import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.LoginService;
 import ru.sportlive.mvp.services.UserService;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.NoSuchAlgorithmException;
 
 @RestController

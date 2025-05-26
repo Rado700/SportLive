@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sports = params.get("sport");
 
 
+
     fetch("/api/sport-section/"+sports)
         .then(response => {
             if (!response.ok) {
