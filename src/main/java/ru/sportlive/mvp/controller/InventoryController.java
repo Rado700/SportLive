@@ -64,13 +64,13 @@ public class InventoryController {
         String userTelegramId = userLoginId.getTelegramId();
         String userMessageText;
         if (userTelegramId != null) {
-            userMessageText = "Был куплен инвентраь " + inventory.getName();
+            userMessageText = "Был куплен инвентарь " + inventory.getName()+" у тренера: "+"<b><a href='tg://user?id=" + couchTelegramId + "'>" + couch.getName() + "</a></b>";
         }else {
-            userMessageText = null;
+            userMessageText = "Был куплен инвентарь " + inventory.getName();
         }
         String couchMessageText;
         if (couchTelegramId != null) {
-            couchMessageText = "Был куплен инвентарь для " + "<b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";
+            couchMessageText = "Был куплен инвентарь "+inventory.getName()+" для " + "<b><a href='tg://user?id=" + userTelegramId + "'>" + user.getName() + "</a></b>";
         }else {
             couchMessageText = "Был куплен инвентарь для <b>"+ user.getName() + "</b>";
         }

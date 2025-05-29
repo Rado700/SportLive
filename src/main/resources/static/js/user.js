@@ -1342,9 +1342,11 @@ function showDetailsBooking(scheduleDay, dayButton) {
     const trainingTime = new Date(scheduleDay.date);
     const now = new Date();
     const msDiff = trainingTime - now;
-    let hoursDiff = msDiff / (2000 * 60 * 60);
+    let hoursDiff = msDiff / (1000 * 60 * 60);
     hoursDiff = Math.round(hoursDiff * 10) / 100;
 
+    console.log(msDiff);
+    console.log(hoursDiff);
 
     if (trainingTime < now) {
         // Тренировка уже прошла
