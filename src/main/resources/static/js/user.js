@@ -89,10 +89,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
+    const urlParamsCouchId = urlParams.get('couchId');
 
     if (urlParams.get("page") === 'recordScreen') {
-        openRecordScreenWithData(urlParams.get('couch'), urlParams.get('section'));
+        //TODO: fetch запрос к api user Couch (проверить на наличий этого (urlParams.get('couch')) тренера по id)если такого тренера нету открыавем openRecordScreenWithData() поверх него function popup и создаем окно urlParams.get('couch') о таком тренере с двумя кнопками добавить и закрыть) если добавить то вызывается запрос который добавляет этого тренера к user и открываем (openRecordScreenWithData(couchId))
+        // заменить в параметре urlParams.get('couch') имя на id
+        fetch("/api/user/couch",{
+            method: "GET",
+            headers: {'Content-Type': 'application/json'},
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(response.message);
+            }
+            return response.json();
+        }).then(data => {
+            const couchId = data?.couch?.id;
+            if(couchId === urlParams.get('couchId')){
+                openRecordScreenWithData(couchId,urlParams.get('section'))
+            }
+            else {
+                showAddCouchPopup(urlParamsCouchId);
+            }
+        }).catch(error => {
+            console.error('Ошибка при получении тренера:', error);
+        });
+
     }
+
     if (urlParams.get("page") === 'scheduleScreen') {
         openRecordScreenWithData();
     }
@@ -114,6 +137,118 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000)
 
     }
+
+
+    function showAddCouchPopup(couchId){
+        const popup = document.createElement('div');
+        popup.classList.add('popup-overlay');
+
+        fetch("/api/user/couch/"+couchId,{
+            method:"GET",
+            headers:{ 'Content-Type': 'application/json'}
+        }).then(response =>{
+            if (!response.ok){
+                throw new Error("нету такого тренера");
+            }
+            return response.json();
+        }).then(data =>{
+            getCouchForUser(data)
+        })
+    }
+
+
+
+    function getCouchForUser(getData) {
+        const coach = document.getElementById("getAllCoaches");
+        coach.innerHTML = "";
+
+        if (getData.length === 0) {
+            coach.innerHTML = '<p>Нету выбранных тренеров</p>';
+            return;
+        }
+
+        getData.forEach(item => {
+            const getCoach = document.createElement("div");
+            getCoach.classList.add("coach-container");
+
+            // Создаем контейнер для фотографии и информации
+            const coachInfo = document.createElement("div");
+            coachInfo.classList.add("coach-info");
+
+            // Фотография тренера
+            const photo = document.createElement("img");
+            photo.src = item.photo || '/coach/photo/default.jpg';
+            photo.alt = `${item.name}`;
+            photo.classList.add("coach-photo");
+            coachInfo.appendChild(photo);
+
+            // Контейнер для текста (имя, стаж, виды спорта)
+            const textInfo = document.createElement("div");
+            textInfo.classList.add("text-info");
+
+            // Имя тренера
+            const name = document.createElement("p");
+            name.textContent = `${item.name}`;
+            textInfo.appendChild(name);
+
+            // Стаж тренера
+            const experience = document.createElement("p");
+            experience.textContent = `Опыт: ${item.experience || 'Неизвестно'}`;
+            textInfo.appendChild(experience);
+
+            // Добавляем информацию в coachInfo
+            coachInfo.appendChild(textInfo);
+
+            // Контейнер для кнопок
+            const buttonsContainer = document.createElement("div");
+            buttonsContainer.classList.add("buttons-container");
+
+            // Кнопка "Выбрать"
+            const selectButton = document.createElement("button");
+            selectButton.textContent = "Добавить";
+            selectButton.onclick = () => {
+                fetch(`/api/user/couch/${item.id}`, {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Ошибка при добавлении тренера");
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        document.body.removeChild(popup);
+                        openRecordScreenWithData(couchId, section);
+                    })
+                    .catch(err => {
+                        console.error("Ошибка при добавлении тренера:", err);
+                        alert("Не удалось добавить тренера.");
+                    });
+            }
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = "Закрыть";
+            closeButton.addEventListener("click", function (){
+                document.body.removeChild(coach);
+            })
+
+            selectButton.classList.add("select-button");
+            buttonsContainer.appendChild(selectButton);
+            buttonsContainer.appendChild(closeButton);
+
+            // Добавляем все элементы в главный контейнер getCoach
+            getCoach.appendChild(coachInfo);
+            getCoach.appendChild(buttonsContainer);
+
+            // Добавляем getCoach в DOM
+            coach.appendChild(getCoach);
+
+
+        });
+    }
+
+
 
 
     //Пополнение баланса
@@ -551,7 +686,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Записаться на тренеровку(выбор спортсекций и тренера)
 
-    function openRecordScreenWithData(couchName, couchSection) {
+    function openRecordScreenWithData(couchId, couchSection) {
         showScreen(recordForSection);
 
         const url = "/api/user/"
@@ -588,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const option = document.createElement('option');
                     option.value = item.id;
                     option.textContent = item.name;
-                    if (item.name === couchName) {
+                    if (item.id === couchId) {
                         option.selected = true;
                     }
                     allCouchForSportSection.appendChild(option);

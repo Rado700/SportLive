@@ -154,15 +154,6 @@ public class UserController {
         return new ResponseEntity<>(couchInfoTgDTO,HttpStatus.OK);
     }
 
-    @Operation(summary = "qr-cod Couch для User")
-    @GetMapping("/tg/qr/tgId{tgId}")
-    public ResponseEntity<CouchInfoTgDTO>getCouchTgId(@PathVariable String tgId) throws NoSuchAlgorithmException {
-        Login loginCouch = loginService.getLoginByTgId(tgId);
-        Couch couch = loginCouch.getCouch();
-        CouchInfoTgDTO couchInfoTgDTO = new CouchInfoTgDTO(couch.getId(),couch.getName(),couch.getPhoto(),couch.getLogin().getTelegramId());
-        return new ResponseEntity<>(couchInfoTgDTO,HttpStatus.OK);
-    }
-
     @Operation(summary = "Добавить заметки для пользователя")
     @PostMapping("/addNotesForUser")
     public ResponseEntity<Notes>addNotesForUser(@RequestBody NotesDTO message,HttpSession httpSession){
