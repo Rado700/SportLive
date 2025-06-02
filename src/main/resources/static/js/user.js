@@ -90,11 +90,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const urlParamsCouchId = urlParams.get('couchId');
+    let couchesId;
 
     if (urlParams.get("page") === 'recordScreen') {
         //TODO: fetch запрос к api user Couch (проверить на наличий этого (urlParams.get('couch')) тренера по id)если такого тренера нету открыавем openRecordScreenWithData() поверх него function popup и создаем окно urlParams.get('couch') о таком тренере с двумя кнопками добавить и закрыть) если добавить то вызывается запрос который добавляет этого тренера к user и открываем (openRecordScreenWithData(couchId))
-        // заменить в параметре urlParams.get('couch') имя на id
-        fetch("/api/user/couch",{
+        // заменить в параметре urlParams.get('couch') имя на id;
+
+         fetch("/api/user/couch",{
+            method: "GET",
+            headers: {'Content-Type':'application/json'},
+        }).then(response =>{
+            if (!response.ok){
+                throw new Error(response.message)
+            }
+        }).then(data =>{
+            couchesId = data.id;
+        });
+
+        fetch("/api/user/couch/tgId"+urlParamsCouchId,{
             method: "GET",
             headers: {'Content-Type': 'application/json'},
         }).then(response => {
@@ -104,11 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         }).then(data => {
             const couchId = data?.couch?.id;
-            if(couchId === urlParams.get('couchId')){
+            if(couchId === couchesId){
                 openRecordScreenWithData(couchId,urlParams.get('section'))
             }
             else {
-                showAddCouchPopup(urlParamsCouchId);
+                showAddCouchPopup(couchId);
             }
         }).catch(error => {
             console.error('Ошибка при получении тренера:', error);
