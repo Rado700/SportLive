@@ -99,7 +99,7 @@ public class LoginService {
     }
 
 
-    public Login getLoginByTgId(String hashTgId) throws NoSuchAlgorithmException {
+    public Login getLoginByHashTgId(String hashTgId) throws NoSuchAlgorithmException {
         List<Login>getAllLogin = loginRepository.findAll();
         for (Login login:getAllLogin) {
             String telegramId = login.getTelegramId();
@@ -114,6 +114,19 @@ public class LoginService {
         return null;
     }
 
+    public Login getLoginByTgId(String tgId) throws NoSuchAlgorithmException {
+        List<Login>getAllLogin = loginRepository.findAll();
+        for (Login login:getAllLogin) {
+            String telegramId = login.getTelegramId();
+            if (telegramId == null){
+                continue;
+            }
+            if (Objects.equals(telegramId, tgId)){
+                return login;
+            }
+        }
+        return null;
+    }
     public static String hashTelegramId(String input) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hashBytes = digest.digest(input.getBytes(StandardCharsets.UTF_8));

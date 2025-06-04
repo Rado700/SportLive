@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sportlive.mvp.dto.input.AuthTgDTO;
 import ru.sportlive.mvp.dto.input.LoginDTO;
-import ru.sportlive.mvp.dto.output.CouchInfoTgDTO;
 import ru.sportlive.mvp.dto.output.LoginInfoDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Login;
@@ -17,8 +16,6 @@ import ru.sportlive.mvp.services.CouchService;
 import ru.sportlive.mvp.services.LoginService;
 import ru.sportlive.mvp.services.UserService;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
@@ -202,7 +199,7 @@ public class LoginController {
     public ResponseEntity<String> getTgHashId(@RequestBody AuthTgDTO authTgDTO, HttpSession httpSession) throws NoSuchAlgorithmException {
         String hastTgId = authTgDTO.getTgId();
 
-        Login login = loginService.getLoginByTgId(hastTgId);
+        Login login = loginService.getLoginByHashTgId(hastTgId);
         if (login == null) {
             return new ResponseEntity<>("/",HttpStatus.UNAUTHORIZED);
         }
@@ -232,7 +229,7 @@ public class LoginController {
     @Operation(summary = "Получить по TgId пользователя и тренера")
     @GetMapping("/tgId/{tgId}")
     public ResponseEntity<LoginInfoDTO>getCouchUserByTgId(@PathVariable String tgId) throws NoSuchAlgorithmException {
-        Login login = loginService.getLoginByTgId(tgId);
+        Login login = loginService.getLoginByHashTgId(tgId);
         if (login == null){
             return null;
         }

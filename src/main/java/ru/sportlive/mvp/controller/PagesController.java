@@ -3,16 +3,9 @@ package ru.sportlive.mvp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import ru.sportlive.mvp.dto.output.CouchInfoTgDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.services.CouchService;
@@ -47,12 +40,12 @@ public class PagesController {
 
     @Operation(summary = "qr-cod Couch для User")
     @GetMapping("/auth/qr")
-    public String getCouchTgId(@RequestParam String couchTgId, HttpSession httpSession) throws NoSuchAlgorithmException {
+    public String getCouchTgId(@RequestParam String couchTgId,@RequestParam String page, HttpSession httpSession) throws NoSuchAlgorithmException {
         Login loginCouch = loginService.getLoginByTgId(couchTgId);
         Couch couch = loginCouch.getCouch();
         Integer userId = (Integer) httpSession.getAttribute("userId");
         if (userId != null){
-            return "redirect:/account?page=recordScreen&couch="+couch.getName();
+            return "redirect:/account?page="+page+"&couchId="+couch.getId();
         }
         return "redirect:/?couchId=" + couch.getId();
     }

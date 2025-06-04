@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.input.CouchUserDTO;
-import ru.sportlive.mvp.dto.input.SportUserDTO;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.dto.output.CouchInfoTgDTO;
 import ru.sportlive.mvp.dto.output.NotesDTO;
@@ -19,7 +17,6 @@ import ru.sportlive.mvp.services.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/user")
@@ -145,7 +142,7 @@ public class UserController {
     @Operation(summary = "Получить всех couches для user по tgId")
     @GetMapping("/couch/tgId/{tgId}")
     public ResponseEntity<List<CouchInfoTgDTO>>getCouchesTgId(@PathVariable String tgId) throws NoSuchAlgorithmException {
-        User user = loginService.getLoginByTgId(tgId).getUser();
+        User user = loginService.getLoginByHashTgId(tgId).getUser();
         List<Couch> couches = user.getSelectedCouches();
         List<CouchInfoTgDTO> couchInfoTgDTO = new ArrayList<>();
         for (Couch couch : couches){
