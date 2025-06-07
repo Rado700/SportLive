@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const selectButton = document.createElement("button");
                 selectButton.textContent = "Выбрать";
                 selectButton.onclick = () => {
-                    window.location.href = 'account?page=recordScreen&couch=' + item.name
+                    window.location.href = 'account?page=recordScreen&couch=' + item.id
                 }
                 selectButton.classList.add("select-button");
                 buttonsContainer.appendChild(selectButton);
