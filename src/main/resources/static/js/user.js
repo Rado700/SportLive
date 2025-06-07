@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return response.json();
                 })
                 .then(() => {
-                    fetch(`/api/sport-section/user/`${sportSectionId},{
+                    fetch(`/api/sport-section/user/${sportSectionId}`,{
                         method: "POST",
                         headers: { 'Content-Type': 'application/json' }
                     })
