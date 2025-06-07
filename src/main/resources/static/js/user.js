@@ -90,29 +90,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const urlParamsCouchId = urlParams.get('couchId');
-    console.log(urlParamsCouchId);
+    const urlParamsCouchId = Number(urlParams.get('couchId'));
+    const urlParamSectionId = urlParams.get("section");
 
     if (urlParams.get("page") === 'recordScreen') {
         //TODO: fetch запрос к api user Couch (проверить на наличий этого (urlParams.get('couch')) тренера по id)если такого тренера нету открыавем openRecordScreenWithData() поверх него function popup и создаем окно urlParams.get('couch') о таком тренере с двумя кнопками добавить и закрыть) если добавить то вызывается запрос который добавляет этого тренера к user и открываем (openRecordScreenWithData(couchId))
         // заменить в параметре urlParams.get('couch') имя на id;
 
-         fetch("/api/user/couch/",{
-            method: "GET",
-            headers: {'Content-Type':'application/json'},
-        }).then(response =>{
-            if (!response.ok){
-                throw new Error(response.message)
-            }
-            return response.json();
-        }).then(data =>{
-                const foundCouch = data.find(couchInfo => couchInfo.id === urlParamsCouchId);
-                if (foundCouch) {
-                    openRecordScreenWithData(urlParamsCouchId, urlParams.get('sport'))
-                }else {
-                    showAddCouchPopup(foundCouch);
+        if (urlParams.get("page") === 'recordScreen') {
+            fetch("/api/user/couch/", {
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' },
+
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Ошибка получения тренеров");
                 }
-        })
+                return response.json();
+            }).then(data => {
+                console.log("Список тренеров пользователя:", data);
+                const foundCouch = data.find(couchInfo => couchInfo.id === urlParamsCouchId);
+                console.log("Найденный тренер:", foundCouch);
+
+                if (foundCouch) {
+                    openRecordScreenWithData(urlParamsCouchId, urlParamSectionId);
+                } else {
+                    fetch(`/api/couch/${urlParamsCouchId}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error("Тренер не найден");
+                            return response.json();
+                        })
+                        .then(couch => {
+                            openRecordScreenWithData();
+                            showAddCouchPopup(couch);
+                        })
+                        .catch(error => {
+                            console.error("Ошибка при получении данных тренера:", error);
+                            alert("Не удалось загрузить информацию о тренере.");
+                        });
+                }
+            }).catch(err => {
+                console.error("Ошибка при получении тренеров пользователя:", err);
+            });
+        }
     }
 
     if (urlParams.get("page") === 'scheduleScreen') {
@@ -206,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const closeButton = document.createElement('button');
         closeButton.textContent = "Закрыть";
         closeButton.addEventListener("click", function (){
-            popup.classList.remove("popup-overlay");
+            document.body.removeChild(popup);
         })
 
         buttonsContainer.appendChild(selectButton);
@@ -218,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Добавляем getCoach в DOM
         popup.appendChild(getCoach);
+        document.body.appendChild(popup);
 
     }
 

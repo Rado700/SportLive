@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.dto.output.NotesDTO;
+import ru.sportlive.mvp.dto.output.SportSectionGetAllDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.InventoryRepository;
@@ -37,6 +37,11 @@ public class CouchService {
 
     public List<Couch> getAllCouches(){
         return couchRepository.findAll();
+    }
+
+    public List<SportSection>getAllSportSectionForCouch(Integer id){
+        Optional<Couch> couch = couchRepository.findById(id);
+        return couch.map(Couch ::getSelectedSportSections).orElse(null);
     }
     public List<User>getAllUsersForCouch(Integer couch_id){
         Optional<Couch> couch = couchRepository.findById(couch_id);
