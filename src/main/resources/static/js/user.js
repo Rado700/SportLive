@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         })
                         .then(couch => {
                             openRecordScreenWithData();
-                            showAddCouchPopup(couch);
+                            showAddCouchPopup(couch,urlParamSectionId);
                         })
                         .catch(error => {
                             console.error("Ошибка при получении данных тренера:", error);
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    function showAddCouchPopup(couch){
+    function showAddCouchPopup(couch,sportSectionId){
         const popup = document.createElement('div');
         popup.classList.add('popup-overlay');
 
@@ -214,13 +214,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     return response.json();
                 })
                 .then(() => {
-                    document.body.removeChild(popup);
-                    openRecordScreenWithData(couch.id, urlParams.get('sport'));
+                    fetch(`/api/sport-section/user/`${sportSectionId},{
+                        method: "POST",
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Ошибка при добавлении тренера");
+                            }
+                            return response.json();
+                        }).then(data =>{
+                            document.body.removeChild(popup);
+                            openRecordScreenWithData(couch.id, urlParams.get('sport'));
+                        })
+                        .catch(err => {
+                            console.error("Ошибка при добавлении организаций:", err);
+                            alert("Не удалось добавить спортсекцию.");
+                        })
+
                 })
                 .catch(err => {
                     console.error("Ошибка при добавлении тренера:", err);
                     alert("Не удалось добавить тренера.");
                 });
+
         }
 
         const closeButton = document.createElement('button');
