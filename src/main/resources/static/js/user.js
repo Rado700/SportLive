@@ -91,13 +91,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const urlParamsCouchId = Number(urlParams.get('couchId'));
-    const urlParamSectionId = urlParams.get("section");
+    const urlParamSectionId = Number(urlParams.get("section"));
 
+    console.log(urlParamSectionId);
     if (urlParams.get("page") === 'recordScreen') {
         //TODO: fetch запрос к api user Couch (проверить на наличий этого (urlParams.get('couch')) тренера по id)если такого тренера нету открыавем openRecordScreenWithData() поверх него function popup и создаем окно urlParams.get('couch') о таком тренере с двумя кнопками добавить и закрыть) если добавить то вызывается запрос который добавляет этого тренера к user и открываем (openRecordScreenWithData(couchId))
         // заменить в параметре urlParams.get('couch') имя на id;
 
-        if (urlParams.get("page") === 'recordScreen') {
             fetch("/api/user/couch/", {
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' },
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(err => {
                 console.error("Ошибка при получении тренеров пользователя:", err);
             });
-        }
+
     }
 
     if (urlParams.get("page") === 'scheduleScreen') {
@@ -680,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //Записаться на тренеровку(выбор спортсекций и тренера)
 
-    function openRecordScreenWithData(couchId, couchSection) {
+    function openRecordScreenWithData(couchId, couchSectionId) {
         showScreen(recordForSection);
 
         const url = "/api/user/"
@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const option = document.createElement("option");
                 option.value = item.id;
                 option.textContent = item.name;
-                if (item.name === couchSection) {
+                if (item.id === couchSectionId) {
                     option.selected = true;
                 }
                 allSportSection.appendChild(option);
