@@ -220,15 +220,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error("Ошибка при добавлении тренера");
+                                throw new Error("Ошибка при добавлении спортсекций");
                             }
-                            return response.json();
+                            return response;
                         }).then(data =>{
                             document.body.removeChild(popup);
                             openRecordScreenWithData(couch.id, urlParams.get('sport'));
                         })
                         .catch(err => {
-                            console.error("Ошибка при добавлении организаций:", err);
+                            console.error("Ошибка при добавлении спортсекцию:", err);
                             alert("Не удалось добавить спортсекцию.");
                         })
 
