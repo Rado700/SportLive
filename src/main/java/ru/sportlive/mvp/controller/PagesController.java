@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.RedirectView;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.Login;
 import ru.sportlive.mvp.services.CouchService;
@@ -39,29 +38,17 @@ public class PagesController {
         return "authTg";
     }
 
+    @Operation(summary = "qr-cod Couch для User")
     @GetMapping("/auth/qr")
-    public RedirectView getCouchTgId(@RequestParam String couchTgId,
-                                     @RequestParam String page,
-                                     @RequestParam String section,
-                                     HttpSession httpSession) throws NoSuchAlgorithmException {
+    public String getCouchTgId(@RequestParam String couchTgId,@RequestParam String page,@RequestParam String section, HttpSession httpSession) throws NoSuchAlgorithmException {
         Login loginCouch = loginService.getLoginByTgId(couchTgId);
         Couch couch = loginCouch.getCouch();
         Integer userId = (Integer) httpSession.getAttribute("userId");
-
-        String redirectUrl;
         if (userId != null) {
-            redirectUrl = "/account?page=" + page + "&couchId=" + couch.getId() + "&section=" + section;
-        } else {
-            redirectUrl = "/?couchId=" + couch.getId();
+            return "redirect:/account?page=" + page + "&couchId=" + couch.getId() + "&section" + section;
         }
-
-        RedirectView redirectView = new RedirectView();
-        redirectView.setContextRelative(true);
-        redirectView.setUrl(redirectUrl);
-        redirectView.setExposeModelAttributes(false);
-        return redirectView;
+        return "redirect:/?couchId=" + couch.getId();
     }
-
     @GetMapping("/account")
     public String account(HttpSession httpSession){
         Integer userId = (Integer) httpSession.getAttribute("userId");
