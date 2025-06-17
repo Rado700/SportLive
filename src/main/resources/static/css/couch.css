@@ -5,6 +5,7 @@
         background-repeat: no-repeat;
         background-size: cover;
         background-position: top;
+        background-attachment: fixed;
     }
 
     button {
@@ -345,6 +346,8 @@
         background-image: url("../img/boks-sila-udar.jpg");
         background-repeat: no-repeat;
         background-size: cover;
+        background-attachment: fixed;
+
     }
 
     button {

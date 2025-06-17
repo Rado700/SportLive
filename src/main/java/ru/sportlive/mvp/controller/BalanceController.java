@@ -78,6 +78,9 @@ public class BalanceController {
     public ResponseEntity<Double> getUserBalance(HttpSession httpSession) {
         Integer user_id = (Integer) httpSession.getAttribute("userId");
         Double userBalance = userService.getUserBalance(user_id);
+        if (userBalance != null) {
+            userBalance = Math.round(userBalance * 10.0) / 10.0;
+        }
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
