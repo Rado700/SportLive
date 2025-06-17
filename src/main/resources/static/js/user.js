@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParamsCouchId = Number(urlParams.get('couchId'));
     const urlParamSectionId = Number(urlParams.get("section"));
 
-    console.log(urlParamSectionId);
+
     if (urlParams.get("page") === 'recordScreen') {
         //TODO: fetch запрос к api user Couch (проверить на наличий этого (urlParams.get('couch')) тренера по id)если такого тренера нету открыавем openRecordScreenWithData() поверх него function popup и создаем окно urlParams.get('couch') о таком тренере с двумя кнопками добавить и закрыть) если добавить то вызывается запрос который добавляет этого тренера к user и открываем (openRecordScreenWithData(couchId))
         // заменить в параметре urlParams.get('couch') имя на id;
