@@ -1,5 +1,6 @@
 package ru.sportlive.mvp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -82,6 +83,13 @@ public class User {
 
     @Getter
     @Setter
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_ticket")
+    private SeasonTicket ticket;
+
+    @Getter
+    @Setter
     @JsonManagedReference
     @OneToMany(mappedBy = "user")
     private List<Notes> addNotes = new ArrayList<>();
@@ -95,6 +103,7 @@ public class User {
     }
 
     public User() {
+        this.balance = 0.0;
     }
 
     public UserInfoDTO getUserInfo(){

@@ -7,10 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.sportlive.mvp.dto.output.NotesDTO;
 import ru.sportlive.mvp.dto.output.SportSectionGetAllDTO;
 import ru.sportlive.mvp.models.*;
-import ru.sportlive.mvp.repository.CouchRepository;
-import ru.sportlive.mvp.repository.InventoryRepository;
-import ru.sportlive.mvp.repository.NotesRepository;
-import ru.sportlive.mvp.repository.OrganisationRepository;
+import ru.sportlive.mvp.repository.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,6 +16,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 @Transactional
@@ -30,7 +28,8 @@ public class CouchService {
     InventoryRepository inventoryRepository;
     @Autowired
     OrganisationRepository organisationRepository;
-
+    @Autowired
+    SportSectionRepository sportSectionRepository;
     @Autowired
     NotesRepository notesRepository;
 
@@ -43,12 +42,25 @@ public class CouchService {
         Optional<Couch> couch = couchRepository.findById(id);
         return couch.map(Couch ::getSelectedSportSections).orElse(null);
     }
-    public List<User>getAllUsersForCouch(Integer couch_id){
+    public List<User> getAllUsersBySection(Couch couch, Integer sportSectionId) {
+        Optional<SportSection> sportSection = sportSectionRepository.findById(sportSectionId);
+        if (sportSection.isEmpty() || couch == null || couch.getSelectedSportSections() == null) {
+            return null;
+        }
+        SportSection targetSection = sportSection.get();
+        boolean isMatch = couch.getSelectedSportSections().stream()
+                .anyMatch(section -> section.getId().equals(targetSection.getId()));
+        if (isMatch) {
+            return couch.getUsers();
+        }
+        return Collections.emptyList();
+    }
+
+    public List<User>getAllUsersForCouch(Integer couch_id) {
         Optional<Couch> couch = couchRepository.findById(couch_id);
         return couch.map(Couch::getUsers).orElse(null);
     }
-
-//    public Couch addCouchSkip (String name, String experience){
+    //    public Couch addCouchSkip (String name, String experience){
 //        Couch couch = new Couch(name, experience);
 //        couchRepository.save(couch);
 //        return couch;

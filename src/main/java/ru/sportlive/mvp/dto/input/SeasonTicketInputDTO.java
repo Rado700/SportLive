@@ -3,11 +3,7 @@ package ru.sportlive.mvp.dto.input;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import ru.sportlive.mvp.dto.output.CouchInfoDTO;
-import ru.sportlive.mvp.dto.output.SportSectionGetAllDTO;
 
-import java.sql.Time;
-import java.time.LocalTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -32,7 +28,7 @@ public class SeasonTicketInputDTO {
     private String time;
     @Getter
     @Setter
-    private Integer days;
+    private Integer trainings;
     @Getter
     @Setter
     private Integer sectionId;

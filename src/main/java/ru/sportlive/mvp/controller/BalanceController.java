@@ -123,8 +123,8 @@ public class BalanceController {
         if (userPayDTO.getSum() > user.getBalance()){
             return new ResponseEntity<>("Не достаточно средств на балансе",HttpStatus.PAYMENT_REQUIRED);
         }
-        user = userService.withdraw(userPayDTO.getSum(),user);
         Couch couch = couchService.getCouch(couch_id);
+        user = userService.withdraw(userPayDTO.getSum(),user);
         if (couch == null){
             return new ResponseEntity<>("Выберите тренера",HttpStatus.NOT_FOUND);
         }

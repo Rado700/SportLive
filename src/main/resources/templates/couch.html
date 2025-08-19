@@ -44,7 +44,7 @@
 
 <!--Информация-->
 
-<div class="modal fade" id="inventoryScreenModal" tabindex="-1" aria-labelledby="infoScreenLabel" aria-hidden="true">
+<div class="modal fade" id="inventoryScreenModal" tabindex="-1" aria-labelledby="infoScreenLabel" aria-hidden="true" onchange="getSchedule()">
     <div class="modal-dialog modal-lg">
         <div class="modal-content border-primary">
             <div class="modal-header">
@@ -52,7 +52,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="trainer-info">Осталось тренировок тренера: <span></span></p>
+                <p id="trainer-info">Осталось тренировок тренера: <span id="trainer-schedule"></span></p>
+                <div id="users-panel"></div>
+                <hr/>
                 <p id="profile-info">Ваши данные: <span></span></p>
                 <!--                <p id="equipment-info">Общее количество инвентаря: <span></span></p>-->
                 <button class="btn btn-primary mt-3" id="cashBack">Вывод средств</button>

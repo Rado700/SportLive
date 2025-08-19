@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.sportlive.mvp.dto.input.AllCouchDTO;
 import ru.sportlive.mvp.dto.output.CouchInfoDTO;
 
 import java.util.ArrayList;
@@ -107,6 +108,7 @@ public class Couch {
 
 
     public Couch() {
+        this.balance = 0.0;
     }
 
     public Couch(String name) {
@@ -128,6 +130,9 @@ public class Couch {
 
     public CouchInfoDTO getCouchInfo(){
         return new CouchInfoDTO(id,name,balance,experience,photo);
+    }
+    public AllCouchDTO getAllCouchDTO(){
+        return new AllCouchDTO(id,name,experience,photo,selectedSportSections);
     }
 
     public Couch(List<Notes> notes) {

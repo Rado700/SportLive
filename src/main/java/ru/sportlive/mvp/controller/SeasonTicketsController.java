@@ -1,15 +1,12 @@
 package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.input.BookingDTO;
 import ru.sportlive.mvp.dto.input.SeasonTicketInputDTO;
-import ru.sportlive.mvp.dto.input.SportSectionDTO;
 import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.*;
@@ -53,7 +50,7 @@ public class SeasonTicketsController {
 
 
     @Operation(summary = "Добавление абонемента")
-    @PostMapping("/add")
+    @PostMapping("/add/")
     public ResponseEntity<SeasonTicketDTO> addSeasonTicket(HttpSession httpSession, @RequestBody SeasonTicketInputDTO dto) {
         Integer couchId = (Integer) httpSession.getAttribute("couchId");
         Couch couch = couchService.getCouch(couchId);
@@ -95,7 +92,7 @@ public class SeasonTicketsController {
             item.put("sum", allSeasonTickets.get(uuid).get(0).getSum());
             item.put("uuid", allSeasonTickets.get(uuid).get(0).getUuid() );
             item.put("couch", allSeasonTickets.get(uuid).get(0).getCouch());
-            item.put("days", allSeasonTickets.get(uuid).get(0).getDays());
+            item.put("trainings", allSeasonTickets.get(uuid).get(0).getTrainings());
             item.put("section", allSeasonTickets.get(uuid).get(0).getSection());
             List<Object> date = new ArrayList<>();
             for (SeasonTicketDTO dto : allSeasonTickets.get(uuid)){
@@ -117,6 +114,12 @@ public class SeasonTicketsController {
         return new ResponseEntity<>(seasonTicket,HttpStatus.OK);
     }
 
+//    @Operation(summary = "Вывести все тарифы у пользователя")
+//    @GetMapping("/user/tickets/{uuid}")
+//    public ResponseEntity<List<SeasonTicket>>getAllTicketForUser(@PathVariable UUID uuid){
+//
+//    }
+
 
     @Operation(summary = "Бронирование тарифа")
     @PostMapping("/book/{uuid}")
@@ -128,10 +131,11 @@ public class SeasonTicketsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        LocalDateTime localDateTimeNow = LocalDateTime.now();
-        LocalDateTime finishDateTime = localDateTimeNow.plusDays(ticketsByUUID.get(0).getDays());
+        LocalDate localDateNow = LocalDate.now();
+        Integer allTrainingCount = ticketsByUUID.get(0).getTrainings();
 
         List<LocalDateTime> matchingDates = new ArrayList<>();
+        Map<DayOfWeek, List<LocalTime>> targetDateTimes = new HashMap<>();
         for (SeasonTicket ticket:ticketsByUUID) {
 
             String dayOfWeekRussian = ticket.getDayOfWeek();
@@ -141,17 +145,29 @@ public class SeasonTicketsController {
                 continue;
             }
             LocalTime targetTime = LocalTime.parse(ticket.getTime());
+            if (!targetDateTimes.containsKey(targetDay)){
+                targetDateTimes.put(targetDay, new ArrayList<>());
+            }
+            targetDateTimes.get(targetDay).add(targetTime);
+            targetDateTimes.get(targetDay).sort(Comparator.naturalOrder());
+        }
 
-            for (LocalDate date = localDateTimeNow.toLocalDate();
-                 !date.isAfter(finishDateTime.toLocalDate());
-                 date = date.plusDays(1)) {
+        while (allTrainingCount > 0){
 
-                if (date.getDayOfWeek().equals(targetDay)) {
-                    LocalDateTime matchingDateTime = LocalDateTime.of(date, targetTime);
+            if (targetDateTimes.containsKey(localDateNow.getDayOfWeek())) {
+                for (LocalTime targetTime : targetDateTimes.get(localDateNow.getDayOfWeek())) {
+                    LocalDateTime matchingDateTime = LocalDateTime.of(localDateNow, targetTime);
                     matchingDates.add(matchingDateTime);
+                    allTrainingCount--;
+                    if (allTrainingCount == 0){
+                        break;
+                    }
                 }
             }
+            localDateNow = localDateNow.plusDays(1);
         }
+
+
         Integer sum = ticketsByUUID.get(0).getSum();
         int size = matchingDates.size();
         Double matchingPrice = Double.valueOf(sum)/size;
@@ -191,7 +207,7 @@ public class SeasonTicketsController {
             item.put("sum", allSeasonTickets.get(uuid).get(0).getSum());
             item.put("uuid", allSeasonTickets.get(uuid).get(0).getUuid() );
             item.put("couch", allSeasonTickets.get(uuid).get(0).getCouch());
-            item.put("days", allSeasonTickets.get(uuid).get(0).getDays());
+            item.put("trainings", allSeasonTickets.get(uuid).get(0).getTrainings());
             item.put("section", allSeasonTickets.get(uuid).get(0).getSection());
             List<Object> date = new ArrayList<>();
             for (SeasonTicketDTO dto : allSeasonTickets.get(uuid)){

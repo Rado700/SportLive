@@ -18,7 +18,7 @@
 //
 //@SpringBootTest
 //@AutoConfigureMockMvc
-//public class CoachController {
+//public class CoachControllers {
 //
 //    @Autowired
 //    CouchRepository couchRepository;

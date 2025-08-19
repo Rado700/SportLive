@@ -25,11 +25,6 @@ public class CouchDTO {
         this.name = name;
     }
 
-    public CouchDTO(String name, String experience) {
-        this.name = name;
-        this.experience = experience;
-    }
-
     public CouchDTO(String name, String experience, MultipartFile photo) {
         this.name = name;
         this.experience = experience;

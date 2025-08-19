@@ -1,15 +1,13 @@
 package ru.sportlive.mvp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
-import ru.sportlive.mvp.dto.output.SportInfoDTO;
 
-import java.sql.Time;
-import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -47,7 +45,7 @@ public class SeasonTicket {
 
     @Getter
     @Setter
-    private Integer days;
+    private Integer trainings;
 
     @Getter
     @Setter
@@ -56,6 +54,13 @@ public class SeasonTicket {
     @JoinColumn(name = "couch_id")
     private Couch couch;
 
+
+    @Getter
+    @Setter
+    @JsonManagedReference
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<User> user;
 
     @Getter
     @Setter
@@ -69,17 +74,17 @@ public class SeasonTicket {
     }
 
     public SeasonTicketDTO getSeasonTicketDTO() {
-        return new SeasonTicketDTO(id,uuid,name,description,sum,dayOfWeek,time,days,couch.getCouchInfo(),sportSection.getSportSectionAllDTO());
+        return new SeasonTicketDTO(id,uuid,name,description,sum,dayOfWeek,time, trainings,couch.getCouchInfo(),sportSection.getSportSectionAllDTO());
     }
 
-    public SeasonTicket(UUID uuid, String name, String description, Integer sum, String dayOfWeek, String time,Integer days, Couch couch, SportSection sportSection) {
+    public SeasonTicket(UUID uuid, String name, String description, Integer sum, String dayOfWeek, String time, Integer trainings, Couch couch, SportSection sportSection) {
         this.uuid = uuid;
         this.name = name;
         this.description = description;
         this.sum = sum;
         this.dayOfWeek = dayOfWeek;
         this.time = time;
-        this.days = days;
+        this.trainings = trainings;
         this.couch = couch;
         this.sportSection = sportSection;
     }

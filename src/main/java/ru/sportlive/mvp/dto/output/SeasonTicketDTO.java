@@ -3,8 +3,6 @@ package ru.sportlive.mvp.dto.output;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.sql.Time;
-import java.time.LocalTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -24,7 +22,7 @@ public class SeasonTicketDTO {
     @Getter
     private String time;
     @Getter
-    private Integer days;
+    private Integer trainings;
     @Getter
     private CouchInfoDTO couch;
     @Getter

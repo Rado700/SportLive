@@ -130,7 +130,6 @@ function next() {
                 return response.json();
             })
             .then(data => {
-                console.log(data)
                 const sportSectionId = data.id;
                 fetch("/api/sport-section/user/" + sportSectionId, {
                     method: 'POST',
@@ -143,7 +142,7 @@ function next() {
                             throw new Error("Нет такого тренера")
                         }
                         sportSections = true;
-                        window.location.href = `/account?sport=${sports}`;
+                        // window.location.href = `/account`;
                         return response;
                     })
             })
@@ -166,7 +165,7 @@ function next() {
                     throw new Error("Нет такого тренера")
                 }
                 couchSections = true;
-                window.location.href = `/account?sport=${sports}`;
+                window.location.href = `/account`;
                 return response;
             })
     }else {
@@ -175,3 +174,46 @@ function next() {
     }
 }
 
+
+const checkboxTerms = document.getElementById('agree-terms');
+const checkboxPrivacy = document.getElementById('agree-privacy');
+const enterButton = document.getElementById('skip');
+const registerButton = document.getElementById('next');
+
+function updateButtonState() {
+    const isBothChecked = checkboxTerms.checked && checkboxPrivacy.checked;
+    enterButton.disabled = !isBothChecked;
+    registerButton.disabled = !isBothChecked;
+}
+
+// Обновлять состояние кнопок при каждом изменении галочек
+checkboxTerms.addEventListener('change', updateButtonState);
+checkboxPrivacy.addEventListener('change', updateButtonState);
+
+// Вызовем один раз при загрузке
+updateButtonState();
+
+document.addEventListener('DOMContentLoaded', () => {
+    const agreedTerms = localStorage.getItem('agreedTerms') === 'true';
+    const agreedPrivacy = localStorage.getItem('agreedPrivacy') === 'true';
+
+    if (agreedTerms && agreedPrivacy) {
+        // Скрываем блок с чекбоксами
+        document.querySelectorAll('.form-check').forEach(el => el.style.display = 'none');
+        enterButton.disabled = false;
+        registerButton.disabled = false;
+    } else {
+        // Иначе — поведение как раньше
+        checkboxTerms.checked = agreedTerms;
+        checkboxPrivacy.checked = agreedPrivacy;
+        updateButtonState();
+    }
+});
+
+
+function openLegalDoc(url) {
+    const pdfFrame = document.getElementById("pdfFrame");
+    pdfFrame.src = url;
+    const modal = new bootstrap.Modal(document.getElementById('pdfModal'));
+    modal.show();
+}

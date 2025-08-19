@@ -141,7 +141,9 @@ public class LoginService {
         return hexString.toString();
     }
 
-
+    public List<Login> getAllLogins(){
+        return loginRepository.findAll();
+    }
     public Login getLogin(Integer id){
         return loginRepository.findById(id).orElse(null);
     }

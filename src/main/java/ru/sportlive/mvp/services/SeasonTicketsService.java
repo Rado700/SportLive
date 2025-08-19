@@ -4,16 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sportlive.mvp.dto.input.SeasonTicketInputDTO;
-import ru.sportlive.mvp.dto.input.SportSectionDTO;
-import ru.sportlive.mvp.dto.output.CouchInfoDTO;
 import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.SeasonTicket;
 import ru.sportlive.mvp.models.SportSection;
-import ru.sportlive.mvp.models.User;
-import ru.sportlive.mvp.repository.CouchRepository;
 import ru.sportlive.mvp.repository.SeasonTicketsRepository;
-import ru.sportlive.mvp.repository.SportSectionRepository;
 
 import java.util.*;
 
@@ -67,7 +62,7 @@ public class SeasonTicketsService {
                 seasonTicketInputDTO.getSum(),
                 seasonTicketInputDTO.getDayOfWeek(),
                 seasonTicketInputDTO.getTime(),
-                seasonTicketInputDTO.getDays(),
+                seasonTicketInputDTO.getTrainings(),
                 couch,
                 sportSection);
         seasonTicketsRepository.save(seasonTicket);

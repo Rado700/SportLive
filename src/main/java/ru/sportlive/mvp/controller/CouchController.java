@@ -98,6 +98,15 @@ public class CouchController {
         return new ResponseEntity<>(getAllUser, HttpStatus.OK);
     }
 
+    @Operation(summary = "Вывести всех пользователей у тренера по спортсекций")
+    @GetMapping("/getAllUsersBySection/{sportSectionId}")
+    public ResponseEntity<List<User>> getAllUsersBySection(@PathVariable Integer sportSectionId, HttpSession httpSession) {
+        Integer couch_id = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couch_id);
+        List<User> getAllUser = couchService.getAllUsersBySection(couch,sportSectionId);
+        return new ResponseEntity<>(getAllUser, HttpStatus.OK);
+    }
+
     @Operation(summary = "Удалить тренера по id")
     @DeleteMapping("/{couchId}")
     public ResponseEntity<Couch> deleteCouch(Integer couchId) {

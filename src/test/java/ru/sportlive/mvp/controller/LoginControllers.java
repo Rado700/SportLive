@@ -1,37 +1,30 @@
 //package ru.sportlive.mvp.controller;
 //
-//import static org.junit.jupiter.api.Assertions.assertTrue;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-//import com.fasterxml.jackson.core.type.TypeReference;
 //import com.fasterxml.jackson.databind.ObjectMapper;
-//import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 //import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.MvcResult;
-//import ru.sportlive.mvp.models.Couch;
-//import ru.sportlive.mvp.models.User;
-//import ru.sportlive.mvp.repository.CouchRepository;
-//import ru.sportlive.mvp.repository.UserRepository;
+//import ru.sportlive.mvp.models.Login;
+//import ru.sportlive.mvp.repository.LoginRepository;
 //
-//import java.nio.charset.StandardCharsets;
 //import java.util.ArrayList;
 //import java.util.List;
 //
+//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+//
 //@SpringBootTest
 //@AutoConfigureMockMvc
-//public class UserControllerTest {
+//public class LoginControllers {
+//
 //
 //    @Autowired
 //    ObjectMapper objectMapper;
 //
 //    @Autowired
-//    UserRepository userRepository;
+//    LoginRepository loginRepository;
 //
 ////
 ////    @BeforeEach
@@ -43,25 +36,25 @@
 //    MockMvc mockMvc;
 //
 //    @Test
-//    public void userTest() throws Exception {
+//    public void loginTest() throws Exception {
 //
-//        User user1 = new User("Galimov", "Radik", 175, 73);
-//        User user2 = new User("Rafail", "Venediktov", 173, 74);
 //
-//        User user3 = new User("Anton", "Antonov", 177, 79);
-//        User user4 = new User("Sergei", "Sergeev", 185, 85);
+//        Login login1 = new Login("radik1","1111");
+//        Login login2 = new Login("rafail2","2222");
+//        Login login3 = new Login("anton3","3333");
+//        Login login4 = new Login("sergei4","4444");
 //
-//        List<User> twoPerson = new ArrayList<>();
+//        List<Login> twoPerson = new ArrayList<>();
 //
-//        twoPerson.add(user1);
-//        twoPerson.add(user2);
-//        twoPerson.add(user3);
-//        twoPerson.add(user4);
+//        twoPerson.add(login1);
+//        twoPerson.add(login2);
+//        twoPerson.add(login3);
+//        twoPerson.add(login4);
 //
-//        for (User users : twoPerson) {
-//            mockMvc.perform(post("/api/user/")
+//        for (Login logins : twoPerson) {
+//            mockMvc.perform(post("/api/login/user/registration/")
 //                            .contentType("application/json")
-//                            .content(objectMapper.writeValueAsString(users)))
+//                            .content(objectMapper.writeValueAsString(logins)))
 //                    .andExpect(status().isOk());
 //        }
 //
@@ -77,3 +70,5 @@
 //    }
 //
 //}
+//
+//

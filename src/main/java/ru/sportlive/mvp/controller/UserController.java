@@ -4,10 +4,14 @@ package ru.sportlive.mvp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.sportlive.mvp.dto.input.AllCouchDTO;
+import ru.sportlive.mvp.dto.input.CouchDTO;
+import ru.sportlive.mvp.dto.input.UserTgDTO;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.dto.output.CouchInfoTgDTO;
 import ru.sportlive.mvp.dto.output.NotesDTO;
@@ -16,7 +20,9 @@ import ru.sportlive.mvp.services.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/user")
@@ -74,6 +80,14 @@ public class UserController {
         User user =userService.getUser(id);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
+    @Operation(summary = "Вывести все спортсекций пользователя")
+    @GetMapping("/getAllSportSection/")
+    public ResponseEntity<Set<SportSection>>getAllSportSectionUser(HttpSession httpSession){
+        Integer user_id = (Integer) httpSession.getAttribute("userId");
+        User user = userService.getUser(user_id);
+        Set<SportSection> selectedSportSections = user.getSelectedSportSections();
+        return new ResponseEntity<>(selectedSportSections,HttpStatus.OK);
+    }
 
     @Operation(summary = "Выводит авторизированного пользователя")
     @GetMapping("/")
@@ -82,7 +96,7 @@ public class UserController {
         if (id == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        User user =userService.getUser(id);
+        User user = userService.getUser(id);
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
@@ -132,11 +146,15 @@ public class UserController {
 
     @Operation(summary = "Получить всех couches для user")
     @GetMapping("/couch/")
-    public ResponseEntity<List<Couch>>getUsersSportSection(HttpSession httpSession){
+    public ResponseEntity<List<AllCouchDTO>>getUsersSportSection(HttpSession httpSession){
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = userService.getUser(userId);
         List<Couch> couches = user.getSelectedCouches();
-        return new ResponseEntity<>(couches,HttpStatus.OK);
+        List<AllCouchDTO>allCouches = new ArrayList<>();
+        for (Couch couch : couches) {
+            allCouches.add(couch.getAllCouchDTO());
+        }
+        return new ResponseEntity<>(allCouches,HttpStatus.OK);
     }
 
     @Operation(summary = "Получить всех couches для user по tgId")
@@ -150,6 +168,27 @@ public class UserController {
         }
         return new ResponseEntity<>(couchInfoTgDTO,HttpStatus.OK);
     }
+
+
+    @Operation(summary = "Пользователя имя,фамилия и тг")
+    @GetMapping("/userForTg/")
+    public ResponseEntity <List<UserTgDTO>>getAllUserForTg(HttpSession httpSession){
+        Integer couchId = (Integer) httpSession.getAttribute("couchId");
+        Couch couch = couchService.getCouch(couchId);
+        List<UserTgDTO>getAllUser = new ArrayList<>();
+        List<Login>getAllLogins = loginService.getAllLogins();
+        for (User user : couch.getUsers()) {
+            for (Login login:getAllLogins) {
+                if (login.getUser() != null && user.getId().equals(login.getUser().getId())) {
+                    System.out.println(user);
+                    getAllUser.add(new UserTgDTO(user.getName(), user.getSurname(), user.getLogin().getTelegramId()));
+                }
+                break;
+            }
+        }
+        return new ResponseEntity<>(getAllUser,HttpStatus.OK);
+    }
+
 
     @Operation(summary = "Добавить заметки для пользователя")
     @PostMapping("/addNotesForUser")
