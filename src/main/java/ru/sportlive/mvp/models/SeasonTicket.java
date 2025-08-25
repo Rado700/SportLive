@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,13 +55,15 @@ public class SeasonTicket {
     @JoinColumn(name = "couch_id")
     private Couch couch;
 
-
     @Getter
     @Setter
     @JsonManagedReference
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private List<User> user;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_tickets",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "ticket_id"))
+    private List<User>selectedTickets = new ArrayList<>();
 
     @Getter
     @Setter

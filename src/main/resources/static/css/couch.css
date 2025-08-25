@@ -240,7 +240,7 @@
         border: 1px solid #dee2e6;
         border-radius: 10px;
         padding: 15px;
-        width: 200px;
+        width: 228px;
         text-align: center;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -503,7 +503,7 @@
         display: block;
         font-size: 16px;
         margin-top: 10px;
-        padding: 10px;
+        /*padding: 10px;*/
         background-color: #fff3e0;
         border-radius: 8px;
         color: #e64a19;

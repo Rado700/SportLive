@@ -146,8 +146,19 @@
         <p id="profile-info">Ваши данные: <span></span></p>
         <p id="balance-info">Баланс: <span></span></p>
         <h4 id="trainer-info">Данные о тренере: <span></span></h4>
-        <p id="trainer-rest">Осталось тренировок: <span></span></p>
         <h4 id="equipment-info">Общее количество инвентаря: <span></span></h4>
+        <p id="trainer-rest">Осталось тренировок: <span></span></p>
+        <div id="trainings-container" class="trainings-container">
+            <button id="trainings-toggle" class="trainings-btn">Статистика тренировок: <span id="trainings-count"></span> <span id="trainings-arrow">⬇</span></button>
+            <div id="trainings-details" style="display: none;"></div>
+        </div>
+        
+        <div id="past-trainings-container" class="trainings-container">
+            <button id="past-trainings-toggle" class="trainings-btn">Прошедшие тренировки: <span id="past-trainings-count"></span> <span id="past-trainings-arrow">⬇</span></button>
+            <div id="past-trainings-details" style="display: none;"></div>
+        </div>
+        <div id="trainings-overlay" class="modal-overlay" style="display:none"></div>
+        <div id="trainings-modal" class="modal-card" style="display:none"></div>
         <button type="submit" class="btn btn-secondary" id="notification">Подключить уведомления</button>
         <button type="submit" class="btn btn-danger mt-3" id="exit" onclick="exit()">Выход</button>
         <button id="back-to-main-info">Назад</button>

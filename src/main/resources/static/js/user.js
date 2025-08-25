@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const coachForUser = document.getElementById("coachForUser");
 
 
-    const getAllEquipment = document.getElementById('getAllEquipment')
+
 
 
     const showScreen = (screen) => {
@@ -498,10 +498,75 @@ document.addEventListener('DOMContentLoaded', () => {
                 equipmentInfo.innerHTML = '';
                 let getUserInventory = getCountEquipment(count, data);
                 equipmentInfo.appendChild(getUserInventory);
-                document.getElementById('getAllEquipment').addEventListener("click", function () {
-                    getEquipment()
-                })
 
+            });
+
+        // Статистика тренировок пользователя (новая версия с модальным окном)
+        fetch('/api/booking/user/trainings')
+            .then(response => response.json())
+            .then(items => {
+                // Разделяем тренировки на текущие и прошедшие
+                const currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0); // Сбрасываем время до начала дня
+                const currentTrainings = [];
+                const pastTrainings = [];
+                
+                if (Array.isArray(items)) {
+                    items.forEach(item => {
+                        if (item.date) {
+                            const trainingDate = new Date(item.date);
+                            trainingDate.setHours(0, 0, 0, 0); // Сбрасываем время до начала дня
+                            if (trainingDate >= currentDate) {
+                                currentTrainings.push(item);
+                            } else {
+                                pastTrainings.push(item);
+                            }
+                        }
+                    });
+                }
+                
+                // Обновляем счетчики
+                const currentCountSpan = document.getElementById('trainings-count');
+                const pastCountSpan = document.getElementById('past-trainings-count');
+                
+                if (currentCountSpan) currentCountSpan.textContent = currentTrainings.length;
+                if (pastCountSpan) pastCountSpan.textContent = pastTrainings.length;
+                
+                // Рендерим текущие тренировки
+                renderCurrentTrainings(currentTrainings);
+                
+                // Рендерим прошедшие тренировки
+                renderPastTrainings(pastTrainings);
+                // Убираем дублирующийся код
+                // Убираем дублирующийся код
+
+                // Убираем дублирующийся код
+                const toggleBtn = document.getElementById('trainings-toggle');
+                const arrow = document.getElementById('trainings-arrow');
+                const trainingsContainer = document.getElementById('trainings-details');
+                if (toggleBtn && arrow && trainingsContainer) {
+                    toggleBtn.onclick = function () {
+                        const isHidden = (trainingsContainer.style.display === 'none' || !trainingsContainer.style.display);
+                        trainingsContainer.style.display = isHidden ? 'block' : 'none';
+                        arrow.textContent = isHidden ? '⬆' : '⬇';
+                    }
+                }
+                
+                // Добавляем обработчик для прошедших тренировок
+                const pastToggleBtn = document.getElementById('past-trainings-toggle');
+                const pastArrow = document.getElementById('past-trainings-arrow');
+                if (pastToggleBtn && pastArrow) {
+                    pastToggleBtn.onclick = function () {
+                        const pastContainer = document.getElementById('past-trainings-details');
+                        const isHidden = (pastContainer.style.display === 'none' || !pastContainer.style.display);
+                        pastContainer.style.display = isHidden ? 'block' : 'none';
+                        pastArrow.textContent = isHidden ? '⬆' : '⬇';
+                    }
+                }
+            })
+            .catch(() => {
+                const container = document.getElementById('trainings-details');
+                if (container) container.textContent = 'Не удалось загрузить статистику тренировок.';
             });
     });
 
@@ -538,22 +603,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    document.getElementById('equipment-info').addEventListener("click", function (event) {
-        if (event.target && event.target.id === "getAllEquipment") {
-            getEquipment();
-        }
-    });
+    // Убрано делегирование клика по #equipment-info во избежание конфликтов с кнопкой-тогглером
 
     function getCountEquipment(count, data) {
         let infoBox = document.createElement("equipment-info");
         infoBox.innerHTML = '';
         infoBox.style.color = 'darkslategrey';
 
+        if (!Array.isArray(data) || data.length === 0) {
+            infoBox.innerHTML = '<p>Инвентаря пока нету</p>';
+            return infoBox;
+        }
+
 
         let firstItemHtml;
         let firstItem = data.length > 0 ? data[0] : null;
         data.forEach(data => {
-            firstItemHtml = firstItem ? `<p>${data.name} (${data.amount} шт.)</p>` : "<p>Нет доступного инвентаря</p>";
+            firstItemHtml = firstItem ? `<p>${data.name} (${data.amount} шт.)</p>` : "<p>Инвентаря пока нету</p>";
             infoBox.innerHTML += `${firstItemHtml}`;
         })
 
@@ -561,6 +627,25 @@ document.addEventListener('DOMContentLoaded', () => {
         infoBox.innerHTML += `
         <p><strong><button id="getAllEquipment" class="btn btn-primary">Подробнее⬇</button></strong></p>
         <div id="showAllEquipment" style="display: none" ></div>`;
+        
+        // Добавляем обработчик для кнопки "Подробнее"
+        setTimeout(() => {
+            const button = document.getElementById("getAllEquipment");
+            if (button) {
+                button.addEventListener("click", function() {
+                    const container = document.getElementById("showAllEquipment");
+                    if (container.style.display === 'none' || !container.style.display) {
+                        // Показываем список
+                        getEquipment();
+                        this.textContent = "Свернуть⬆";
+                    } else {
+                        // Скрываем список
+                        container.style.display = 'none';
+                        this.textContent = "Подробнее⬇";
+                    }
+                });
+            }
+        }, 100);
 
         return infoBox;
 
@@ -577,7 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.style.display = "block";
 
                 if (data.length === 0) {
-                    container.innerHTML = '<p>No equipment available</p>';
+                    container.innerHTML = '<p>Инвентаря пока нету</p>';
                     return;
                 }
                 data.forEach(item => {
@@ -611,10 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     container.appendChild(newElement);
 
                 })
-                container.innerHTML += '<button id="closeInventory" class="btn btn-primary">Закрыть список⬆</button>'
-                document.getElementById("closeInventory").addEventListener("click", function () {
-                    container.style.display = 'none';
-                })
+                // Кнопка "Закрыть список" больше не нужна, так как основная кнопка меняется на "Свернуть"
             })
     }
 
@@ -705,7 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }).then(data => {
             const allSportSectionDB = data.selectedSportSections;
             allSportSection.innerHTML = "<option value=\"\"  disabled selected hidden>Спортиваная секция</option>";
-            if (allSportSectionDB === []) {
+            if (!Array.isArray(allSportSectionDB) || allSportSectionDB.length === 0) {
                 alert("Нет спортсекций");
             }
             allSportSectionDB.forEach(item => {
@@ -722,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 const allCouchForSportSectionDB = data.selectedCouches;
                 allCouchForSportSection.innerHTML = "<option value=\"\"  disabled selected hidden>Тренер</option>";
-                if (allCouchForSportSectionDB === []) {
+                if (!Array.isArray(allCouchForSportSectionDB) || allCouchForSportSectionDB.length === 0) {
                     alert("Нету тренеров");
                 }
                 allCouchForSportSectionDB.forEach(item => {
@@ -734,6 +816,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     allCouchForSportSection.appendChild(option);
                 })
+                // Предвыбор типа и месяца при переходе из статистики
+                const typeParam = urlParams.get('type');
+                const dateParam = urlParams.get('date');
+                if (typeParam) {
+                    const radio = document.querySelector(`input[name=\"training_type\"][value=\"${typeParam}\"]`);
+                    if (radio) radio.checked = true;
+                }
+                if (dateParam) {
+                    const d = new Date(dateParam);
+                    if (!isNaN(d)) {
+                        document.getElementById('month').value = d.getMonth();
+                        generateCalendar(d.getMonth());
+                        // подсветим день
+                        const dayBtn = document.getElementById('button_' + d.getDate());
+                        if (dayBtn) dayBtn.classList.add('selected');
+                    }
+                }
+                getSchedule();
             })
 
 
@@ -765,7 +865,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 const coachForInventoryDB = data.selectedCouches;
                 coachForInventory.innerHTML = "<option value=\"couch\"  disabled selected hidden>Тренер</option>";
-                if (coachForInventoryDB === []) {
+                if (!Array.isArray(coachForInventoryDB) || coachForInventoryDB.length === 0) {
                     alert("notCouches");
                 }
                 coachForInventoryDB.forEach(item => {
@@ -1666,6 +1766,249 @@ function bookTraining(scheduleId, infoBox, sum, coach) {
                 document.body.removeChild(infoBox);
             }
         });
+}
+
+// Функция для рендеринга текущих тренировок
+function renderCurrentTrainings(trainings) {
+    const container = document.getElementById('trainings-details');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (!Array.isArray(trainings) || trainings.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6c757d; font-style: italic;">Нет предстоящих тренировок</p>';
+        return;
+    }
+    
+    const general = [];
+    const individual = [];
+    
+    trainings.forEach(training => {
+        const type = String(training.typeWorkout || '').toLowerCase();
+        (type === 'individual' ? individual : general).push(training);
+    });
+    
+    // Рендерим общие тренировки
+    if (general.length > 0) {
+        const generalGroup = createTrainingGroup('Общие тренировки', general, true);
+        container.appendChild(generalGroup);
+    }
+    
+    // Рендерим индивидуальные тренировки
+    if (individual.length > 0) {
+        const individualGroup = createTrainingGroup('Индивидуальные тренировки', individual, true);
+        container.appendChild(individualGroup);
+    }
+}
+
+// Функция для рендеринга прошедших тренировок
+function renderPastTrainings(trainings) {
+    const container = document.getElementById('past-trainings-details');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (!Array.isArray(trainings) || trainings.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6c757d; font-style: italic;">Нет прошедших тренировок</p>';
+        return;
+    }
+    
+    const general = [];
+    const individual = [];
+    
+    trainings.forEach(training => {
+        const type = String(training.typeWorkout || '').toLowerCase();
+        (type === 'individual' ? individual : general).push(training);
+    });
+    
+    // Рендерим общие тренировки
+    if (general.length > 0) {
+        const generalGroup = createTrainingGroup('Общие тренировки', general, false);
+        container.appendChild(generalGroup);
+    }
+    
+    // Рендерим индивидуальные тренировки
+    if (individual.length > 0) {
+        const individualGroup = createTrainingGroup('Индивидуальные тренировки', individual, false);
+        container.appendChild(individualGroup);
+    }
+}
+
+// Функция для создания группы тренировок
+function createTrainingGroup(title, trainings, isCurrent) {
+    const groupContainer = document.createElement('div');
+    groupContainer.className = 'training-group';
+    
+    const groupHeader = document.createElement('h4');
+    groupHeader.textContent = title;
+    groupContainer.appendChild(groupHeader);
+    
+    const trainingList = document.createElement('div');
+    trainingList.className = 'training-list';
+    
+    trainings.forEach(training => {
+        const trainingItem = createTrainingItem(training, isCurrent);
+        trainingList.appendChild(trainingItem);
+    });
+    
+    groupContainer.appendChild(trainingList);
+    
+    // Добавляем кнопку "Скрыть список"
+    const hideButton = document.createElement('button');
+    hideButton.className = 'btn btn-secondary';
+    hideButton.textContent = 'Скрыть список';
+    hideButton.style.marginTop = '10px';
+    hideButton.onclick = function() {
+        trainingList.style.display = trainingList.style.display === 'none' ? 'block' : 'none';
+        this.textContent = trainingList.style.display === 'none' ? 'Показать список' : 'Скрыть список';
+    };
+    
+    groupContainer.appendChild(hideButton);
+    
+    return groupContainer;
+}
+
+// Функция для создания элемента тренировки
+function createTrainingItem(training, isCurrent) {
+    const item = document.createElement('div');
+    item.className = 'training-item';
+    
+    const type = String(training.typeWorkout || '').toLowerCase();
+    const typeRu = type === 'individual' ? 'Индивидуальная' : 'Общая';
+    const dateStr = training.date ? new Date(training.date).toLocaleString('ru-RU') : '';
+    
+    const info = document.createElement('div');
+    info.className = 'training-info';
+    
+    const typeEl = document.createElement('div');
+    typeEl.className = 'training-type';
+    typeEl.textContent = typeRu;
+    
+    const dateEl = document.createElement('div');
+    dateEl.className = 'training-date';
+    dateEl.textContent = dateStr;
+    
+    info.appendChild(typeEl);
+    info.appendChild(dateEl);
+    
+    const actions = document.createElement('div');
+    actions.className = 'training-actions';
+    
+    // Кнопка "Детали"
+    const detailsBtn = document.createElement('button');
+    detailsBtn.className = 'btn-details';
+    detailsBtn.textContent = 'Детали';
+    detailsBtn.onclick = () => showTrainingDetails(training, typeRu, dateStr);
+    
+    actions.appendChild(detailsBtn);
+    
+    // Кнопка "Календарь" только для текущих тренировок
+    if (isCurrent) {
+        const calendarBtn = document.createElement('button');
+        calendarBtn.className = 'btn-calendar';
+        calendarBtn.textContent = 'Календарь';
+        calendarBtn.onclick = () => openCalendar(training);
+        actions.appendChild(calendarBtn);
+    }
+    
+    item.appendChild(info);
+    item.appendChild(actions);
+    
+    return item;
+}
+
+// Функция для показа деталей тренировки
+function showTrainingDetails(training, typeRu, dateStr) {
+    const overlay = document.getElementById('trainings-overlay');
+    const modal = document.getElementById('trainings-modal');
+    
+    if (!overlay || !modal) return;
+    
+    modal.innerHTML = '';
+    
+    const detailsContainer = document.createElement('div');
+    const titleEl = document.createElement('h3');
+    titleEl.textContent = 'Информация о тренировке';
+    
+    const pType = document.createElement('p');
+    pType.innerHTML = `<strong>Тип:</strong> ${typeRu}`;
+    
+    const pDate = document.createElement('p');
+    pDate.innerHTML = `<strong>Дата и время:</strong> ${dateStr}`;
+    
+    const pPlace = document.createElement('p');
+    const pSum = document.createElement('p');
+    const pDesc = document.createElement('p');
+    const pCoach = document.createElement('p');
+    
+    detailsContainer.appendChild(titleEl);
+    detailsContainer.appendChild(pType);
+    detailsContainer.appendChild(pDate);
+    detailsContainer.appendChild(pCoach);
+    detailsContainer.appendChild(pPlace);
+    detailsContainer.appendChild(pSum);
+    detailsContainer.appendChild(pDesc);
+    
+    const fetches = [];
+    
+    if (training.scheduleId) {
+        fetches.push(
+            fetch(`/api/schedule/${training.scheduleId}`).then(r => r.ok ? r.json() : null)
+                .then(s => {
+                    if (s) {
+                        if (s.place) pPlace.innerHTML = `<strong>Место:</strong> ${s.place}`;
+                        if (s.sum != null) pSum.innerHTML = `<strong>Стоимость:</strong> ${s.sum} ₽`;
+                        if (s.description) pDesc.innerHTML = `<strong>Комментарий:</strong> ${s.description}`;
+                    }
+                })
+        );
+    }
+    
+    if (training.couchId) {
+        fetches.push(
+            fetch(`/api/couch/${training.couchId}`).then(r => r.ok ? r.json() : null)
+                .then(c => {
+                    if (c) {
+                        pCoach.innerHTML = `<strong>Тренер:</strong> ${c.name}${c.experience ? `, опыт: ${c.experience}` : ''}`;
+                    }
+                })
+        );
+    }
+    
+    Promise.all(fetches).finally(() => {
+        const actions = document.createElement('div');
+        actions.style.marginTop = '10px';
+        
+        const close = document.createElement('button');
+        close.textContent = 'Закрыть';
+        close.className = 'btn btn-secondary';
+        close.onclick = () => { 
+            overlay.style.display = 'none'; 
+            modal.style.display = 'none'; 
+        };
+        
+        actions.appendChild(close);
+        
+        modal.appendChild(detailsContainer);
+        modal.appendChild(actions);
+        overlay.style.display = 'block';
+        modal.style.display = 'block';
+        overlay.onclick = () => { 
+            overlay.style.display = 'none'; 
+            modal.style.display = 'none'; 
+        };
+    });
+}
+
+// Функция для открытия календаря
+function openCalendar(training) {
+    const url = new URL(window.location.origin + '/account');
+    url.searchParams.set('page', 'recordScreen');
+    if (training.couchId) url.searchParams.set('couchId', training.couchId);
+    if (training.sportSectionId) url.searchParams.set('section', training.sportSectionId);
+    if (training.date) url.searchParams.set('date', new Date(training.date).toISOString());
+    if (training.typeWorkout) url.searchParams.set('type', training.typeWorkout);
+    window.location.href = url.toString();
 }
 
 

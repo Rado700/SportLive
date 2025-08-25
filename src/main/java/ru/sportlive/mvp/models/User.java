@@ -81,12 +81,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "couch_id"))
     private List<Couch> selectedCouches = new ArrayList<>();
 
+
     @Getter
     @Setter
     @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "user_ticket")
-    private SeasonTicket ticket;
+    @ManyToMany(mappedBy = "selectedTickets",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<SeasonTicket>tickets;
 
     @Getter
     @Setter

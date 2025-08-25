@@ -63,7 +63,7 @@
         cursor: pointer;
         flex: 1;
         border-radius: 20px;
-        border-bottom-style: dashed;
+        /*border-bottom-style: dashed;*/
         border-width: thick;
         padding-left: 3px;
     }
@@ -392,6 +392,26 @@
         margin-bottom: 20px;
     }
 
+    /* Статистика тренировок - единый стиль */
+    .trainings-btn {
+        margin: 0;
+        padding: 12px;
+        background-color: transparent;
+        border: none;
+        color: black;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .trainings-btn:hover { background-color: #f7f7f7; }
+    #trainings-details {
+        margin-top: 8px;
+    }
+
     #trainer-rest {
         color: white;
     }
@@ -449,11 +469,103 @@
         background-color: white;
     }
 
-    #trainer-info {
+    #trainer-info, #trainings-details {
         padding: 15px;
         background-color: #ffffff;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        color: black;
+    }
+
+    .trainings-container {
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+    }
+
+    .training-group {
+        margin: 15px 0;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+
+    .training-group h4 {
+        margin: 0 0 10px 0;
+        color: #007bff;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .training-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 8px 0;
+        background-color: white;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+    }
+
+    .training-item:hover {
+        background-color: #f8f9fa;
+        border-color: #007bff;
+        transform: translateX(5px);
+    }
+
+    .training-info {
+        flex: 1;
+    }
+
+    .training-type {
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+
+    .training-date {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .training-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-details {
+        padding: 6px 12px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-details:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-calendar {
+        padding: 6px 12px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-calendar:hover {
+        background-color: #1e7e34;
     }
 
     .trainer-container {
@@ -1012,6 +1124,98 @@
         color: black;
     }
 
+    .trainings-container {
+        padding: 15px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+        color: black;
+    }
+
+    .training-group {
+        margin: 15px 0;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+
+    .training-group h4 {
+        margin: 0 0 10px 0;
+        color: #007bff;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .training-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 8px 0;
+        background-color: white;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+    }
+
+    .training-item:hover {
+        background-color: #f8f9fa;
+        border-color: #007bff;
+        transform: translateX(5px);
+    }
+
+    .training-info {
+        flex: 1;
+    }
+
+    .training-type {
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+
+    .training-date {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .training-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-details {
+        padding: 6px 12px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-details:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-calendar {
+        padding: 6px 12px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-calendar:hover {
+        background-color: #1e7e34;
+    }
+
     .trainer-container {
         margin-top: 13px;
         padding: 10px 0;
@@ -1062,6 +1266,28 @@
         z-index: 9999; /* поверх overlay */
         opacity: 0;
         transition: opacity 0.3s ease;
+    }
+
+    /* Модальное окно для тренировок */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1200;
+    }
+    .modal-card {
+        position: fixed;
+        top: 75%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        color: #000;
+        padding: 16px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        z-index: 1201;
+        width: 90%;
+        max-width: 420px;
     }
 
     .popup.show {
@@ -1120,5 +1346,26 @@
         font-size: 1em;
     }
 
+    /* Статистика тренировок - мобильная версия */
+    .trainings-btn {
+        margin: 0;
+        padding: 12px;
+        background-color: cornsilk;
+        border: none;
+        color: black;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .trainings-btn:hover {
+        background-color: cornsilk;
+    }
+    #trainings-details {
+        margin-top: 8px;
+    }
 
 }

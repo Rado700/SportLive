@@ -1,23 +1,40 @@
 package ru.sportlive.mvp.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.input.BookingDTO;
-import ru.sportlive.mvp.dto.output.BookingUserCouchDTO;
-import ru.sportlive.mvp.dto.output.GetScheduleDateUser;
-import ru.sportlive.mvp.models.*;
-import ru.sportlive.mvp.services.*;
-
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
+import ru.sportlive.mvp.dto.input.BookingDTO;
+import ru.sportlive.mvp.dto.output.BookingUserCouchDTO;
+import ru.sportlive.mvp.dto.output.GetScheduleDateUser;
+import ru.sportlive.mvp.dto.output.UserTrainingDTO;
+import ru.sportlive.mvp.models.Booking;
+import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Login;
+import ru.sportlive.mvp.models.Schedule;
+import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.services.BookingService;
+import ru.sportlive.mvp.services.CouchService;
+import ru.sportlive.mvp.services.LoginService;
+import ru.sportlive.mvp.services.ScheduleService;
+import ru.sportlive.mvp.services.TGService;
+import ru.sportlive.mvp.services.TransactionService;
+import ru.sportlive.mvp.services.UserService;
 
 @RestController
 @RequestMapping("/api/booking")
@@ -151,6 +168,28 @@ public class BookingController {
         Integer id = (Integer) httpSession.getAttribute("userId");
         List<Booking> booking = bookingService.getUserBookings(id);
         return new ResponseEntity<>(booking,HttpStatus.OK);
+    }
+
+    @Operation(summary = "Тренировки пользователя с типом и датой")
+    @GetMapping("/user/trainings")
+    public ResponseEntity<List<UserTrainingDTO>> getUserTrainings(HttpSession httpSession) {
+        Integer userId = (Integer) httpSession.getAttribute("userId");
+        if (userId == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        List<Booking> userBookings = bookingService.getUserBookings(userId);
+        List<UserTrainingDTO> trainings = userBookings.stream()
+                .filter(b -> b.getSchedules() != null && b.getSchedules().getDate() != null)
+                .map(b -> new UserTrainingDTO(
+                        b.getSchedules().getDate(),
+                        b.getSchedules().getTypeWorkout(),
+                        b.getSchedules().getId(),
+                        b.getSchedules().getCouch() != null ? b.getSchedules().getCouch().getId() : null,
+                        b.getSchedules().getSportSection() != null ? b.getSchedules().getSportSection().getId() : null
+                ))
+                .sorted((a, b) -> b.getDate().compareTo(a.getDate()))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(trainings, HttpStatus.OK);
     }
 
     @Operation(summary = "Все брони тренера по id")
