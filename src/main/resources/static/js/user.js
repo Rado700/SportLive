@@ -828,9 +828,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!isNaN(d)) {
                         document.getElementById('month').value = d.getMonth();
                         generateCalendar(d.getMonth());
-                        // подсветим день
-                        const dayBtn = document.getElementById('button_' + d.getDate());
-                        if (dayBtn) dayBtn.classList.add('selected');
+                        // подсветим день с временной рамкой
+                        setTimeout(() => {
+                            highlightSelectedDate(d.getDate());
+                        }, 500); // Небольшая задержка для загрузки календаря
                     }
                 }
                 getSchedule();
@@ -1155,6 +1156,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('month').value = currentMonth;
     generateCalendar(currentMonth);
 
+    // Добавляем обработчики для типа тренировки
+    const trainingTypeRadios = document.getElementsByName("training_type");
+    trainingTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            console.log("Изменен тип тренировки:", this.value);
+            getSchedule();
+        });
+    });
+
+    // Добавляем обработчики для изменения тренера и секции
+    const coachSelect = document.getElementById("coach");
+    const sectionSelect = document.getElementById("sports-section");
+    
+    if (coachSelect) {
+        coachSelect.addEventListener('change', function() {
+            console.log("Изменен тренер:", this.value);
+            getSchedule();
+        });
+    }
+    
+    if (sectionSelect) {
+        sectionSelect.addEventListener('change', function() {
+            console.log("Изменена секция:", this.value);
+            getSchedule();
+        });
+    }
 
     openTgBot();
 
@@ -1291,7 +1318,17 @@ function displayTariffs() {
     const coach = document.getElementById("coach").value
     const sportSection = document.getElementById("sports-section").value
 
+    console.log("displayTariffs вызвана с параметрами:", { coach, sportSection });
+
     tariffContainer.innerHTML = "";
+
+    // Проверяем, что тренер и секция выбраны
+    if (!coach || !sportSection) {
+        console.log("Тренер или секция не выбраны, пропускаем загрузку тарифов");
+        return;
+    }
+
+    console.log("Загружаем тарифы для тренера", coach, "и секции", sportSection);
 
     fetch("/api/seasonTickets/ticket/get/" + sportSection + "/" + coach)
         .then(response => {
@@ -1301,7 +1338,12 @@ function displayTariffs() {
             return response.json()
         })
         .then(data => {
-            console.log(data);
+            console.log("Получены тарифы:", data);
+            if (!Array.isArray(data) || data.length === 0) {
+                console.log("Тарифы не найдены");
+                tariffContainer.innerHTML = '<p style="text-align: center; color: #6c757d;">Тарифы не найдены</p>';
+                return;
+            }
             data.forEach(item => {
                 const tariffs = document.createElement("div");
                 tariffs.classList.add("tariffs");
@@ -1353,6 +1395,10 @@ function displayTariffs() {
             })
 
         })
+        .catch(error => {
+            console.error("Ошибка загрузки тарифов:", error);
+            tariffContainer.innerHTML = '<p style="text-align: center; color: #dc3545;">Ошибка загрузки тарифов: ' + error.message + '</p>';
+        })
 }
 
 
@@ -1392,10 +1438,13 @@ function getSchedule() {
     bookingTime.classList.add('hidden');
 
     const tariffContainer = document.getElementById("tariffs-container");
+    console.log("getSchedule: тип тренировки =", type);
     if (type === "general") {
+        console.log("Показываем тарифы для общих тренировок");
         tariffContainer.classList.remove("hidden");
         displayTariffs();
     } else {
+        console.log("Скрываем тарифы, тип не general");
         tariffContainer.classList.add("hidden");
     }
 
@@ -1459,8 +1508,6 @@ function getSchedule() {
                                 if (scheduleDay.id === scheduleId) {
                                     if (bookingUserId === userId) {
                                         dayButton.style.backgroundColor = 'green';
-                                    } else {
-                                        dayButton.style.backgroundColor = 'yellow';
                                     }
                                 }
                             })
@@ -1565,6 +1612,7 @@ function showDetailsBookingTime(dayButton) {
 
 function showDetailsBooking(scheduleDay, dayButton) {
     const coach = document.getElementById("coach").value
+    const sportSection = document.getElementById("sports-section").value
 
     // Создаем или показываем окно с информацией
     const infoBoxes = document.querySelectorAll("div.info-box");
@@ -1592,7 +1640,9 @@ function showDetailsBooking(scheduleDay, dayButton) {
 
     if (trainingTime < now) {
         // Тренировка уже прошла
+        const typeRu = scheduleDay.typeWorkout === "individual" ? "Индивидуальная" : "Общая";
         infoBox.innerHTML = `
+            <p><strong>Тип:</strong> ${typeRu}</p>
             <p><strong>Время:</strong> ${time}</p>
             <p><strong>Место:</strong> ${place}</p>
             <p><strong>Сумма:</strong> ${sum}</p>
@@ -1602,6 +1652,7 @@ function showDetailsBooking(scheduleDay, dayButton) {
 
 
         document.body.appendChild(infoBox);
+
         document.getElementById('closeInfoBox').addEventListener('click', function () {
             document.body.removeChild(infoBox);
         });
@@ -1633,7 +1684,9 @@ function showDetailsBooking(scheduleDay, dayButton) {
         console.log(count);
 
 
+        const typeRu = scheduleDay.typeWorkout === "individual" ? "Индивидуальная" : "Общая";
         infoBox.innerHTML = `
+        <p><strong>Тип:</strong> ${typeRu}</p>
         <p><strong>Время:</strong> ${time}</p>
         <p><strong>Место:</strong> ${place}</p>
         <p><strong>Сумма:</strong> ${sum}</p>
@@ -1679,6 +1732,8 @@ function showDetailsBooking(scheduleDay, dayButton) {
                 bookTraining(scheduleId, infoBox, sum, coach);
             });
         }
+
+
 
         const closeBtn = document.getElementById('closeInfoBox');
         if (closeBtn) {
@@ -1772,28 +1827,28 @@ function bookTraining(scheduleId, infoBox, sum, coach) {
 function renderCurrentTrainings(trainings) {
     const container = document.getElementById('trainings-details');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     if (!Array.isArray(trainings) || trainings.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #6c757d; font-style: italic;">Нет предстоящих тренировок</p>';
         return;
     }
-    
+
     const general = [];
     const individual = [];
-    
+
     trainings.forEach(training => {
         const type = String(training.typeWorkout || '').toLowerCase();
         (type === 'individual' ? individual : general).push(training);
     });
-    
+
     // Рендерим общие тренировки
     if (general.length > 0) {
         const generalGroup = createTrainingGroup('Общие тренировки', general, true);
         container.appendChild(generalGroup);
     }
-    
+
     // Рендерим индивидуальные тренировки
     if (individual.length > 0) {
         const individualGroup = createTrainingGroup('Индивидуальные тренировки', individual, true);
@@ -1805,28 +1860,28 @@ function renderCurrentTrainings(trainings) {
 function renderPastTrainings(trainings) {
     const container = document.getElementById('past-trainings-details');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     if (!Array.isArray(trainings) || trainings.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #6c757d; font-style: italic;">Нет прошедших тренировок</p>';
         return;
     }
-    
+
     const general = [];
     const individual = [];
-    
+
     trainings.forEach(training => {
         const type = String(training.typeWorkout || '').toLowerCase();
         (type === 'individual' ? individual : general).push(training);
     });
-    
+
     // Рендерим общие тренировки
     if (general.length > 0) {
         const generalGroup = createTrainingGroup('Общие тренировки', general, false);
         container.appendChild(generalGroup);
     }
-    
+
     // Рендерим индивидуальные тренировки
     if (individual.length > 0) {
         const individualGroup = createTrainingGroup('Индивидуальные тренировки', individual, false);
@@ -1838,21 +1893,21 @@ function renderPastTrainings(trainings) {
 function createTrainingGroup(title, trainings, isCurrent) {
     const groupContainer = document.createElement('div');
     groupContainer.className = 'training-group';
-    
+
     const groupHeader = document.createElement('h4');
     groupHeader.textContent = title;
     groupContainer.appendChild(groupHeader);
-    
+
     const trainingList = document.createElement('div');
     trainingList.className = 'training-list';
-    
+
     trainings.forEach(training => {
         const trainingItem = createTrainingItem(training, isCurrent);
         trainingList.appendChild(trainingItem);
     });
-    
+
     groupContainer.appendChild(trainingList);
-    
+
     // Добавляем кнопку "Скрыть список"
     const hideButton = document.createElement('button');
     hideButton.className = 'btn btn-secondary';
@@ -1862,9 +1917,9 @@ function createTrainingGroup(title, trainings, isCurrent) {
         trainingList.style.display = trainingList.style.display === 'none' ? 'block' : 'none';
         this.textContent = trainingList.style.display === 'none' ? 'Показать список' : 'Скрыть список';
     };
-    
+
     groupContainer.appendChild(hideButton);
-    
+
     return groupContainer;
 }
 
@@ -1872,36 +1927,36 @@ function createTrainingGroup(title, trainings, isCurrent) {
 function createTrainingItem(training, isCurrent) {
     const item = document.createElement('div');
     item.className = 'training-item';
-    
+
     const type = String(training.typeWorkout || '').toLowerCase();
     const typeRu = type === 'individual' ? 'Индивидуальная' : 'Общая';
     const dateStr = training.date ? new Date(training.date).toLocaleString('ru-RU') : '';
-    
+
     const info = document.createElement('div');
     info.className = 'training-info';
-    
+
     const typeEl = document.createElement('div');
     typeEl.className = 'training-type';
     typeEl.textContent = typeRu;
-    
+
     const dateEl = document.createElement('div');
     dateEl.className = 'training-date';
     dateEl.textContent = dateStr;
-    
+
     info.appendChild(typeEl);
     info.appendChild(dateEl);
-    
+
     const actions = document.createElement('div');
     actions.className = 'training-actions';
-    
+
     // Кнопка "Детали"
     const detailsBtn = document.createElement('button');
     detailsBtn.className = 'btn-details';
     detailsBtn.textContent = 'Детали';
     detailsBtn.onclick = () => showTrainingDetails(training, typeRu, dateStr);
-    
+
     actions.appendChild(detailsBtn);
-    
+
     // Кнопка "Календарь" только для текущих тренировок
     if (isCurrent) {
         const calendarBtn = document.createElement('button');
@@ -1910,10 +1965,10 @@ function createTrainingItem(training, isCurrent) {
         calendarBtn.onclick = () => openCalendar(training);
         actions.appendChild(calendarBtn);
     }
-    
+
     item.appendChild(info);
     item.appendChild(actions);
-    
+
     return item;
 }
 
@@ -1921,26 +1976,26 @@ function createTrainingItem(training, isCurrent) {
 function showTrainingDetails(training, typeRu, dateStr) {
     const overlay = document.getElementById('trainings-overlay');
     const modal = document.getElementById('trainings-modal');
-    
+
     if (!overlay || !modal) return;
-    
+
     modal.innerHTML = '';
-    
+
     const detailsContainer = document.createElement('div');
     const titleEl = document.createElement('h3');
     titleEl.textContent = 'Информация о тренировке';
-    
+
     const pType = document.createElement('p');
     pType.innerHTML = `<strong>Тип:</strong> ${typeRu}`;
-    
+
     const pDate = document.createElement('p');
     pDate.innerHTML = `<strong>Дата и время:</strong> ${dateStr}`;
-    
+
     const pPlace = document.createElement('p');
     const pSum = document.createElement('p');
     const pDesc = document.createElement('p');
     const pCoach = document.createElement('p');
-    
+
     detailsContainer.appendChild(titleEl);
     detailsContainer.appendChild(pType);
     detailsContainer.appendChild(pDate);
@@ -1948,9 +2003,9 @@ function showTrainingDetails(training, typeRu, dateStr) {
     detailsContainer.appendChild(pPlace);
     detailsContainer.appendChild(pSum);
     detailsContainer.appendChild(pDesc);
-    
+
     const fetches = [];
-    
+
     if (training.scheduleId) {
         fetches.push(
             fetch(`/api/schedule/${training.scheduleId}`).then(r => r.ok ? r.json() : null)
@@ -1963,7 +2018,7 @@ function showTrainingDetails(training, typeRu, dateStr) {
                 })
         );
     }
-    
+
     if (training.couchId) {
         fetches.push(
             fetch(`/api/couch/${training.couchId}`).then(r => r.ok ? r.json() : null)
@@ -1974,28 +2029,28 @@ function showTrainingDetails(training, typeRu, dateStr) {
                 })
         );
     }
-    
+
     Promise.all(fetches).finally(() => {
         const actions = document.createElement('div');
         actions.style.marginTop = '10px';
-        
+
         const close = document.createElement('button');
         close.textContent = 'Закрыть';
         close.className = 'btn btn-secondary';
-        close.onclick = () => { 
-            overlay.style.display = 'none'; 
-            modal.style.display = 'none'; 
+        close.onclick = () => {
+            overlay.style.display = 'none';
+            modal.style.display = 'none';
         };
-        
+
         actions.appendChild(close);
-        
+
         modal.appendChild(detailsContainer);
         modal.appendChild(actions);
         overlay.style.display = 'block';
         modal.style.display = 'block';
-        overlay.onclick = () => { 
-            overlay.style.display = 'none'; 
-            modal.style.display = 'none'; 
+        overlay.onclick = () => {
+            overlay.style.display = 'none';
+            modal.style.display = 'none';
         };
     });
 }
@@ -2009,6 +2064,26 @@ function openCalendar(training) {
     if (training.date) url.searchParams.set('date', new Date(training.date).toISOString());
     if (training.typeWorkout) url.searchParams.set('type', training.typeWorkout);
     window.location.href = url.toString();
+}
+
+// Функция для временной подсветки выбранной даты
+function highlightSelectedDate(day) {
+    const dayBtn = document.getElementById('button_' + day);
+    if (!dayBtn) return;
+    
+    // Сохраняем оригинальные стили
+    const originalBorder = dayBtn.style.border;
+    const originalBoxShadow = dayBtn.style.boxShadow;
+    
+    // Добавляем временную подсветку
+    dayBtn.style.border = '3px solid #ff6b35'; // Оранжевая рамка
+    dayBtn.style.boxShadow = '0 0 10px rgba(255, 107, 53, 0.6)'; // Свечение
+    
+    // Убираем подсветку через 3 секунды
+    setTimeout(() => {
+        dayBtn.style.border = originalBorder;
+        dayBtn.style.boxShadow = originalBoxShadow;
+    }, 3000);
 }
 
 

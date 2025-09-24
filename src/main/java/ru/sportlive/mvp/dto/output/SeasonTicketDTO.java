@@ -1,9 +1,9 @@
 package ru.sportlive.mvp.dto.output;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.UUID;
 
 @AllArgsConstructor
 public class SeasonTicketDTO {

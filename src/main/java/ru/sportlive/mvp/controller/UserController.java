@@ -2,27 +2,41 @@ package ru.sportlive.mvp.controller;
 
 
 
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpSession;
-import lombok.extern.java.Log;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
 import ru.sportlive.mvp.dto.input.AllCouchDTO;
-import ru.sportlive.mvp.dto.input.CouchDTO;
 import ru.sportlive.mvp.dto.input.UserTgDTO;
 import ru.sportlive.mvp.dto.input.UsersDTO;
 import ru.sportlive.mvp.dto.output.CouchInfoTgDTO;
 import ru.sportlive.mvp.dto.output.NotesDTO;
-import ru.sportlive.mvp.models.*;
-import ru.sportlive.mvp.services.*;
-
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Login;
+import ru.sportlive.mvp.models.Notes;
+import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.services.CouchService;
+import ru.sportlive.mvp.services.LoginService;
+import ru.sportlive.mvp.services.SportSectionService;
+import ru.sportlive.mvp.services.SportService;
+import ru.sportlive.mvp.services.TGService;
+import ru.sportlive.mvp.services.UserService;
 
 @RestController
 @RequestMapping("/api/user")

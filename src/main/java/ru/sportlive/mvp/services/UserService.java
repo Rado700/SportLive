@@ -1,21 +1,24 @@
 package ru.sportlive.mvp.services;
 
-import org.aspectj.weaver.ast.Not;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.sportlive.mvp.dto.input.UsersDTO;
-import ru.sportlive.mvp.dto.output.NotesDTO;
-import ru.sportlive.mvp.models.*;
-import ru.sportlive.mvp.repository.LoginRepository;
-import ru.sportlive.mvp.repository.NotesRepository;
-import ru.sportlive.mvp.repository.TransactionRepository;
-import ru.sportlive.mvp.repository.UserRepository;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ru.sportlive.mvp.dto.input.UsersDTO;
+import ru.sportlive.mvp.dto.output.NotesDTO;
+import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Notes;
+import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.repository.LoginRepository;
+import ru.sportlive.mvp.repository.NotesRepository;
+import ru.sportlive.mvp.repository.TransactionRepository;
+import ru.sportlive.mvp.repository.UserRepository;
 @Transactional
 @Service
 public class UserService {
@@ -82,6 +85,11 @@ public class UserService {
         user.setSurname(usersDTO.getSurname());
         user.setHeight(usersDTO.getHeight());
         user.setWeight(usersDTO.getWeight());
+        userRepository.save(user);
+        return user;
+    }
+
+    public User updateUser(User user){
         userRepository.save(user);
         return user;
     }

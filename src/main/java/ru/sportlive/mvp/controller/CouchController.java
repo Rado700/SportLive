@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.sportlive.mvp.dto.input.CouchOrganisationDTO;
-import ru.sportlive.mvp.dto.output.CouchInfoTgDTO;
 import ru.sportlive.mvp.dto.output.NotesDTO;
 import ru.sportlive.mvp.models.*;
 import ru.sportlive.mvp.services.*;
@@ -35,6 +34,12 @@ public class CouchController {
 
     @Autowired
     LoginService loginService;
+
+    @Autowired
+    SeasonTicketsService seasonTicketsService;
+
+    @Autowired
+    UserService userService;
 
     private static final String UPLOADED_FOLDER = "/static/coach/photo/";
 
@@ -106,6 +111,7 @@ public class CouchController {
         List<User> getAllUser = couchService.getAllUsersBySection(couch,sportSectionId);
         return new ResponseEntity<>(getAllUser, HttpStatus.OK);
     }
+
 
     @Operation(summary = "Удалить тренера по id")
     @DeleteMapping("/{couchId}")

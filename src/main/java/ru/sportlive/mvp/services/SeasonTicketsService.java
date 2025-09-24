@@ -1,16 +1,22 @@
 package ru.sportlive.mvp.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import ru.sportlive.mvp.dto.input.SeasonTicketInputDTO;
 import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
 import ru.sportlive.mvp.models.Couch;
 import ru.sportlive.mvp.models.SeasonTicket;
 import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.models.User;
 import ru.sportlive.mvp.repository.SeasonTicketsRepository;
-
-import java.util.*;
 
 @Transactional
 @Service
@@ -51,6 +57,11 @@ public class SeasonTicketsService {
             }
         }
         return seasonTicketDTOS;
+    }
+    public List<SeasonTicket> bookSeasonTickets(UUID uuid, User user){
+        List<SeasonTicket> seasonTickets = seasonTicketsRepository.findAllByUuid(uuid);
+        user.setTickets(seasonTickets);
+        return user.getTickets();
     }
 
 

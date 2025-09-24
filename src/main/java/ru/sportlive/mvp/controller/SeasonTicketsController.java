@@ -1,21 +1,43 @@
 package ru.sportlive.mvp.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ru.sportlive.mvp.dto.input.SeasonTicketInputDTO;
-import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
-import ru.sportlive.mvp.models.*;
-import ru.sportlive.mvp.services.*;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
+import ru.sportlive.mvp.dto.input.SeasonTicketInputDTO;
+import ru.sportlive.mvp.dto.output.SeasonTicketDTO;
+import ru.sportlive.mvp.models.Booking;
+import ru.sportlive.mvp.models.Couch;
+import ru.sportlive.mvp.models.Schedule;
+import ru.sportlive.mvp.models.SeasonTicket;
+import ru.sportlive.mvp.models.SportSection;
+import ru.sportlive.mvp.models.User;
+import ru.sportlive.mvp.services.BookingService;
+import ru.sportlive.mvp.services.CouchService;
+import ru.sportlive.mvp.services.ScheduleService;
+import ru.sportlive.mvp.services.SeasonTicketsService;
+import ru.sportlive.mvp.services.SportSectionService;
+import ru.sportlive.mvp.services.UserService;
 
 @RestController
 @RequestMapping("/api/seasonTickets")
@@ -127,6 +149,7 @@ public class SeasonTicketsController {
         List<SeasonTicket> ticketsByUUID = seasonTicketsService.getTicketsByUUID(uuid);
         Integer userId = (Integer) httpSession.getAttribute("userId");
         User user = userService.getUser(userId);
+        List<SeasonTicket>seasonTickets = seasonTicketsService.bookSeasonTickets(uuid,user);
         if (ticketsByUUID.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -189,6 +212,13 @@ public class SeasonTicketsController {
             }
         }
         return  new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "Вывести все тарифы для пользователя")
+    @GetMapping("/getAllSeasonTicketsUser/{userId}")
+    public List<SeasonTicket>getAllSeasonTicketsUser(@PathVariable Integer userId){
+        User user = userService.getUser(userId);
+        return user.getTickets();
     }
 
     @Operation(summary = "Вывести все тарифы для тренера")

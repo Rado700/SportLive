@@ -510,6 +510,9 @@
         border-radius: 6px;
         border: 1px solid #e9ecef;
         transition: all 0.2s ease;
+        min-width: 0;
+        overflow: hidden;
+        box-sizing: border-box;
     }
 
     .training-item:hover {
@@ -520,22 +523,40 @@
 
     .training-info {
         flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        box-sizing: border-box;
     }
 
     .training-type {
         font-weight: bold;
         color: #495057;
         margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
     }
 
     .training-date {
         color: #6c757d;
         font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
     }
 
     .training-actions {
         display: flex;
         gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        min-width: 0;
+        justify-content: flex-end;
+        box-sizing: border-box;
+        max-width: 100%;
+        flex-shrink: 0;
     }
 
     .btn-details {
@@ -547,6 +568,14 @@
         cursor: pointer;
         font-size: 12px;
         transition: background-color 0.2s ease;
+        white-space: nowrap;
+        min-width: 0;
+        flex-shrink: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+        word-break: keep-all;
     }
 
     .btn-details:hover {
@@ -562,10 +591,60 @@
         cursor: pointer;
         font-size: 12px;
         transition: background-color 0.2s ease;
+        white-space: nowrap;
+        min-width: 0;
+        flex-shrink: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+        word-break: keep-all;
     }
 
     .btn-calendar:hover {
         background-color: #1e7e34;
+    }
+
+    /* Медиа-запрос для маленьких экранов */
+    @media (max-width: 768px) {
+        .training-actions {
+            gap: 4px;
+        }
+
+        .btn-details,
+        .btn-calendar {
+            padding: 4px 8px;
+            font-size: 11px;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+
+        .training-item {
+            padding: 8px;
+        }
+    }
+
+    /* Медиа-запрос для очень маленьких экранов */
+    @media (max-width: 480px) {
+        .training-actions {
+            gap: 2px;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-details,
+        .btn-calendar {
+            padding: 6px 8px;
+            font-size: 10px;
+            text-align: center;
+            white-space: normal;
+            word-wrap: break-word;
+            box-sizing: border-box;
+        }
+
+        .training-item {
+            padding: 6px;
+        }
     }
 
     .trainer-container {
@@ -1068,7 +1147,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         color:black;
     }
-
+.
     /* Элемент инвентаря */
     .equipment-item {
         /*border-bottom: 1px solid #ddd;*/
@@ -1277,7 +1356,7 @@
     }
     .modal-card {
         position: fixed;
-        top: 75%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         background: #fff;

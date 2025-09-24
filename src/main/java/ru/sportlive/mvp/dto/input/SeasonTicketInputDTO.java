@@ -1,10 +1,10 @@
 package ru.sportlive.mvp.dto.input;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @AllArgsConstructor
 public class SeasonTicketInputDTO {
